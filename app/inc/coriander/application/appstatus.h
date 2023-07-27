@@ -14,13 +14,13 @@
 namespace coriander {
 
 struct AppStatus : public IAppStatus {
-    AppStatus(const AppStatus&) = delete;
-    AppStatus(AppStatus&&) = delete;
-    virtual AppStatus& operator=(const AppStatus&) = delete;
+  AppStatus(const AppStatus&) = delete;
+  AppStatus(AppStatus&&) = delete;
+  virtual AppStatus& operator=(const AppStatus&) = delete;
 
-    explicit AppStatus() noexcept;
-    virtual void setStatus(Status status) noexcept override;
-    virtual Status getStatus() const noexcept override;
+  explicit AppStatus() noexcept;
+  virtual void setStatus(Status status) noexcept override;
+  virtual Status getStatus() const noexcept override;
 };
 
-}
+}  // namespace coriander

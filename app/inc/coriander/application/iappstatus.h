@@ -12,17 +12,16 @@
 namespace coriander {
 
 struct IAppStatus {
+  enum class Status {
+    Ok,
+    Busy,
+    Error,
+  };
 
-    enum class Status {
-        Ok,
-        Busy,
-        Error,
-    };
+  virtual ~IAppStatus() = default;
 
-    virtual ~IAppStatus() = default;
-
-    virtual void setStatus(Status status) noexcept = 0;
-    virtual Status getStatus() const noexcept = 0;
+  virtual void setStatus(Status status) noexcept = 0;
+  virtual Status getStatus() const noexcept = 0;
 };
 
-}
+}  // namespace coriander

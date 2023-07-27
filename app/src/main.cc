@@ -4,41 +4,48 @@
  */
 
 #include <app_version.h>
-#include <boost/di.hpp>
-#include <memory>
 #include <zephyr/drivers/sensor.h>
 #include <zephyr/kernel.h>
-
 #include <zephyr/logging/log.h>
+
+#include <boost/di.hpp>
+#include <memory>
 LOG_MODULE_REGISTER(main, CONFIG_APP_LOG_LEVEL);
 
 // interfaces
 #include "coriander/application/iappstatus.h"
+#include "coriander/iboard_state.h"
 
 // implements
 #include "coriander/application/appstatus.h"
+#include "coriander/board_state.h"
 
 namespace {
 
-static auto createIocContainer()
-{
-    return boost::di::make_injector(
-        boost::di::bind<coriander::IAppStatus>.to<coriander::AppStatus>().in(boost::di::singleton));
+static auto createIocContainer() {
+  return boost::di::make_injector(
+      boost::di::bind<coriander::IAppStatus>.to<coriander::AppStatus>(),
+      boost::di::bind<coriander::IBoardState>.to<coriander::BoardState>(),
+      boost::di::bind<coriander::IStateInitHandler>.to<coriander::StateInitHandler>(),
+      boost::di::bind<coriander::IStateStandbyHandler>.to<coriander::StateStandbyHandler>(),
+      boost::di::bind<coriander::IStateRunHandler>.to<coriander::StateRunHandler>(),
+      boost::di::bind<coriander::IStateErrorHandler>.to<coriander::StateErrorHandler>(),
+      boost::di::bind<coriander::IStateCalibrateHandler>.to<coriander::StateCalibrateHandler>(),
+      boost::di::bind<coriander::IStateFirmwareUpdateHandler>.to<coriander::StateFirmwareUpdateHandler>());
 }
-}
+}  // namespace
 
-int main(void)
-{
-    auto injector = createIocContainer();
-    auto appStatus = injector.create<std::shared_ptr<coriander::IAppStatus>>();
+int main(void) {
+  auto injector = createIocContainer();
 
-    k_sleep(K_MSEC(5000));
+  auto board = injector.create<std::shared_ptr<coriander::IBoardState>>();
 
-    appStatus->setStatus(coriander::IAppStatus::Status::Ok);
+  board->setState(coriander::IBoardState::State::Standby);
 
-    while (1) {
-        LOG_INF("Hello World! %s", CONFIG_BOARD);
-        k_sleep(K_MSEC(500));
-    }
-    return 0;
+  while (1) {
+    board->loop();
+    k_sleep(K_MSEC(1));
+  }
+
+  return 0;
 }
