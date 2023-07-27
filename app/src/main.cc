@@ -12,6 +12,7 @@ LOG_MODULE_REGISTER(main, CONFIG_APP_LOG_LEVEL);
 
 int main(void)
 {
+	LOG_INF("Hello World! %s", CONFIG_BOARD);
 	return 0;
 }
 
