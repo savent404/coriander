@@ -9,4 +9,8 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
 project(app LANGUAGES C)
 
-target_sources(app PRIVATE src/main.cc)
+aux_source_directory(src/coriander sc_src)
+aux_source_directory(src/coriander/application sca_src)
+
+target_sources(app PRIVATE src/main.cc ${sc_src} ${sca_src})
+target_include_directories(app PRIVATE inc)

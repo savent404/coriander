@@ -15,7 +15,16 @@
 		zephyr,sram = &sram0;
 		zephyr,flash = &flash0;
 		zephyr,code-partition = &slot0_partition;
+		usr,led = &leds;
     };
+
+	leds: leds{
+		compatible = "gpio-leds";
+		app_led: app_led {
+			gpios = <&gpioa 12 GPIO_ACTIVE_LOW>;
+			status = "okay";
+		};
+	};
 };
 
 &clk_lsi {
