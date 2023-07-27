@@ -9,9 +9,12 @@
  */
 #pragma once
 
+#include <zephyr/kernel.h>
+
 #include <memory>
 
 #include "coriander/application/iappstatus.h"
+#include "coriander/iboard_event.h"
 #include "coriander/iboard_state.h"
 #include "coriander/os/imutex.h"
 
@@ -22,13 +25,14 @@ struct BoardState : public IBoardState {
   BoardState(BoardState&&) = delete;
   virtual BoardState& operator=(const BoardState&) = delete;
 
-  explicit BoardState(std::unique_ptr<IStateInitHandler> initHandler,
-                      std::unique_ptr<IStateStandbyHandler> standbyHandler,
-                      std::unique_ptr<IStateRunHandler> runHandler,
-                      std::unique_ptr<IStateErrorHandler> errorHandler,
-                      std::unique_ptr<IStateCalibrateHandler> calibrateHandler,
-                      std::unique_ptr<IStateFirmwareUpdateHandler>
-                          firmwareUpdateHandler) noexcept;
+  explicit BoardState(
+      std::unique_ptr<IStateInitHandler> initHandler,
+      std::unique_ptr<IStateStandbyHandler> standbyHandler,
+      std::unique_ptr<IStateRunHandler> runHandler,
+      std::unique_ptr<IStateErrorHandler> errorHandler,
+      std::unique_ptr<IStateCalibrateHandler> calibrateHandler,
+      std::unique_ptr<IStateFirmwareUpdateHandler> firmwareUpdateHandler,
+      std::shared_ptr<IBoardEvent> event) noexcept;
 
   virtual void setState(State state) noexcept override;
   virtual State getState() const noexcept override;
@@ -42,6 +46,7 @@ struct BoardState : public IBoardState {
   std::unique_ptr<IStateErrorHandler> mStateErrorHandler;
   std::unique_ptr<IStateCalibrateHandler> mStateCalibrateHandler;
   std::unique_ptr<IStateFirmwareUpdateHandler> mStateFirmwareUpdateHandler;
+  std::shared_ptr<IBoardEvent> mEvent;
 
   IStateHandler* getHandler(State s) {
     switch (s) {
@@ -65,10 +70,12 @@ struct BoardState : public IBoardState {
 };
 
 struct StateInitHandler : public IStateInitHandler {
-  StateInitHandler(std::shared_ptr<IAppStatus> appStatus) noexcept
-      : mAppStatus(appStatus) {}
+  StateInitHandler(std::shared_ptr<IAppStatus> appStatus,
+                   std::shared_ptr<IBoardEvent> event) noexcept
+      : mAppStatus(appStatus), mEvent(event) {}
   virtual void onEnter() noexcept override {
     mAppStatus->setStatus(IAppStatus::Status::Busy);
+    mEvent->raiseEvent(IBoardEvent::Event::InitDone);
   }
   virtual void onExit() noexcept override {
     mAppStatus->setStatus(IAppStatus::Status::Ok);
@@ -77,6 +84,7 @@ struct StateInitHandler : public IStateInitHandler {
 
  private:
   std::shared_ptr<IAppStatus> mAppStatus;
+  std::shared_ptr<IBoardEvent> mEvent;
 };
 
 struct StateStandbyHandler : public IStateStandbyHandler {

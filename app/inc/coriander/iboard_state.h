@@ -21,6 +21,7 @@ struct IStateCalibrateHandler : public IStateHandler {};
 struct IStateFirmwareUpdateHandler : public IStateHandler {};
 
 struct IBoardState {
+
   enum class State {
     Init,
     Standby,
@@ -29,7 +30,6 @@ struct IBoardState {
     Calibrate,
     FirmwareUpdate,
   };
-
 
   virtual ~IBoardState() = default;
 

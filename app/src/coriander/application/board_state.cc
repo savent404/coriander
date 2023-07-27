@@ -9,8 +9,6 @@
  */
 #include "coriander/board_state.h"
 
-#include "coriander/iboard_state.h"
-
 namespace coriander {
 BoardState::BoardState(
     std::unique_ptr<IStateInitHandler> initHandler,
@@ -18,14 +16,19 @@ BoardState::BoardState(
     std::unique_ptr<IStateRunHandler> runHandler,
     std::unique_ptr<IStateErrorHandler> errorHandler,
     std::unique_ptr<IStateCalibrateHandler> calibrateHandler,
-    std::unique_ptr<IStateFirmwareUpdateHandler> firmwareUpdateHandler) noexcept
+    std::unique_ptr<IStateFirmwareUpdateHandler> firmwareUpdateHandler,
+    std::shared_ptr<IBoardEvent> event) noexcept
     : mState(State::Init),
       mStateInitHandler(std::move(initHandler)),
       mStateStandbyHandler(std::move(standbyHandler)),
       mStateRunHandler(std::move(runHandler)),
       mStateErrorHandler(std::move(errorHandler)),
       mStateCalibrateHandler(std::move(calibrateHandler)),
-      mStateFirmwareUpdateHandler(std::move(firmwareUpdateHandler)) {
+      mStateFirmwareUpdateHandler(std::move(firmwareUpdateHandler)),
+      mEvent(event) {
+  event->registerEventCallback(
+      IBoardEvent::Event::InitDone,
+      [this](IBoardEvent::Event event) { setState(State::Standby); });
   if (mStateInitHandler) mStateInitHandler->onEnter();
 }
 

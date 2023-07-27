@@ -14,10 +14,12 @@ LOG_MODULE_REGISTER(main, CONFIG_APP_LOG_LEVEL);
 
 // interfaces
 #include "coriander/application/iappstatus.h"
+#include "coriander/iboard_event.h"
 #include "coriander/iboard_state.h"
 
 // implements
 #include "coriander/application/appstatus.h"
+#include "coriander/board_event.h"
 #include "coriander/board_state.h"
 
 namespace {
@@ -31,7 +33,8 @@ static auto createIocContainer() {
       boost::di::bind<coriander::IStateRunHandler>.to<coriander::StateRunHandler>(),
       boost::di::bind<coriander::IStateErrorHandler>.to<coriander::StateErrorHandler>(),
       boost::di::bind<coriander::IStateCalibrateHandler>.to<coriander::StateCalibrateHandler>(),
-      boost::di::bind<coriander::IStateFirmwareUpdateHandler>.to<coriander::StateFirmwareUpdateHandler>());
+      boost::di::bind<coriander::IStateFirmwareUpdateHandler>.to<coriander::StateFirmwareUpdateHandler>(),
+      boost::di::bind<coriander::IBoardEvent>.to<coriander::BoardEvent>());
 }
 }  // namespace
 
@@ -39,8 +42,6 @@ int main(void) {
   auto injector = createIocContainer();
 
   auto board = injector.create<std::shared_ptr<coriander::IBoardState>>();
-
-  board->setState(coriander::IBoardState::State::Standby);
 
   while (1) {
     board->loop();
