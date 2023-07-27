@@ -18,9 +18,9 @@ struct AppStatus : public IAppStatus {
     AppStatus(AppStatus&&) = delete;
     virtual AppStatus& operator=(const AppStatus&) = delete;
 
-    explicit AppStatus();
-    virtual void setStatus(Status status) override;
-    virtual Status getStatus() const override;
+    explicit AppStatus() noexcept;
+    virtual void setStatus(Status status) noexcept override;
+    virtual Status getStatus() const noexcept override;
 };
 
 }

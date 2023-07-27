@@ -54,19 +54,19 @@ K_TIMER_DEFINE(app_status, AppStatusPeriodCallback, NULL);
 
 namespace coriander {
 
-AppStatus::AppStatus()
+AppStatus::AppStatus() noexcept
 {
     led_off(APP_LED_DEVICE, 0);
     k_timer_start(&app_status, K_MSEC(APP_LED_BLINK_PERIOD), K_MSEC(APP_LED_BLINK_PERIOD));
 }
 
-void AppStatus::setStatus(Status status)
+void AppStatus::setStatus(Status status) noexcept
 {
     s_status = status;
     led_on(APP_LED_DEVICE, 0);
 }
 
-AppStatus::Status AppStatus::getStatus() const
+AppStatus::Status AppStatus::getStatus() const noexcept
 {
     return s_status;
 }

@@ -21,8 +21,8 @@ struct IAppStatus {
 
     virtual ~IAppStatus() = default;
 
-    virtual void setStatus(Status status) = 0;
-    virtual Status getStatus() const = 0;
+    virtual void setStatus(Status status) noexcept = 0;
+    virtual Status getStatus() const noexcept = 0;
 };
 
 }
