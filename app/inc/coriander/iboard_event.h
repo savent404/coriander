@@ -28,6 +28,7 @@ struct IBoardEvent {
 
   virtual ~IBoardEvent() = default;
   virtual void raiseEvent(Event event) noexcept = 0;
-  virtual void registerEventCallback(Event event, EventCallback callback) noexcept = 0;
+  virtual void registerEventCallback(Event event,
+                                     EventCallback callback) noexcept = 0;
 };
 }  // namespace coriander

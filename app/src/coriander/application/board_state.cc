@@ -11,12 +11,12 @@
 
 namespace coriander {
 BoardState::BoardState(
-    std::unique_ptr<IStateInitHandler> initHandler,
-    std::unique_ptr<IStateStandbyHandler> standbyHandler,
-    std::unique_ptr<IStateRunHandler> runHandler,
-    std::unique_ptr<IStateErrorHandler> errorHandler,
-    std::unique_ptr<IStateCalibrateHandler> calibrateHandler,
-    std::unique_ptr<IStateFirmwareUpdateHandler> firmwareUpdateHandler,
+    std::unique_ptr<IBoardStateInitHandler> initHandler,
+    std::unique_ptr<IBoardStateStandbyHandler> standbyHandler,
+    std::unique_ptr<IBoardStateRunHandler> runHandler,
+    std::unique_ptr<IBoardStateErrorHandler> errorHandler,
+    std::unique_ptr<IBoardStateCalibrateHandler> calibrateHandler,
+    std::unique_ptr<IBoardStateFirmwareUpdateHandler> firmwareUpdateHandler,
     std::shared_ptr<IBoardEvent> event) noexcept
     : mState(State::Init),
       mStateInitHandler(std::move(initHandler)),

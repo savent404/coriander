@@ -16,6 +16,13 @@
 #include "coriander/application/iappstatus.h"
 #include "coriander/iboard_event.h"
 #include "coriander/iboard_state.h"
+#include "coriander/iboard_state_init_handler.h"
+#include "coriander/iboard_state_calibrate_handler.h"
+#include "coriander/iboard_state_error_handler.h"
+#include "coriander/iboard_state_firmware_update_handler.h"
+#include "coriander/iboard_state_init_handler.h"
+#include "coriander/iboard_state_run_handler.h"
+#include "coriander/iboard_state_standby_handler.h"
 #include "coriander/os/imutex.h"
 
 namespace coriander {
@@ -26,12 +33,12 @@ struct BoardState : public IBoardState {
   virtual BoardState& operator=(const BoardState&) = delete;
 
   explicit BoardState(
-      std::unique_ptr<IStateInitHandler> initHandler,
-      std::unique_ptr<IStateStandbyHandler> standbyHandler,
-      std::unique_ptr<IStateRunHandler> runHandler,
-      std::unique_ptr<IStateErrorHandler> errorHandler,
-      std::unique_ptr<IStateCalibrateHandler> calibrateHandler,
-      std::unique_ptr<IStateFirmwareUpdateHandler> firmwareUpdateHandler,
+      std::unique_ptr<IBoardStateInitHandler> initHandler,
+      std::unique_ptr<IBoardStateStandbyHandler> standbyHandler,
+      std::unique_ptr<IBoardStateRunHandler> runHandler,
+      std::unique_ptr<IBoardStateErrorHandler> errorHandler,
+      std::unique_ptr<IBoardStateCalibrateHandler> calibrateHandler,
+      std::unique_ptr<IBoardStateFirmwareUpdateHandler> firmwareUpdateHandler,
       std::shared_ptr<IBoardEvent> event) noexcept;
 
   virtual void setState(State state) noexcept override;
@@ -40,12 +47,12 @@ struct BoardState : public IBoardState {
 
  private:
   State mState;
-  std::unique_ptr<IStateInitHandler> mStateInitHandler;
-  std::unique_ptr<IStateStandbyHandler> mStateStandbyHandler;
-  std::unique_ptr<IStateRunHandler> mStateRunHandler;
-  std::unique_ptr<IStateErrorHandler> mStateErrorHandler;
-  std::unique_ptr<IStateCalibrateHandler> mStateCalibrateHandler;
-  std::unique_ptr<IStateFirmwareUpdateHandler> mStateFirmwareUpdateHandler;
+  std::unique_ptr<IBoardStateInitHandler> mStateInitHandler;
+  std::unique_ptr<IBoardStateStandbyHandler> mStateStandbyHandler;
+  std::unique_ptr<IBoardStateRunHandler> mStateRunHandler;
+  std::unique_ptr<IBoardStateErrorHandler> mStateErrorHandler;
+  std::unique_ptr<IBoardStateCalibrateHandler> mStateCalibrateHandler;
+  std::unique_ptr<IBoardStateFirmwareUpdateHandler> mStateFirmwareUpdateHandler;
   std::shared_ptr<IBoardEvent> mEvent;
 
   IStateHandler* getHandler(State s) {
@@ -67,94 +74,6 @@ struct BoardState : public IBoardState {
         return nullptr;
     }
   }
-};
-
-struct StateInitHandler : public IStateInitHandler {
-  StateInitHandler(std::shared_ptr<IAppStatus> appStatus,
-                   std::shared_ptr<IBoardEvent> event) noexcept
-      : mAppStatus(appStatus), mEvent(event) {}
-  virtual void onEnter() noexcept override {
-    mAppStatus->setStatus(IAppStatus::Status::Busy);
-    mEvent->raiseEvent(IBoardEvent::Event::InitDone);
-  }
-  virtual void onExit() noexcept override {
-    mAppStatus->setStatus(IAppStatus::Status::Ok);
-  }
-  virtual void onLoop() noexcept override {}
-
- private:
-  std::shared_ptr<IAppStatus> mAppStatus;
-  std::shared_ptr<IBoardEvent> mEvent;
-};
-
-struct StateStandbyHandler : public IStateStandbyHandler {
-  StateStandbyHandler(std::shared_ptr<IAppStatus> appStatus) noexcept
-      : mAppStatus(appStatus) {}
-
-  virtual void onEnter() noexcept override {
-    mAppStatus->setStatus(IAppStatus::Status::Ok);
-  }
-  virtual void onExit() noexcept override {}
-  virtual void onLoop() noexcept override {}
-
- private:
-  std::shared_ptr<IAppStatus> mAppStatus;
-};
-
-struct StateRunHandler : public IStateRunHandler {
-  StateRunHandler(std::shared_ptr<IAppStatus> appStatus) noexcept
-      : mAppStatus(appStatus) {}
-
-  virtual void onEnter() noexcept override {
-    mAppStatus->setStatus(IAppStatus::Status::Ok);
-  }
-  virtual void onExit() noexcept override {}
-  virtual void onLoop() noexcept override {}
-
- private:
-  std::shared_ptr<IAppStatus> mAppStatus;
-};
-
-struct StateErrorHandler : public IStateErrorHandler {
-  StateErrorHandler(std::shared_ptr<IAppStatus> appStatus) noexcept
-      : mAppStatus(appStatus) {}
-
-  virtual void onEnter() noexcept override {
-    mAppStatus->setStatus(IAppStatus::Status::Error);
-  }
-  virtual void onExit() noexcept override {}
-  virtual void onLoop() noexcept override {}
-
- private:
-  std::shared_ptr<IAppStatus> mAppStatus;
-};
-
-struct StateCalibrateHandler : public IStateCalibrateHandler {
-  StateCalibrateHandler(std::shared_ptr<IAppStatus> appStatus) noexcept
-      : mAppStatus(appStatus) {}
-
-  virtual void onEnter() noexcept override {
-    mAppStatus->setStatus(IAppStatus::Status::Busy);
-  }
-  virtual void onExit() noexcept override {}
-  virtual void onLoop() noexcept override {}
-
- private:
-  std::shared_ptr<IAppStatus> mAppStatus;
-};
-
-struct StateFirmwareUpdateHandler : public IStateFirmwareUpdateHandler {
-  StateFirmwareUpdateHandler(std::shared_ptr<IAppStatus> appStatus) noexcept
-      : mAppStatus(appStatus) {}
-
-  virtual void onEnter() noexcept override {
-    mAppStatus->setStatus(IAppStatus::Status::Busy);
-  }
-  virtual void onExit() noexcept override {}
-  virtual void onLoop() noexcept override {}
-
- private:
-  std::shared_ptr<IAppStatus> mAppStatus;
 };
 
 }  // namespace coriander
