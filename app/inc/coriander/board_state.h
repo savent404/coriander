@@ -23,7 +23,6 @@
 #include "coriander/iboard_state_init_handler.h"
 #include "coriander/iboard_state_run_handler.h"
 #include "coriander/iboard_state_standby_handler.h"
-#include "coriander/os/imutex.h"
 
 namespace coriander {
 
