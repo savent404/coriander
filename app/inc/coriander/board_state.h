@@ -9,8 +9,6 @@
  */
 #pragma once
 
-#include <zephyr/kernel.h>
-
 #include <memory>
 
 #include "coriander/application/iappstatus.h"
