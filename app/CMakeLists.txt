@@ -3,33 +3,57 @@
 #
 # Copyright (c) 2023 Savent Gate
 # SPDX-License-Identifier: All rights reserved
+#-------------------------------------------------------------------------------
+
+option(UNIT_TEST "Build tests" OFF)
 
 cmake_minimum_required(VERSION 3.13.1)
-find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
+if (UNIT_TEST)
+    set(CMAKE_CXX_STANDARD 20)
+else ()
+    find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
+endif (UNIT_TEST)
 
 project(app LANGUAGES C CXX)
 
-include(cmake/CPM.cmake)
-CPMAddPackage("gh:boost-ext/di@1.3.0")
 
 ###############
-# coriander lib
+# CPM dependencies
+###############
+include(cmake/CPM.cmake)
+CPMAddPackage("gh:boost-ext/di@1.3.0")
+if (UNIT_TEST)
+    CPMAddPackage("gh:google/googletest@1.12.0")
+endif (UNIT_TEST)
+
+###############
+# coriander core
 ###############
 aux_source_directory(src/coriander sc_src)
 set(coriander_src ${sc_src})
 set(coriander_inc inc ${di_SOURCE_DIR}/include)
 set(coriander_lib )
-
-# build this library to check no specific backend is selected
 add_library(coriander STATIC ${coriander_src})
 target_include_directories(coriander PUBLIC ${coriander_inc})
 target_link_libraries(coriander PUBLIC ${coriander_lib})
 
+###############
 # coriander backend
-file(GLOB_RECURSE backend_src src/coriander/backends/zephyr/*.cc)
+###############
+if (UNIT_TEST)
+    file(GLOB_RECURSE backend_src src/coriander/backends/posix/*.cc)
+else ()
+    file(GLOB_RECURSE backend_src src/coriander/backends/zephyr/*.cc)
+endif (UNIT_TEST)
 
-target_sources(app PRIVATE src/main.cc ${coriander_src} ${backend_src})
-target_include_directories(app PRIVATE
-    inc
-    ${coriander_inc})
-target_link_libraries(app PRIVATE ${coriander_lib})
+if (UNIT_TEST)
+    aux_source_directory(tests ut_src ${backend_src})
+    add_executable(ut ${ut_src})
+    target_link_libraries(ut PRIVATE gtest_main coriander)
+else ()
+    target_sources(app PRIVATE src/main.cc ${coriander_src} ${backend_src})
+    target_include_directories(app PRIVATE
+        inc
+        ${coriander_inc})
+    target_link_libraries(app PRIVATE ${coriander_lib})
+endif (UNIT_TEST)
