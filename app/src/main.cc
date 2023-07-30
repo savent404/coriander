@@ -13,13 +13,10 @@
 
 LOG_MODULE_REGISTER(main);
 
+static void loop_hook() { k_sleep(K_MSEC(1)); }
+
 int main(void) {
   LOG_INF("Coriander version %s", APP_VERSION_STRING);
-  auto instance = create_coriander_instance();
-  while (1) {
-    coriander_run(instance);
-    k_sleep(K_MSEC(1));
-  }
-
+  coriander::coriander_loop(loop_hook);
   return 0;
 }

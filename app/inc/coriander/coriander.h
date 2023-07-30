@@ -9,16 +9,22 @@
  */
 #pragma once
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include <utility>
 
-typedef void* coriander_instance_t;
+#include "coriander/container.h"
 
-coriander_instance_t create_coriander_instance(void);
-void coriander_run(coriander_instance_t instance);
-void destroy_coriander_instance(coriander_instance_t instance);
+namespace coriander {
 
-#ifdef __cplusplus
+using CorianderMainObject = std::shared_ptr<coriander::IBoardState>;
+
+template <typename T_hook, typename... T_args>
+static inline auto coriander_loop(T_hook hook, T_args&&... args) {
+  auto injector = boost::di::make_injector(
+      std::move(detail::defaultContainer()), std::forward<T_args>(args)...);
+  auto obj = injector.template create<CorianderMainObject>();
+  for (;;) {
+    obj->loop();
+    hook();
+  }
 }
-#endif
+}  // namespace coriander
