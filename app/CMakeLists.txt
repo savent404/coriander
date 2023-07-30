@@ -16,6 +16,8 @@ endif (UNIT_TEST)
 
 project(app LANGUAGES C CXX)
 
+include(cmake/git_version.cmake)
+
 
 ###############
 # CPM dependencies

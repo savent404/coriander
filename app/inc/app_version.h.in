@@ -1,0 +1,12 @@
+/**
+ * @file app_version.h.in
+ * @author Savent Gate (savent_gate@outlook.com)
+ * @brief 
+ * @date 2023-07-30
+ * 
+ * Copyright 2023 savent_gate
+ * 
+ */
+#pragma once
+
+#define APP_VERSION_STRING "@GIT_VERSION@"
