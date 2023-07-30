@@ -9,38 +9,12 @@
  */
 #include "coriander/coriander.h"
 
-#include <boost/di.hpp>
-#include <memory>
-
-// interfaces
-#include "coriander/application/iappstatus.h"
-#include "coriander/iboard_event.h"
-#include "coriander/iboard_state.h"
-
-// implements
-#include "coriander/application/appstatus.h"
-#include "coriander/board_event.h"
-#include "coriander/board_state.h"
-#include "coriander/board_state_calibrate_handler.h"
-#include "coriander/board_state_error_handler.h"
-#include "coriander/board_state_firmware_update_handler.h"
-#include "coriander/board_state_init_handler.h"
-#include "coriander/board_state_run_handler.h"
-#include "coriander/board_state_standby_handler.h"
+#include "coriander/container.h"
 
 namespace {
 
 static auto createInjector() {
-  static auto mInjector = boost::di::make_injector(
-      boost::di::bind<coriander::IAppStatus>.to<coriander::AppStatus>(),
-      boost::di::bind<coriander::IBoardState>.to<coriander::BoardState>(),
-      boost::di::bind<coriander::IBoardStateInitHandler>.to<coriander::BoardStateInitHandler>(),
-      boost::di::bind<coriander::IBoardStateStandbyHandler>.to<coriander::BoardStateStandbyHandler>(),
-      boost::di::bind<coriander::IBoardStateRunHandler>.to<coriander::BoardStateRunHandler>(),
-      boost::di::bind<coriander::IBoardStateErrorHandler>.to<coriander::BoardStateErrorHandler>(),
-      boost::di::bind<coriander::IBoardStateCalibrateHandler>.to<coriander::BoardStateCalibrateHandler>(),
-      boost::di::bind<coriander::IBoardStateFirmwareUpdateHandler>.to<coriander::BoardStateFirmwareUpdateHandler>(),
-      boost::di::bind<coriander::IBoardEvent>.to<coriander::BoardEvent>());
+  static auto mInjector = coriander::detail::createInjector();
   return &mInjector;
 }
 
