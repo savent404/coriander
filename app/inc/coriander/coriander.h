@@ -17,10 +17,13 @@ namespace coriander {
 
 using CorianderMainObject = std::shared_ptr<coriander::IBoardState>;
 
-template <typename T_hook, typename... T_args>
-static inline auto coriander_loop(T_hook hook, T_args&&... args) {
-  auto injector = boost::di::make_injector(
-      std::move(detail::defaultContainer()), std::forward<T_args>(args)...);
+template <typename... T_args>
+static inline auto coriander_create_injector(T_args&&... args) {
+  return detail::createInjector(std::forward<T_args>(args)...);
+}
+
+template <typename T_hook, typename T_injector>
+static inline auto coriander_loop(T_hook hook, T_injector&& injector) {
   auto obj = injector.template create<CorianderMainObject>();
   for (;;) {
     obj->loop();
