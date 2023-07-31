@@ -22,6 +22,7 @@
 #include "coriander/board_state_init_handler.h"
 #include "coriander/board_state_run_handler.h"
 #include "coriander/board_state_standby_handler.h"
+#include "coriander/board_state_reboot_handler.h"
 
 namespace coriander {
 
@@ -42,6 +43,7 @@ static inline auto defaultContainer() {
       boost::di::bind<coriander::IBoardStateErrorHandler>.to<coriander::BoardStateErrorHandler>(),
       boost::di::bind<coriander::IBoardStateCalibrateHandler>.to<coriander::BoardStateCalibrateHandler>(),
       boost::di::bind<coriander::IBoardStateFirmwareUpdateHandler>.to<coriander::BoardStateFirmwareUpdateHandler>(),
+      boost::di::bind<coriander::IBoardStateRebootHandler>.to<coriander::BoardStateRebootHandler>(),
       boost::di::bind<coriander::IBoardEvent>.to<coriander::BoardEvent>());
 }
 

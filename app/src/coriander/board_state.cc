@@ -17,6 +17,7 @@ BoardState::BoardState(
     std::unique_ptr<IBoardStateErrorHandler> errorHandler,
     std::unique_ptr<IBoardStateCalibrateHandler> calibrateHandler,
     std::unique_ptr<IBoardStateFirmwareUpdateHandler> firmwareUpdateHandler,
+    std::unique_ptr<IBoardStateRebootHandler> rebootHandler,
     std::shared_ptr<IBoardEvent> event) noexcept
     : mState(State::Init),
       mStateInitHandler(std::move(initHandler)),
@@ -25,11 +26,11 @@ BoardState::BoardState(
       mStateErrorHandler(std::move(errorHandler)),
       mStateCalibrateHandler(std::move(calibrateHandler)),
       mStateFirmwareUpdateHandler(std::move(firmwareUpdateHandler)),
+      mStateRebootHandler(std::move(rebootHandler)),
       mEvent(event) {
   event->registerEventCallback(
       IBoardEvent::Event::InitDone,
       [this](IBoardEvent::Event event) { setState(State::Standby); });
-
   event->registerEventCallback(
       IBoardEvent::Event::DoRun,
       [this](IBoardEvent::Event event) { setState(State::Run); });
@@ -50,7 +51,7 @@ BoardState::BoardState(
       [this](IBoardEvent::Event event) { setState(State::FirmwareUpdate); });
   event->registerEventCallback(
       IBoardEvent::Event::FirmwareUpdateDone,
-      [this](IBoardEvent::Event event) { setState(State::Standby); });
+      [this](IBoardEvent::Event event) { setState(State::Reboot); });
   if (mStateInitHandler) mStateInitHandler->onEnter();
 }
 

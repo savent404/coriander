@@ -14,11 +14,11 @@
 #include "coriander/application/iappstatus.h"
 #include "coriander/iboard_event.h"
 #include "coriander/iboard_state.h"
-#include "coriander/iboard_state_init_handler.h"
 #include "coriander/iboard_state_calibrate_handler.h"
 #include "coriander/iboard_state_error_handler.h"
 #include "coriander/iboard_state_firmware_update_handler.h"
 #include "coriander/iboard_state_init_handler.h"
+#include "coriander/iboard_state_reboot_handler.h"
 #include "coriander/iboard_state_run_handler.h"
 #include "coriander/iboard_state_standby_handler.h"
 
@@ -36,6 +36,7 @@ struct BoardState : public IBoardState {
       std::unique_ptr<IBoardStateErrorHandler> errorHandler,
       std::unique_ptr<IBoardStateCalibrateHandler> calibrateHandler,
       std::unique_ptr<IBoardStateFirmwareUpdateHandler> firmwareUpdateHandler,
+      std::unique_ptr<IBoardStateRebootHandler> rebootHandler,
       std::shared_ptr<IBoardEvent> event) noexcept;
 
   virtual void setState(State state) noexcept override;
@@ -50,6 +51,7 @@ struct BoardState : public IBoardState {
   std::unique_ptr<IBoardStateErrorHandler> mStateErrorHandler;
   std::unique_ptr<IBoardStateCalibrateHandler> mStateCalibrateHandler;
   std::unique_ptr<IBoardStateFirmwareUpdateHandler> mStateFirmwareUpdateHandler;
+  std::unique_ptr<IBoardStateRebootHandler> mStateRebootHandler;
   std::shared_ptr<IBoardEvent> mEvent;
 
   IStateHandler* getHandler(State s) {
@@ -66,7 +68,8 @@ struct BoardState : public IBoardState {
         return mStateCalibrateHandler.get();
       case State::FirmwareUpdate:
         return mStateFirmwareUpdateHandler.get();
-
+      case State::Reboot:
+        return mStateRebootHandler.get();
       default:
         return nullptr;
     }

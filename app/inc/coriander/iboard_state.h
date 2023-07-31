@@ -18,6 +18,7 @@ struct IBoardState {
     Error,
     Calibrate,
     FirmwareUpdate,
+    Reboot,
   };
 
   virtual ~IBoardState() = default;
