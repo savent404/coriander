@@ -8,9 +8,14 @@
 #include <st/f4/stm32f405rgtx-pinctrl.dtsi>
 
 / {
+
     model = "Savent Gate STM32F405RG TD2KW Board";
     compatible = "st,stm32f405Xg";
 
+	zephyr,user {
+		io-channels = <&adc1 1>, <&adc1 3>, <&adc1 15>, <&adc1 8>;
+	};
+	
     chosen {
 		zephyr,sram = &sram0;
 		zephyr,flash = &flash0;
@@ -24,6 +29,55 @@
 			gpios = <&gpioa 12 GPIO_ACTIVE_LOW>;
 			status = "okay";
 		};
+	};
+};
+
+&adc1 {
+	status = "okay";
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	pinctrl-0 = <&adc1_in1_pa1 &adc1_in3_pa3 &adc1_in8_pb0 &adc1_in15_pc5>;
+	pinctrl-names = "default";
+
+	channel@1 {
+		reg = <1>;
+		zephyr,gain = "ADC_GAIN_1";
+		zephyr,reference = "ADC_REF_INTERNAL";
+		zephyr,acquisition-time = <ADC_ACQ_TIME(ADC_ACQ_TIME_TICKS, 144)>;
+		zephyr,resolution = <12>;
+	};
+
+	channel@3 {
+		reg = <3>;
+		zephyr,gain = "ADC_GAIN_1";
+		zephyr,reference = "ADC_REF_INTERNAL";
+		zephyr,acquisition-time = <ADC_ACQ_TIME(ADC_ACQ_TIME_TICKS, 56)>;
+		zephyr,resolution = <12>;
+	};
+
+	channel@5 {
+		reg = <5>;
+		zephyr,gain = "ADC_GAIN_1";
+		zephyr,reference = "ADC_REF_INTERNAL";
+		zephyr,acquisition-time = <ADC_ACQ_TIME(ADC_ACQ_TIME_TICKS, 56)>;
+		zephyr,resolution = <12>;
+	};
+
+	channel@8 {
+		reg = <8>;
+		zephyr,gain = "ADC_GAIN_1";
+		zephyr,reference = "ADC_REF_INTERNAL";
+		zephyr,acquisition-time = <ADC_ACQ_TIME(ADC_ACQ_TIME_TICKS, 56)>;
+		zephyr,resolution = <12>;
+	};
+
+	channel@15 {
+		reg = <15>;
+		zephyr,gain = "ADC_GAIN_1";
+		zephyr,reference = "ADC_REF_INTERNAL";
+		zephyr,acquisition-time = <ADC_ACQ_TIME(ADC_ACQ_TIME_TICKS, 56)>;
+		zephyr,resolution = <12>;
 	};
 };
 
