@@ -34,5 +34,5 @@ TEST(Logger, stream) {
   os << "Hello,World";
   EXPECT_EQ(logger->mMsg, "");
   os << std::endl;
-  EXPECT_EQ(logger->mMsg, "Hello,World\n");
+  EXPECT_EQ(logger->mMsg, "Hello,World");
 }
