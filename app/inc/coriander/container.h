@@ -14,7 +14,6 @@
 #include <boost/di.hpp>
 
 // dependencies
-#include "coriander/application/appstatus.h"
 #include "coriander/board_event.h"
 #include "coriander/board_state.h"
 #include "coriander/board_state_calibrate_handler.h"
@@ -36,7 +35,6 @@ static inline auto extendContainer(T_injector&& injector, T_args&&... args) {
 
 static inline auto defaultContainer() {
   return boost::di::make_injector(
-      boost::di::bind<coriander::IAppStatus>.to<coriander::AppStatus>(),
       boost::di::bind<coriander::IBoardState>.to<coriander::BoardState>(),
       boost::di::bind<coriander::IBoardStateInitHandler>.to<coriander::BoardStateInitHandler>(),
       boost::di::bind<coriander::IBoardStateStandbyHandler>.to<coriander::BoardStateStandbyHandler>(),

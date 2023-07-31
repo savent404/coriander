@@ -7,8 +7,11 @@
 
 namespace coriander {
 
-struct BoardStateFirmwareUpdateHandler : public IBoardStateFirmwareUpdateHandler {
-  BoardStateFirmwareUpdateHandler(std::shared_ptr<IAppStatus> appStatus) noexcept
+using application::IAppStatus;
+struct BoardStateFirmwareUpdateHandler
+    : public IBoardStateFirmwareUpdateHandler {
+  BoardStateFirmwareUpdateHandler(
+      std::shared_ptr<IAppStatus> appStatus) noexcept
       : mAppStatus(appStatus) {}
 
   virtual void onEnter() noexcept override {

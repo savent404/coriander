@@ -6,6 +6,7 @@
 #include "iboard_state_calibrate_handler.h"
 
 namespace coriander {
+using application::IAppStatus;
 struct BoardStateCalibrateHandler : public IBoardStateCalibrateHandler {
   BoardStateCalibrateHandler(std::shared_ptr<IAppStatus> appStatus) noexcept
       : mAppStatus(appStatus) {}

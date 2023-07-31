@@ -13,6 +13,8 @@
 
 namespace coriander {
 
+namespace application {
+namespace zephyr {
 struct AppStatus : public IAppStatus {
   AppStatus(const AppStatus&) = delete;
   AppStatus(AppStatus&&) = delete;
@@ -22,5 +24,6 @@ struct AppStatus : public IAppStatus {
   virtual void setStatus(Status status) noexcept override;
   virtual Status getStatus() const noexcept override;
 };
-
+}  // namespace zephyr
+}  // namespace application
 }  // namespace coriander

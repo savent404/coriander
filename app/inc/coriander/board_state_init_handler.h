@@ -11,6 +11,7 @@
 
 namespace coriander {
 
+using application::IAppStatus;
 struct BoardStateInitHandler : public IBoardStateInitHandler {
   BoardStateInitHandler(std::shared_ptr<IAppStatus> appStatus,
                         std::shared_ptr<IBoardEvent> event,

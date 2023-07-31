@@ -7,6 +7,7 @@
 
 namespace coriander {
 
+using application::IAppStatus;
 struct BoardStateRunHandler : public IBoardStateRunHandler {
   BoardStateRunHandler(std::shared_ptr<IAppStatus> appStatus) noexcept
       : mAppStatus(appStatus) {}

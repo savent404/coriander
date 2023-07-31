@@ -7,6 +7,7 @@
 
 namespace coriander {
 
+using application::IAppStatus;
 struct BoardStateErrorHandler : public IBoardStateErrorHandler {
   BoardStateErrorHandler(std::shared_ptr<IAppStatus> appStatus) noexcept
       : mAppStatus(appStatus) {}

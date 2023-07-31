@@ -7,11 +7,11 @@
  * Copyright 2023 savent_gate
  *
  */
-#include "coriander/application/appstatus.h"
-
 #include <zephyr/drivers/led.h>
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
+
+#include "zephyr_appstatus.h"
 
 LOG_MODULE_REGISTER(appstatus, 2);
 
@@ -23,7 +23,7 @@ LOG_MODULE_REGISTER(appstatus, 2);
 namespace {
 extern "C" {
 
-using Status = coriander::AppStatus::Status;
+using Status = coriander::application::zephyr::AppStatus::Status;
 static Status s_status = Status::Busy;
 static int s_on = 0;
 
@@ -67,7 +67,9 @@ K_TIMER_DEFINE(app_status, AppStatusPeriodCallback, NULL);
 }  // namespace
 
 namespace coriander {
+namespace application {
 
+namespace zephyr {
 AppStatus::AppStatus() noexcept {
   if (!has_led()) {
     LOG_ERR("LED device not found");
@@ -88,4 +90,6 @@ void AppStatus::setStatus(Status status) noexcept {
 
 AppStatus::Status AppStatus::getStatus() const noexcept { return s_status; }
 
+}  // namespace zephyr
+}  // namespace application
 }  // namespace coriander

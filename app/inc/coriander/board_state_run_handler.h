@@ -6,6 +6,8 @@
 #include "coriander/iboard_state_standby_handler.h"
 
 namespace coriander {
+
+using application::IAppStatus;
 struct BoardStateStandbyHandler : public IBoardStateStandbyHandler {
   BoardStateStandbyHandler(std::shared_ptr<IAppStatus> appStatus) noexcept
       : mAppStatus(appStatus) {}

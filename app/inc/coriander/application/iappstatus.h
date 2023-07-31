@@ -10,7 +10,7 @@
 #pragma once
 
 namespace coriander {
-
+namespace application {
 struct IAppStatus {
   enum class Status {
     Ok,
@@ -24,4 +24,5 @@ struct IAppStatus {
   virtual Status getStatus() const noexcept = 0;
 };
 
+}  // namespace application
 }  // namespace coriander
