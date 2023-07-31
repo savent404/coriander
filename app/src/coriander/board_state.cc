@@ -29,6 +29,28 @@ BoardState::BoardState(
   event->registerEventCallback(
       IBoardEvent::Event::InitDone,
       [this](IBoardEvent::Event event) { setState(State::Standby); });
+
+  event->registerEventCallback(
+      IBoardEvent::Event::DoRun,
+      [this](IBoardEvent::Event event) { setState(State::Run); });
+  event->registerEventCallback(
+      IBoardEvent::Event::RunDone,
+      [this](IBoardEvent::Event event) { setState(State::Standby); });
+  event->registerEventCallback(
+      IBoardEvent::Event::DoError,
+      [this](IBoardEvent::Event event) { setState(State::Error); });
+  event->registerEventCallback(
+      IBoardEvent::Event::DoCalibrate,
+      [this](IBoardEvent::Event event) { setState(State::Calibrate); });
+  event->registerEventCallback(
+      IBoardEvent::Event::CalibrateDone,
+      [this](IBoardEvent::Event event) { setState(State::Standby); });
+  event->registerEventCallback(
+      IBoardEvent::Event::DoFirmwareUpdate,
+      [this](IBoardEvent::Event event) { setState(State::FirmwareUpdate); });
+  event->registerEventCallback(
+      IBoardEvent::Event::FirmwareUpdateDone,
+      [this](IBoardEvent::Event event) { setState(State::Standby); });
   if (mStateInitHandler) mStateInitHandler->onEnter();
 }
 
