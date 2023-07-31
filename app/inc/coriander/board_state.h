@@ -30,13 +30,13 @@ struct BoardState : public IBoardState {
   virtual BoardState& operator=(const BoardState&) = delete;
 
   explicit BoardState(
-      std::unique_ptr<IBoardStateInitHandler> initHandler,
-      std::unique_ptr<IBoardStateStandbyHandler> standbyHandler,
-      std::unique_ptr<IBoardStateRunHandler> runHandler,
-      std::unique_ptr<IBoardStateErrorHandler> errorHandler,
-      std::unique_ptr<IBoardStateCalibrateHandler> calibrateHandler,
-      std::unique_ptr<IBoardStateFirmwareUpdateHandler> firmwareUpdateHandler,
-      std::unique_ptr<IBoardStateRebootHandler> rebootHandler,
+      std::shared_ptr<IBoardStateInitHandler> initHandler,
+      std::shared_ptr<IBoardStateStandbyHandler> standbyHandler,
+      std::shared_ptr<IBoardStateRunHandler> runHandler,
+      std::shared_ptr<IBoardStateErrorHandler> errorHandler,
+      std::shared_ptr<IBoardStateCalibrateHandler> calibrateHandler,
+      std::shared_ptr<IBoardStateFirmwareUpdateHandler> firmwareUpdateHandler,
+      std::shared_ptr<IBoardStateRebootHandler> rebootHandler,
       std::shared_ptr<IBoardEvent> event) noexcept;
 
   virtual void setState(State state) noexcept override;
@@ -45,13 +45,13 @@ struct BoardState : public IBoardState {
 
  private:
   State mState;
-  std::unique_ptr<IBoardStateInitHandler> mStateInitHandler;
-  std::unique_ptr<IBoardStateStandbyHandler> mStateStandbyHandler;
-  std::unique_ptr<IBoardStateRunHandler> mStateRunHandler;
-  std::unique_ptr<IBoardStateErrorHandler> mStateErrorHandler;
-  std::unique_ptr<IBoardStateCalibrateHandler> mStateCalibrateHandler;
-  std::unique_ptr<IBoardStateFirmwareUpdateHandler> mStateFirmwareUpdateHandler;
-  std::unique_ptr<IBoardStateRebootHandler> mStateRebootHandler;
+  std::shared_ptr<IBoardStateInitHandler> mStateInitHandler;
+  std::shared_ptr<IBoardStateStandbyHandler> mStateStandbyHandler;
+  std::shared_ptr<IBoardStateRunHandler> mStateRunHandler;
+  std::shared_ptr<IBoardStateErrorHandler> mStateErrorHandler;
+  std::shared_ptr<IBoardStateCalibrateHandler> mStateCalibrateHandler;
+  std::shared_ptr<IBoardStateFirmwareUpdateHandler> mStateFirmwareUpdateHandler;
+  std::shared_ptr<IBoardStateRebootHandler> mStateRebootHandler;
   std::shared_ptr<IBoardEvent> mEvent;
 
   IStateHandler* getHandler(State s) {

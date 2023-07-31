@@ -11,22 +11,22 @@
 
 namespace coriander {
 BoardState::BoardState(
-    std::unique_ptr<IBoardStateInitHandler> initHandler,
-    std::unique_ptr<IBoardStateStandbyHandler> standbyHandler,
-    std::unique_ptr<IBoardStateRunHandler> runHandler,
-    std::unique_ptr<IBoardStateErrorHandler> errorHandler,
-    std::unique_ptr<IBoardStateCalibrateHandler> calibrateHandler,
-    std::unique_ptr<IBoardStateFirmwareUpdateHandler> firmwareUpdateHandler,
-    std::unique_ptr<IBoardStateRebootHandler> rebootHandler,
+    std::shared_ptr<IBoardStateInitHandler> initHandler,
+    std::shared_ptr<IBoardStateStandbyHandler> standbyHandler,
+    std::shared_ptr<IBoardStateRunHandler> runHandler,
+    std::shared_ptr<IBoardStateErrorHandler> errorHandler,
+    std::shared_ptr<IBoardStateCalibrateHandler> calibrateHandler,
+    std::shared_ptr<IBoardStateFirmwareUpdateHandler> firmwareUpdateHandler,
+    std::shared_ptr<IBoardStateRebootHandler> rebootHandler,
     std::shared_ptr<IBoardEvent> event) noexcept
     : mState(State::Init),
-      mStateInitHandler(std::move(initHandler)),
-      mStateStandbyHandler(std::move(standbyHandler)),
-      mStateRunHandler(std::move(runHandler)),
-      mStateErrorHandler(std::move(errorHandler)),
-      mStateCalibrateHandler(std::move(calibrateHandler)),
-      mStateFirmwareUpdateHandler(std::move(firmwareUpdateHandler)),
-      mStateRebootHandler(std::move(rebootHandler)),
+      mStateInitHandler(initHandler),
+      mStateStandbyHandler(standbyHandler),
+      mStateRunHandler(runHandler),
+      mStateErrorHandler(errorHandler),
+      mStateCalibrateHandler(calibrateHandler),
+      mStateFirmwareUpdateHandler(firmwareUpdateHandler),
+      mStateRebootHandler(rebootHandler),
       mEvent(event) {
   mEvent->registerEventCallback(
       IBoardEvent::Event::BoardInited, [this](IBoardEvent::Event event) {
