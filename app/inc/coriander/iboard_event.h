@@ -14,13 +14,16 @@
 namespace coriander {
 struct IBoardEvent {
   enum class Event : int {
-    InitDone = 0,
-    DoRun,
-    RunDone,
-    DoError,
-    DoCalibrate,
+    BoardInited = 0,
+    MotorStart,
+    MotorStop,
+    ParameterUpdate,
+    Crap,
+    CrapHandled,
+    CrapUnhandle,
+    CalibrateStart,
     CalibrateDone,
-    DoFirmwareUpdate,
+    FirmwareStartUpdate,
     FirmwareUpdateDone,
     MAX_EVENT,
   };

@@ -28,30 +28,119 @@ BoardState::BoardState(
       mStateFirmwareUpdateHandler(std::move(firmwareUpdateHandler)),
       mStateRebootHandler(std::move(rebootHandler)),
       mEvent(event) {
-  event->registerEventCallback(
-      IBoardEvent::Event::InitDone,
-      [this](IBoardEvent::Event event) { setState(State::Standby); });
-  event->registerEventCallback(
-      IBoardEvent::Event::DoRun,
-      [this](IBoardEvent::Event event) { setState(State::Run); });
-  event->registerEventCallback(
-      IBoardEvent::Event::RunDone,
-      [this](IBoardEvent::Event event) { setState(State::Standby); });
-  event->registerEventCallback(
-      IBoardEvent::Event::DoError,
+  mEvent->registerEventCallback(
+      IBoardEvent::Event::BoardInited, [this](IBoardEvent::Event event) {
+        switch (mState) {
+          case State::Init:
+            setState(State::Standby);
+            break;
+          default:
+            mEvent->raiseEvent(IBoardEvent::Event::Crap);
+            break;
+        }
+      });
+
+  mEvent->registerEventCallback(
+      IBoardEvent::Event::MotorStart, [this](IBoardEvent::Event event) {
+        switch (mState) {
+          case State::Standby:
+            setState(State::Run);
+            break;
+          default:
+            mEvent->raiseEvent(IBoardEvent::Event::Crap);
+            break;
+        }
+      });
+
+  mEvent->registerEventCallback(
+      IBoardEvent::Event::MotorStop, [this](IBoardEvent::Event event) {
+        switch (mState) {
+          case State::Run:
+            setState(State::Standby);
+            break;
+          default:
+            mEvent->raiseEvent(IBoardEvent::Event::Crap);
+            break;
+        }
+      });
+
+  mEvent->registerEventCallback(
+      IBoardEvent::Event::ParameterUpdate, [this](IBoardEvent::Event event) {
+        switch (mState) {
+          case State::Run:
+            // if we are in run state, we need to
+            // reload
+            setState(State::Standby);
+            loop();  // not sure if this is necessary
+            setState(State::Run);
+            break;
+          case State::Standby:
+            break;
+          default:
+            mEvent->raiseEvent(IBoardEvent::Event::Crap);
+            break;
+        }
+      });
+
+  mEvent->registerEventCallback(
+      IBoardEvent::Event::Crap,
       [this](IBoardEvent::Event event) { setState(State::Error); });
-  event->registerEventCallback(
-      IBoardEvent::Event::DoCalibrate,
-      [this](IBoardEvent::Event event) { setState(State::Calibrate); });
-  event->registerEventCallback(
-      IBoardEvent::Event::CalibrateDone,
+
+  mEvent->registerEventCallback(
+      IBoardEvent::Event::CrapHandled,
       [this](IBoardEvent::Event event) { setState(State::Standby); });
-  event->registerEventCallback(
-      IBoardEvent::Event::DoFirmwareUpdate,
-      [this](IBoardEvent::Event event) { setState(State::FirmwareUpdate); });
-  event->registerEventCallback(
-      IBoardEvent::Event::FirmwareUpdateDone,
+
+  mEvent->registerEventCallback(
+      IBoardEvent::Event::CrapUnhandle,
       [this](IBoardEvent::Event event) { setState(State::Reboot); });
+
+  mEvent->registerEventCallback(
+      IBoardEvent::Event::CalibrateStart, [this](IBoardEvent::Event event) {
+        switch (mState) {
+          case State::Standby:
+            setState(State::Calibrate);
+            break;
+          default:
+            mEvent->raiseEvent(IBoardEvent::Event::Crap);
+            break;
+        }
+      });
+  mEvent->registerEventCallback(
+      IBoardEvent::Event::CalibrateDone, [this](IBoardEvent::Event event) {
+        switch (mState) {
+          case State::Calibrate:
+            setState(State::Standby);
+            break;
+          default:
+            mEvent->raiseEvent(IBoardEvent::Event::Crap);
+            break;
+        }
+      });
+  mEvent->registerEventCallback(
+      IBoardEvent::Event::FirmwareStartUpdate,
+      [this](IBoardEvent::Event event) {
+        switch (mState) {
+          case State::Standby:
+            setState(State::FirmwareUpdate);
+            break;
+          default:
+            mEvent->raiseEvent(IBoardEvent::Event::Crap);
+            break;
+        }
+      });
+
+  mEvent->registerEventCallback(
+      IBoardEvent::Event::FirmwareUpdateDone, [this](IBoardEvent::Event event) {
+        switch (mState) {
+          case State::FirmwareUpdate:
+            setState(State::Standby);
+            break;
+          default:
+            mEvent->raiseEvent(IBoardEvent::Event::Crap);
+            break;
+        }
+      });
+
   if (mStateInitHandler) mStateInitHandler->onEnter();
 }
 

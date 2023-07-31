@@ -33,7 +33,7 @@ struct BoardStateInitHandler : public IBoardStateInitHandler {
               auto os = base::LoggerStream(mLogger);
               os << "BoardStateInitHandler: diagnosis error, id:"
                  << static_cast<int>(id) << std::endl;
-              mEvent->raiseEvent(IBoardEvent::Event::DoError);
+              mEvent->raiseEvent(IBoardEvent::Event::Crap);
             }
           });
     } else {
@@ -52,7 +52,7 @@ struct BoardStateInitHandler : public IBoardStateInitHandler {
   }
   virtual void onLoop() noexcept override {
     // no need to do anything, go to next state
-    mEvent->raiseEvent(IBoardEvent::Event::InitDone);
+    mEvent->raiseEvent(IBoardEvent::Event::BoardInited);
   }
 
  private:
