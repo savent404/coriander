@@ -32,7 +32,8 @@ endif (UNIT_TEST)
 # coriander core
 ###############
 aux_source_directory(src/coriander sc_src)
-set(coriander_src ${sc_src})
+aux_source_directory(src/coriander/application sca_src)
+set(coriander_src ${sc_src} ${sca_src})
 set(coriander_inc inc ${di_SOURCE_DIR}/include)
 set(coriander_lib )
 add_library(coriander STATIC ${coriander_src})
