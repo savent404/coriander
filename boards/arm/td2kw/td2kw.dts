@@ -33,6 +33,23 @@
 	};
 };
 
+// spi flash
+&spi1 {
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&spi1_miso_pa6 &spi1_mosi_pa7 &spi1_sck_pa5 &spi1_nss_pa4>;
+	cs-gpios = <&gpioa 4 GPIO_ACTIVE_LOW>;
+	clock-frequency = <24000000>;
+	spi_flash: FM25Q16A@0 {
+		compatible = "jedec,spi-nor";
+		reg = <0>;
+		size = <0x1000000>;
+		spi-max-frequency = <24000000>;
+		jedec-id = [a1 40 15];
+		status = "okay";
+	};
+};
+
 // debug console
 &uart5 {
 	status = "okay";
