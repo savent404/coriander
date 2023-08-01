@@ -176,6 +176,7 @@ struct PropertyBinaryStreamHeader {
 
 struct PropertyBinaryStream : public Property {
   PropertyBinaryStream(Property&& p) noexcept : Property{std::move(p)} {}
+  PropertyBinaryStream(const Property& p) noexcept : Property{p} {}
   explicit PropertyBinaryStream() noexcept
       : Property{Type{Invalid{}}, "unknow"} {}
 
@@ -363,7 +364,6 @@ struct PropertyBinaryStream : public Property {
     return Property::operator==(*(Property*)&other);
   }
 
- private:
  private:
   std::string m_dynamic_name;
   std::string m_dynamic_desc;
