@@ -9,10 +9,12 @@
  */
 #include <gtest/gtest.h>
 
+#include <boost/di.hpp>
 #include <functional>
 
 #include "coriander/board_event.h"
 #include "coriander/board_state.h"
+#include "posix_logger.h"
 
 namespace coriander {
 struct custom_hook {
@@ -151,16 +153,30 @@ struct dummyReboot : public IBoardStateRebootHandler, public custom_hook {
 }  // namespace coriander
 
 TEST(BoardState, basic) {
-  auto event = std::make_shared<coriander::BoardEvent>();
-  auto initHandler = std::make_shared<coriander::dummyInit>();
-  auto standbyHandler = std::make_shared<coriander::dummyStandby>();
-  auto runHandler = std::make_shared<coriander::dummyRun>();
-  auto errorHandler = std::make_shared<coriander::dummyError>();
-  auto calibrateHandler = std::make_shared<coriander::dummyCalibrate>();
-  auto firmwareUpdateHandler =
-      std::make_shared<coriander::dummyFirmwareUpdate>();
-  auto rebootHandler = std::make_shared<coriander::dummyReboot>();
+  auto injector = boost::di::make_injector(
+      boost::di::bind<coriander::base::ILogger>.to<coriander::base::posix::Logger>(),
+      boost::di::bind<coriander::IBoardEvent>.to<coriander::BoardEvent>(),
+      boost::di::bind<coriander::IBoardStateInitHandler>.to<coriander::dummyInit>(),
+      boost::di::bind<coriander::IBoardStateStandbyHandler>.to<coriander::dummyStandby>(),
+      boost::di::bind<coriander::IBoardStateRunHandler>.to<coriander::dummyRun>(),
+      boost::di::bind<coriander::IBoardStateErrorHandler>.to<coriander::dummyError>(),
+      boost::di::bind<coriander::IBoardStateCalibrateHandler>.to<coriander::dummyCalibrate>(),
+      boost::di::bind<coriander::IBoardStateFirmwareUpdateHandler>.to<coriander::dummyFirmwareUpdate>(),
+      boost::di::bind<coriander::IBoardStateRebootHandler>.to<coriander::dummyReboot>());
 
+  auto event = injector.create<std::shared_ptr<coriander::BoardEvent> >();
+  auto initHandler = injector.create<std::shared_ptr<coriander::dummyInit> >();
+  auto standbyHandler =
+      injector.create<std::shared_ptr<coriander::dummyStandby> >();
+  auto runHandler = injector.create<std::shared_ptr<coriander::dummyRun> >();
+  auto errorHandler =
+      injector.create<std::shared_ptr<coriander::dummyError> >();
+  auto calibrateHandler =
+      injector.create<std::shared_ptr<coriander::dummyCalibrate> >();
+  auto firmwareUpdateHandler =
+      injector.create<std::shared_ptr<coriander::dummyFirmwareUpdate> >();
+  auto rebootHandler =
+      injector.create<std::shared_ptr<coriander::dummyReboot> >();
   // board call init->entry at constructor
   initHandler->custom_enter = [event]() {
     event->raiseEvent(coriander::IBoardEvent::Event::BoardInited);
