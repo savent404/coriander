@@ -37,7 +37,7 @@
 &uart5 {
 	status = "okay";
 	pinctrl-names = "default";
-	pinctrl-0 = <&uart5_rx_pd2 &uart5_tx_pd12>;
+	pinctrl-0 = <&uart5_rx_pd2 &uart5_tx_pc12>;
 	current-speed = <115200>;
 };
 
