@@ -36,7 +36,7 @@ namespace coriander {
 namespace base {
 
 struct IPropertyVisitor {
-  virtual void visit(const Property& property) const = 0;
+  virtual void visit(const Property& property) noexcept = 0;
 };
 
 struct IPropertySet {
@@ -75,6 +75,9 @@ struct PropertyUnorderedMap : public IPropertySet {
   }
   virtual const Property& get(const char* name) const noexcept {
     return m_map.at(string_hash(name));
+  }
+  virtual void add(Property&& property) noexcept {
+    m_map.insert({string_hash(property.name()), std::move(property)});
   }
   virtual void add(const Property& property) noexcept {
     m_map.insert({string_hash(property.name()), property});

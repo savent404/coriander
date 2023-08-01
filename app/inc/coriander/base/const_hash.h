@@ -37,6 +37,11 @@ inline std::uint32_t string_hash(const char* s, std::size_t count = 0) {
   }
   return detail::fnv1a_32(s, count);
 }
+
+inline std::uint32_t string_hash(std::string_view s) {
+  return detail::fnv1a_32(s.data(), s.size());
+}
+
 }  // namespace base
 
 }  // namespace coriander
