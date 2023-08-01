@@ -21,6 +21,7 @@
 		zephyr,flash = &flash0;
 		zephyr,code-partition = &slot0_partition;
 		usr,led = &leds;
+		usr,dbg = &uart5;
     };
 
 	leds: leds{
@@ -30,6 +31,14 @@
 			status = "okay";
 		};
 	};
+};
+
+// debug console
+&uart5 {
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&uart5_rx_pd2 &uart5_tx_pd12>;
+	current-speed = <115200>;
 };
 
 &adc1 {
