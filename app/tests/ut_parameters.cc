@@ -16,6 +16,24 @@ TEST(Parameter, basic)
     using namespace coriander::base;
 
     ParameterBase param;
+
+    ASSERT_EQ(param.has("t1"), false);
+    param.add(Property{0, "t1", "null for t1"});
+    ASSERT_EQ(param.has("t1"), true);
+    ASSERT_EQ(param.has("t1"_hash), true);
+    ASSERT_EQ(get<int>(param.get("t1").value()), 0);
+    ASSERT_EQ(get<int>(param.get("t1"_hash).value()), 0);
+    
+    param.remove("t1"_hash);
+    ASSERT_EQ(param.has("t1"), false);
+}
+
+TEST(Parameter, basic_map)
+{
+    using namespace coriander;
+    using namespace coriander::base;
+
+    ParameterBase param;
     ParameterMemoryMapper mapper;
 
     param.add(Property{0, "t1", "null for t1"});
