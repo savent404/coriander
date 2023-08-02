@@ -73,8 +73,14 @@ struct PropertyUnorderedMap : public IPropertySet {
   virtual bool has(const char* name) const noexcept {
     return m_map.find(string_hash(name)) != m_map.end();
   }
+  virtual bool has(std::uint32_t name_hash) const noexcept {
+    return m_map.find(name_hash) != m_map.end();
+  }
   virtual const Property& get(const char* name) const noexcept {
     return m_map.at(string_hash(name));
+  }
+  virtual const Property& get(std::uint32_t name_hash) const noexcept {
+    return m_map.at(name_hash);
   }
   virtual void add(Property&& property) noexcept {
     m_map.insert({string_hash(property.name()), std::move(property)});
@@ -84,6 +90,9 @@ struct PropertyUnorderedMap : public IPropertySet {
   }
   virtual void remove(const char* name) noexcept {
     m_map.erase(string_hash(name));
+  }
+  virtual void remove(std::uint32_t name_hash) noexcept {
+    m_map.erase(name_hash);
   }
   virtual void accept(IPropertyVisitor& visitor) const {
     for (const auto& [_, property] : m_map) {
