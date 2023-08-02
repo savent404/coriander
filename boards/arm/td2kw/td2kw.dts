@@ -43,10 +43,23 @@
 	spi_flash: FM25Q16A@0 {
 		compatible = "jedec,spi-nor";
 		reg = <0>;
+
+		// 16Mbits = 2MBytes
 		size = <0x1000000>;
 		spi-max-frequency = <24000000>;
 		jedec-id = [a1 40 15];
 		status = "okay";
+
+		partitions {
+			compatible = "fixed-partitions";
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			nvs_partition: partition@0 {
+				label = "nvs";
+				reg = <0x00000000 DT_SIZE_K(16)>;
+			};
+		};
 	};
 };
 
