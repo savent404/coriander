@@ -9,10 +9,11 @@ option(UNIT_TEST "Build tests" OFF)
 
 cmake_minimum_required(VERSION 3.13.1)
 if (UNIT_TEST)
-    set(CMAKE_CXX_STANDARD 20)
 else ()
     find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 endif (UNIT_TEST)
+
+set(CMAKE_CXX_STANDARD 20)
 
 project(app LANGUAGES C CXX)
 
