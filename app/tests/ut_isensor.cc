@@ -16,6 +16,7 @@ using namespace coriander::motorctl;
 struct dummySensor : public ISensor {
   virtual void enable() {}
   virtual void disable() {}
+  virtual bool enabled() { return true; }
   virtual void sync() { mCnt++; }
   virtual void calibrate() { mCnt = 0; }
   virtual bool needCalibrate() { return mCnt < 0; }
