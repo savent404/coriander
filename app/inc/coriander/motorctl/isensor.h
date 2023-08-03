@@ -23,11 +23,12 @@ struct ISensor {
 
   virtual void enable() = 0;
   virtual void disable() = 0;
+  virtual bool enabled() = 0;
   virtual void sync() = 0;
 
   virtual bool needSync(unsigned syncId) {
-    if (this->syncId < syncId) {
-      this->syncId = syncId;
+    if (this->mSyncId < syncId) {
+      this->mSyncId = syncId;
       return true;
     }
     return false;
@@ -40,7 +41,7 @@ struct ISensor {
   virtual bool needCalibrate() = 0;
 
  protected:
-  unsigned syncId = 0;
+  unsigned mSyncId = 0;
 };
 
 }  // namespace motorctl
