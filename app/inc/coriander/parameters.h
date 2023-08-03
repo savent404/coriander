@@ -9,14 +9,66 @@
  */
 #pragma once
 
-#include <span>
 #include <memory>
+#include <span>
 
 #include "coriander/base/property_set.h"
+#include "coriander/base/type.h"
 
 namespace coriander {
 
-using ParameterBase = base::PropertySet;
+using namespace coriander::base;
+
+struct ParameterBase : public base::PropertySet {
+  template <typename T>
+  T getValue(const char* name) const noexcept {
+    return get<T>(base::PropertySet::get(name).value());
+  }
+  template <typename T>
+  T getValue(uint32_t name_hash) const noexcept {
+    return get<T>(base::PropertySet::get(name_hash).value());
+  }
+
+  /**
+   * @brief Set the Value object
+   *
+   * @note Can't create new property if not exist
+   * @param name
+   * @param t
+   */
+  bool setValue(const char* name, Type t) noexcept {
+    if (has(name)) {
+      auto p = get(name);
+      p.setValue(t);
+      remove(name);
+      add(p);
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /**
+   * @brief Set the Value object
+   *
+   * @param name_hash
+   * @param t
+   * @note Can't create new property if not exist
+   * @return true set value success
+   * @return false set value failed
+   */
+  bool setValue(uint32_t name_hash, Type t) noexcept {
+    if (has(name_hash)) {
+      auto p = get(name_hash);
+      p.setValue(t);
+      remove(name_hash);
+      add(p);
+      return true;
+    } else {
+      return false;
+    }
+  }
+};
 
 struct ParameterMemoryMapper {
   using Property = base::Property;
