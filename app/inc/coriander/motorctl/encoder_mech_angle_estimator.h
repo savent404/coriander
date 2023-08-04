@@ -27,7 +27,8 @@ using namespace coriander::base;
  *                                        after power off
  */
 struct EncoderMechAngleEstimator : public IMechAngleEstimator {
-  EncoderMechAngleEstimator(IEncoder* encoder, ParameterBase* param) noexcept;
+  EncoderMechAngleEstimator(std::shared_ptr<IEncoder> encoder,
+                            std::shared_ptr<ParameterBase> param) noexcept;
 
   virtual void enable();
   virtual void disable();
@@ -38,8 +39,8 @@ struct EncoderMechAngleEstimator : public IMechAngleEstimator {
   virtual float getMechanicalAngle() noexcept;
 
  private:
-  IEncoder* mEncoder;
-  ParameterBase* mParam;
+  std::shared_ptr<IEncoder> mEncoder;
+  std::shared_ptr<ParameterBase> mParam;
   float mRawMechAngle;
   float mPersistOffset;
   float mMechAngleOffset;

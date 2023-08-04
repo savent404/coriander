@@ -12,7 +12,8 @@
 namespace coriander {
 namespace motorctl {
 EncoderMechAngleEstimator::EncoderMechAngleEstimator(
-    IEncoder* encoder, ParameterBase* param) noexcept
+    std::shared_ptr<IEncoder> encoder,
+    std::shared_ptr<ParameterBase> param) noexcept
     : mEncoder(encoder),
       mParam(param),
       mRawMechAngle(0.0f),

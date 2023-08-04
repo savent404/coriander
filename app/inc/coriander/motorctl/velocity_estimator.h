@@ -39,8 +39,9 @@ struct VelocityEstimator : public IVelocityEstimator {
 
   using Records = std::list<RecordItem>;
 
-  explicit VelocityEstimator(IMechAngleEstimator* mechAngleEstimator,
-                             ParameterBase* param, ISystick* systick);
+  explicit VelocityEstimator(std::shared_ptr<IMechAngleEstimator> mechAngleEstimator,
+                             std::shared_ptr<ParameterBase> param,
+                             std::shared_ptr<ISystick> systick);
   virtual void enable();
   virtual void disable();
   virtual bool enabled();
@@ -50,9 +51,9 @@ struct VelocityEstimator : public IVelocityEstimator {
   virtual float getVelocity();
 
  private:
-  IMechAngleEstimator* mMechAngleEstimator;
-  ParameterBase* mParam;
-  ISystick* mSystick;
+  std::shared_ptr<IMechAngleEstimator> mMechAngleEstimator;
+  std::shared_ptr<ParameterBase> mParam;
+  std::shared_ptr<ISystick> mSystick;
   float mVelocity;
   Records mRecords;
   uint32_t mMaxSamples;
