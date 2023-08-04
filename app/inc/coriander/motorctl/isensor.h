@@ -33,6 +33,7 @@ struct ISensor {
     }
     return false;
   }
+  virtual void reset() { mSyncId = 0; }
 
   /**
    * @brief set the sensor to zero, calibrate offset
