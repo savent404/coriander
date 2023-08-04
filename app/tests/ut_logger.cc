@@ -7,6 +7,7 @@
  * Copyright 2023 savent_gate
  *
  */
+#include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
 #include <memory>
@@ -16,23 +17,25 @@
 
 using namespace coriander::base;
 
-struct Logger : public ILogger {
-  void log(const char* msg) noexcept override { mMsg = msg; }
-  std::string mMsg;
+struct MockLogger : public ILogger {
+  MOCK_METHOD(void, log, (const char* msg), (noexcept));
 };
 
 TEST(Logger, basic) {
-  Logger logger;
+  MockLogger logger;
+
+  EXPECT_CALL(logger, log("Hello,World")).Times(1);
   logger.log("Hello,World");
-  EXPECT_EQ(logger.mMsg, "Hello,World");
 }
 
 TEST(Logger, stream) {
-  auto logger = std::make_shared<Logger>();
+  auto logger = std::make_shared<MockLogger>();
   auto os = LoggerStream(logger);
 
+  // only print once for the whole line
+  EXPECT_CALL(*logger, log(testing::_)).Times(1);
   os << "Hello,World";
-  EXPECT_EQ(logger->mMsg, "");
   os << std::endl;
-  EXPECT_EQ(logger->mMsg, "Hello,World");
+  os << "FOO"
+     << "FFFF";
 }
