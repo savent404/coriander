@@ -29,7 +29,8 @@ using namespace coriander::base;
  *
  */
 struct EncoderElecAngleEstimator : public IElecAngleEstimator {
-  EncoderElecAngleEstimator(IEncoder* encoder, ParameterBase* param) noexcept;
+  EncoderElecAngleEstimator(std::shared_ptr<IEncoder> encoder,
+                            std::shared_ptr<ParameterBase> param) noexcept;
 
   virtual void enable();
   virtual void disable();
@@ -40,8 +41,8 @@ struct EncoderElecAngleEstimator : public IElecAngleEstimator {
   virtual float getElectricalAngle() noexcept;
 
  private:
-  IEncoder* mEncoder;
-  ParameterBase* mParam;
+  std::shared_ptr<IEncoder> mEncoder;
+  std::shared_ptr<ParameterBase> mParam;
   int32_t mPolePair;
   float mElecAngle;
   float mRawElecAngle;

@@ -12,8 +12,9 @@
 namespace coriander {
 namespace motorctl {
 
-VelocityEstimator::VelocityEstimator(IMechAngleEstimator* mechAngleEstimator,
-                                     ParameterBase* param, ISystick* systick)
+VelocityEstimator::VelocityEstimator(
+    std::shared_ptr<IMechAngleEstimator> mechAngleEstimator,
+    std::shared_ptr<ParameterBase> param, std::shared_ptr<ISystick> systick)
     : mMechAngleEstimator(mechAngleEstimator),
       mParam(param),
       mSystick(systick),

@@ -33,15 +33,15 @@ struct dummyEncoder : public IEncoder {
 }  // namespace
 
 TEST(ISensor, CalibrateEncoderElecAngleEstimator) {
-  ::dummyEncoder encoder;
-  ParameterBase param;
+  auto encoder = std::make_shared<dummyEncoder>();
+  auto param = std::make_shared<ParameterBase>();
 
-  EncoderElecAngleEstimator estimator(&encoder, &param);
+  EncoderElecAngleEstimator estimator(encoder, param);
 
-  param.add(Property{4, "pole_pair"});
-  ASSERT_TRUE(param.has("pole_pair"_hash));
+  param->add(Property{4, "pole_pair"});
+  ASSERT_TRUE(param->has("pole_pair"_hash));
 
-  encoder.mCC = 1024;
+  encoder->mCC = 1024;
   estimator.enable();
   ASSERT_NEAR(estimator.getElectricalAngle(), 359, 1e-6f);
   ASSERT_TRUE(estimator.needCalibrate());
@@ -49,22 +49,22 @@ TEST(ISensor, CalibrateEncoderElecAngleEstimator) {
   ASSERT_FALSE(estimator.needCalibrate());
   ASSERT_NEAR(estimator.getElectricalAngle(), 0.0f, 1e-6f);
 
-  encoder.mCC += 512;
+  encoder->mCC += 512;
   estimator.sync();
   ASSERT_NEAR(estimator.getElectricalAngle(), 180, 1e-6f);
   estimator.disable();
 }
 
 TEST(ISensor, CalibrateEncoderElecAngleEstimatorWithPersist) {
-  dummyEncoder encoder;
-  ParameterBase param;
+  auto encoder = std::make_shared<dummyEncoder>();
+  auto param = std::make_shared<ParameterBase>();
 
-  EncoderElecAngleEstimator estimator(&encoder, &param);
+  EncoderElecAngleEstimator estimator(encoder, param);
 
-  param.add(Property{4, "pole_pair"});
-  param.add(Property{0.0f, "persist_raw_elec_angle"});
+  param->add(Property{4, "pole_pair"});
+  param->add(Property{0.0f, "persist_raw_elec_angle"});
 
-  encoder.mCC = 1024;
+  encoder->mCC = 1024;
   estimator.enable();
   ASSERT_NEAR(estimator.getElectricalAngle(), 359, 1e-6f);
   ASSERT_TRUE(estimator.needCalibrate());
@@ -72,7 +72,7 @@ TEST(ISensor, CalibrateEncoderElecAngleEstimatorWithPersist) {
   ASSERT_FALSE(estimator.needCalibrate());
   ASSERT_NEAR(estimator.getElectricalAngle(), 0.0f, 1e-6f);
 
-  encoder.mCC += 512;
+  encoder->mCC += 512;
   estimator.sync();
   ASSERT_NEAR(estimator.getElectricalAngle(), 180, 1e-6f);
   estimator.disable();
@@ -84,15 +84,15 @@ TEST(ISensor, CalibrateEncoderElecAngleEstimatorWithPersist) {
 }
 
 TEST(ISensor, CalibratedEncoderElecAngleEstimator) {
-  dummyEncoder encoder;
-  ParameterBase param;
+  auto encoder = std::make_shared<dummyEncoder>();
+  auto param = std::make_shared<ParameterBase>();
 
-  EncoderElecAngleEstimator estimator(&encoder, &param);
+  EncoderElecAngleEstimator estimator(encoder, param);
 
-  param.add(Property{4, "pole_pair"});
-  param.add(Property{0.0f, "elec_angle_offset"});
+  param->add(Property{4, "pole_pair"});
+  param->add(Property{0.0f, "elec_angle_offset"});
 
-  encoder.mCC = 512;
+  encoder->mCC = 512;
   estimator.enable();
   ASSERT_NEAR(estimator.getElectricalAngle(), 180, 1e-6f);
   ASSERT_FALSE(estimator.needCalibrate());
@@ -104,16 +104,16 @@ TEST(ISensor, CalibratedEncoderElecAngleEstimator) {
 }
 
 TEST(ISensor, CalibratedEncoderElecAngleEstimatorWithPersist) {
-  dummyEncoder encoder;
-  ParameterBase param;
+  auto encoder = std::make_shared<dummyEncoder>();
+  auto param = std::make_shared<ParameterBase>();
 
-  EncoderElecAngleEstimator estimator(&encoder, &param);
+  EncoderElecAngleEstimator estimator(encoder, param);
 
-  param.add(Property{4, "pole_pair"});
-  param.add(Property{10.0f, "elec_angle_offset"});
-  param.add(Property{180.0f, "persist_raw_elec_angle"});
+  param->add(Property{4, "pole_pair"});
+  param->add(Property{10.0f, "elec_angle_offset"});
+  param->add(Property{180.0f, "persist_raw_elec_angle"});
 
-  encoder.mCC = 512;
+  encoder->mCC = 512;
   estimator.enable();
   ASSERT_NEAR(estimator.getElectricalAngle(), 180 + 10, 1e-6f);
   ASSERT_FALSE(estimator.needCalibrate());
@@ -130,27 +130,27 @@ TEST(ISensor, CalibratedEncoderElecAngleEstimatorWithPersist) {
 }
 
 TEST(ISensor, EncoderElecAngleEstimatorRecoveryAfterPowerOn) {
-  dummyEncoder encoder;
-  ParameterBase param;
+  auto encoder = std::make_shared<dummyEncoder>();
+  auto param = std::make_shared<ParameterBase>();
 
-  EncoderElecAngleEstimator estimator(&encoder, &param);
+  EncoderElecAngleEstimator estimator(encoder, param);
 
-  param.add(Property{4, "pole_pair"});
-  param.add(Property{0.0f, "elec_angle_offset"});
-  param.add(Property{0.0f, "persist_raw_elec_angle"});
+  param->add(Property{4, "pole_pair"});
+  param->add(Property{0.0f, "elec_angle_offset"});
+  param->add(Property{0.0f, "persist_raw_elec_angle"});
 
-  encoder.mCC = 0;
+  encoder->mCC = 0;
   estimator.enable();
   estimator.sync();
   ASSERT_NEAR(estimator.getElectricalAngle(), 0, 1e-6f);
 
-  encoder.mCC = 512;
+  encoder->mCC = 512;
   estimator.sync();
   ASSERT_NEAR(estimator.getElectricalAngle(), 180, 1e-6f);
   estimator.disable();
 
   // assume there is a power off and param is written to flash
-  encoder.mCC = 0;
+  encoder->mCC = 0;
   estimator.enable();
   ASSERT_NEAR(estimator.getElectricalAngle(), 180, 1e-6f);
 }

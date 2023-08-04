@@ -37,15 +37,15 @@ struct dummyEncoder : public IEncoder {
 }  // namespace
 
 TEST(ISensor, BasicEncoderMechAngleEstimator) {
-  ::dummyEncoder encoder;
-  ParameterBase param;
+  auto encoder = std::make_shared<::dummyEncoder>();
+  auto param = std::make_shared<ParameterBase>();
 
-  EncoderMechAngleEstimator estimator(&encoder, &param);
+  EncoderMechAngleEstimator estimator(encoder, param);
 
-  encoder.mCC = 0;
-  encoder.mOverflow = 2;
-  encoder.mPeriod = 4096;
-  encoder.mEnabled = false;
+  encoder->mCC = 0;
+  encoder->mOverflow = 2;
+  encoder->mPeriod = 4096;
+  encoder->mEnabled = false;
 
   estimator.enable();
   estimator.sync();
@@ -53,14 +53,14 @@ TEST(ISensor, BasicEncoderMechAngleEstimator) {
 }
 
 TEST(ISensor, CalibrateEncoderMechAngleEstimator) {
-  ::dummyEncoder encoder;
-  ParameterBase param;
+  std::shared_ptr<::dummyEncoder> encoder = std::make_shared<::dummyEncoder>();
+  std::shared_ptr<ParameterBase> param = std::make_shared<ParameterBase>();
 
-  EncoderMechAngleEstimator estimator(&encoder, &param);
+  EncoderMechAngleEstimator estimator(encoder, param);
 
-  param.add(Property{0.0f, "mech_angle_offset"});
+  param->add(Property{0.0f, "mech_angle_offset"});
 
-  encoder.mOverflow = 1;
+  encoder->mOverflow = 1;
 
   estimator.enable();
   estimator.sync();
@@ -72,21 +72,21 @@ TEST(ISensor, CalibrateEncoderMechAngleEstimator) {
 }
 
 TEST(ISensor, PersistEncoderMechAngleEstimator) {
-  ::dummyEncoder encoder;
-  ParameterBase param;
+  auto encoder = std::make_shared<::dummyEncoder>();
+  auto param = std::make_shared<ParameterBase>();
 
-  EncoderMechAngleEstimator estimator(&encoder, &param);
+  EncoderMechAngleEstimator estimator(encoder, param);
 
-  param.add(Property{0.0f, "mech_angle_offset"});
-  param.add(Property{0.0f, "persist_raw_mech_angle"});
+  param->add(Property{0.0f, "mech_angle_offset"});
+  param->add(Property{0.0f, "persist_raw_mech_angle"});
 
-  encoder.mOverflow = 1;
+  encoder->mOverflow = 1;
 
   estimator.enable();
   estimator.sync();
   ASSERT_NEAR(estimator.getMechanicalAngle(), 0.0f, 1e-6f);
 
-  encoder.mOverflow += 1;
+  encoder->mOverflow += 1;
   estimator.sync();
   ASSERT_NEAR(estimator.getMechanicalAngle(), 360.0f, 1e-6);
 

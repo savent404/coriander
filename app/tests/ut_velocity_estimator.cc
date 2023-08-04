@@ -9,6 +9,8 @@
  */
 #include <gtest/gtest.h>
 
+#include <memory>
+
 #include "coriander/motorctl/velocity_estimator.h"
 #include "coriander/parameters.h"
 
@@ -34,69 +36,71 @@ struct DummySystick : public coriander::os::ISystick {
 };
 
 using Property = coriander::base::Property;
+using namespace coriander;
 using namespace coriander::base;
 
 TEST(ISensor, BasicVelocityEstimator) {
-  ::DummyMechAngleEstimator mechAngleEstimator;
-  coriander::ParameterBase param;
-  ::DummySystick systick;
+  auto mechAngleEstimator = std::make_shared<DummyMechAngleEstimator>();
+  auto systick = std::make_shared<DummySystick>();
+  auto param = std::make_shared<ParameterBase>();
 
-  param.add(Property{16, "velocity_sample_window_size"});
-  param.add(Property{500, "velocity_sample_window_time"});
-  param.add(Property{30, "velocity_sample_minimal_duration"});
+  param->add(Property{16, "velocity_sample_window_size"});
+  param->add(Property{500, "velocity_sample_window_time"});
+  param->add(Property{30, "velocity_sample_minimal_duration"});
 
-  coriander::motorctl::VelocityEstimator velocityEstimator(&mechAngleEstimator,
-                                                           &param, &systick);
+  auto velocityEstimator =
+      std::make_shared<coriander::motorctl::VelocityEstimator>(
+          mechAngleEstimator, param, systick);
 
-  velocityEstimator.enable();
+  velocityEstimator->enable();
 
   // input 30 samples but not reach minimal duration
   for (int i = 0; i < 30; i++) {
-    systick.ms = 30 + i;
-    mechAngleEstimator.mMechAngle = i * 10.0f;
-    velocityEstimator.sync();
+    systick->ms = 30 + i;
+    mechAngleEstimator->mMechAngle = i * 10.0f;
+    velocityEstimator->sync();
   }
-  ASSERT_NEAR(velocityEstimator.getVelocity(), 0.0f, 1e-6);
+  ASSERT_NEAR(velocityEstimator->getVelocity(), 0.0f, 1e-6);
 
   // input 1 samples and reach minimal duration
-  systick.ms = 30 + 30;
-  mechAngleEstimator.mMechAngle = 300.0f;
-  velocityEstimator.sync();
-  ASSERT_NEAR(velocityEstimator.getVelocity(), (300.0f / 360) / (60.0f / 60000),
-              1e-6);
+  systick->ms = 30 + 30;
+  mechAngleEstimator->mMechAngle = 300.0f;
+  velocityEstimator->sync();
+  ASSERT_NEAR(velocityEstimator->getVelocity(),
+              (300.0f / 360) / (60.0f / 60000), 1e-6);
   // input 13 samples and velocity should be slower
   for (int i = 0; i < 13; i++) {
-    systick.ms += 30;
-    velocityEstimator.sync();
-    ASSERT_NEAR(velocityEstimator.getVelocity(),
-                (300.0f / 360.0f) / (systick.ms / 60000.0f), 1e-6);
+    systick->ms += 30;
+    velocityEstimator->sync();
+    ASSERT_NEAR(velocityEstimator->getVelocity(),
+                (300.0f / 360.0f) / (systick->ms / 60000.0f), 1e-6);
   }
 
   // input 2 samples and velocity should down to 0
   for (int i = 0; i < 2; i++) {
-    systick.ms += 30;
-    velocityEstimator.sync();
+    systick->ms += 30;
+    velocityEstimator->sync();
   }
-  ASSERT_NEAR(velocityEstimator.getVelocity(), 0, 1e-6);
+  ASSERT_NEAR(velocityEstimator->getVelocity(), 0, 1e-6);
 
   // input normal samples and velocity should be faster
   float v = 0;
   for (int i = 0; i < 30; i++) {
-    systick.ms += 30;
-    mechAngleEstimator.mMechAngle += 10.0f;
-    velocityEstimator.sync();
-    ASSERT_GE(velocityEstimator.getVelocity(), v);
-    v = velocityEstimator.getVelocity();
+    systick->ms += 30;
+    mechAngleEstimator->mMechAngle += 10.0f;
+    velocityEstimator->sync();
+    ASSERT_GE(velocityEstimator->getVelocity(), v);
+    v = velocityEstimator->getVelocity();
   }
-  ASSERT_NEAR(velocityEstimator.getVelocity(), (10.0f / 360) / (30.0f / 60000),
+  ASSERT_NEAR(velocityEstimator->getVelocity(), (10.0f / 360) / (30.0f / 60000),
               1e-5);
 
   // re-enable it , sample should be cleared
-  velocityEstimator.disable();
-  velocityEstimator.enable();
-  ASSERT_NEAR(velocityEstimator.getVelocity(), 0, 1e-6);
-  velocityEstimator.sync();
-  ASSERT_NEAR(velocityEstimator.getVelocity(), 0, 1e-6);
+  velocityEstimator->disable();
+  velocityEstimator->enable();
+  ASSERT_NEAR(velocityEstimator->getVelocity(), 0, 1e-6);
+  velocityEstimator->sync();
+  ASSERT_NEAR(velocityEstimator->getVelocity(), 0, 1e-6);
 }
 
 }  // namespace
