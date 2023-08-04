@@ -7,33 +7,37 @@
  * @copyright Copyright (c) 2023
  *
  */
+#include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
 #include "coriander/motorctl/isensor.h"
 
-using namespace coriander::motorctl;
-
-struct dummySensor : public ISensor {
-  virtual void enable() {}
-  virtual void disable() {}
-  virtual bool enabled() { return true; }
-  virtual void sync() { mCnt++; }
-  virtual void calibrate() { mCnt = 0; }
-  virtual bool needCalibrate() { return mCnt < 0; }
-  int mCnt = -1;
+namespace {
+struct DummySensor : public coriander::motorctl::ISensor {
+  MOCK_METHOD0(enable, void());
+  MOCK_METHOD0(disable, void());
+  MOCK_METHOD0(enabled, bool());
+  MOCK_METHOD0(sync, void());
+  MOCK_METHOD0(calibrate, void());
+  MOCK_METHOD0(needCalibrate, bool());
 };
+}  // namespace
+
 TEST(ISensor, dummy) {
-  auto dummy = new dummySensor();
-  ISensor* sensor = dummy;
+  DummySensor dummy_;
+  coriander::motorctl::ISensor* sensor = &dummy_;
+
+  EXPECT_CALL(dummy_, needCalibrate())
+      .Times(2)
+      .WillOnce(testing::Return(true))
+      .WillOnce(testing::Return(false));
   ASSERT_EQ(sensor->needCalibrate(), true);
   sensor->calibrate();
   ASSERT_EQ(sensor->needCalibrate(), false);
-  ASSERT_EQ(dummy->mCnt, 0);
 
   ASSERT_TRUE(sensor->needSync(1));
   ASSERT_FALSE(sensor->needSync(1));
   ASSERT_TRUE(sensor->needSync(2));
 
   sensor->sync();
-  ASSERT_EQ(dummy->mCnt, 1);
 }

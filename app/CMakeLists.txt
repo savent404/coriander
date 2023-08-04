@@ -59,7 +59,7 @@ target_link_libraries(coriander PUBLIC ${coriander_lib})
 if (UNIT_TEST)
     aux_source_directory(tests ut_src ${backend_src})
     add_executable(ut ${ut_src})
-    target_link_libraries(ut PRIVATE gtest_main coriander)
+    target_link_libraries(ut PRIVATE gtest_main gmock coriander)
 else ()
     target_sources(app PRIVATE src/main.cc ${coriander_src} ${backend_src})
     target_include_directories(app PRIVATE

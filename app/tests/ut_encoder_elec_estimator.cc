@@ -7,6 +7,7 @@
  * @copyright Copyright (c) 2023
  *
  */
+#include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
 #include "coriander/motorctl/encoder_elec_angle_estimator.h"
@@ -20,20 +21,19 @@ struct dummyEncoder : public IEncoder {
   virtual void disable() { mEnabled = false; }
   virtual bool enabled() { return mEnabled; }
   virtual bool needCalibrate() { return false; }
-  virtual void calibrate() {}
-  virtual void sync() {}
+  MOCK_METHOD0(calibrate, void());
+  MOCK_METHOD0(sync, void());
   virtual unsigned getEncoderCount() { return mCC; }
-  virtual unsigned getEncoderCountPerRound() { return mPeriod; }
-  virtual int getOverflowCount() { return 0; }
+  virtual unsigned getEncoderCountPerRound() { return 4096; }
+  MOCK_METHOD0(getOverflowCount, int());
 
   unsigned mCC = 0;
-  unsigned mPeriod = 4096;
   bool mEnabled = false;
 };
 }  // namespace
 
 TEST(ISensor, CalibrateEncoderElecAngleEstimator) {
-  auto encoder = std::make_shared<dummyEncoder>();
+  auto encoder = std::make_shared<::dummyEncoder>();
   auto param = std::make_shared<ParameterBase>();
 
   EncoderElecAngleEstimator estimator(encoder, param);
@@ -56,7 +56,7 @@ TEST(ISensor, CalibrateEncoderElecAngleEstimator) {
 }
 
 TEST(ISensor, CalibrateEncoderElecAngleEstimatorWithPersist) {
-  auto encoder = std::make_shared<dummyEncoder>();
+  auto encoder = std::make_shared<::dummyEncoder>();
   auto param = std::make_shared<ParameterBase>();
 
   EncoderElecAngleEstimator estimator(encoder, param);
@@ -84,7 +84,7 @@ TEST(ISensor, CalibrateEncoderElecAngleEstimatorWithPersist) {
 }
 
 TEST(ISensor, CalibratedEncoderElecAngleEstimator) {
-  auto encoder = std::make_shared<dummyEncoder>();
+  auto encoder = std::make_shared<::dummyEncoder>();
   auto param = std::make_shared<ParameterBase>();
 
   EncoderElecAngleEstimator estimator(encoder, param);
@@ -104,7 +104,7 @@ TEST(ISensor, CalibratedEncoderElecAngleEstimator) {
 }
 
 TEST(ISensor, CalibratedEncoderElecAngleEstimatorWithPersist) {
-  auto encoder = std::make_shared<dummyEncoder>();
+  auto encoder = std::make_shared<::dummyEncoder>();
   auto param = std::make_shared<ParameterBase>();
 
   EncoderElecAngleEstimator estimator(encoder, param);
@@ -130,7 +130,7 @@ TEST(ISensor, CalibratedEncoderElecAngleEstimatorWithPersist) {
 }
 
 TEST(ISensor, EncoderElecAngleEstimatorRecoveryAfterPowerOn) {
-  auto encoder = std::make_shared<dummyEncoder>();
+  auto encoder = std::make_shared<::dummyEncoder>();
   auto param = std::make_shared<ParameterBase>();
 
   EncoderElecAngleEstimator estimator(encoder, param);
