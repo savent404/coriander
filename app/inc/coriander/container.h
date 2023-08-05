@@ -20,9 +20,10 @@
 #include "coriander/board_state_error_handler.h"
 #include "coriander/board_state_firmware_update_handler.h"
 #include "coriander/board_state_init_handler.h"
+#include "coriander/board_state_reboot_handler.h"
 #include "coriander/board_state_run_handler.h"
 #include "coriander/board_state_standby_handler.h"
-#include "coriander/board_state_reboot_handler.h"
+#include "coriander/motorctl/container.h"
 
 namespace coriander {
 
@@ -34,7 +35,7 @@ static inline auto extendContainer(T_injector&& injector, T_args&&... args) {
                                   std::forward<T_args>(args)...);
 }
 
-static inline auto defaultContainer() {
+static inline auto createInjector() {
   return boost::di::make_injector(
       boost::di::bind<coriander::IBoardState>.to<coriander::BoardState>(),
       boost::di::bind<coriander::IBoardStateInitHandler>.to<coriander::BoardStateInitHandler>(),
@@ -47,10 +48,10 @@ static inline auto defaultContainer() {
       boost::di::bind<coriander::IBoardEvent>.to<coriander::BoardEvent>());
 }
 
-template <typename... T_args>
-static inline auto createInjector(T_args&&... args) {
-  return boost::di::make_injector(std::move(defaultContainer()),
-                                  std::forward<T_args>(args)...);
+static inline auto defaultContainer() {
+  return boost::di::make_injector(
+      std::move(coriander::detail::createInjector()),
+      std::move(coriander::motorctl::detail::createInjector()));
 }
 
 }  // namespace detail

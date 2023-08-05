@@ -31,6 +31,8 @@ TEST(ISensor, dummy) {
       .Times(2)
       .WillOnce(testing::Return(true))
       .WillOnce(testing::Return(false));
+  EXPECT_CALL(dummy_, calibrate()).Times(1);
+  EXPECT_CALL(dummy_, sync()).Times(1);
   ASSERT_EQ(sensor->needCalibrate(), true);
   sensor->calibrate();
   ASSERT_EQ(sensor->needCalibrate(), false);
