@@ -25,6 +25,8 @@ MotorCtlCalibrate::MotorCtlCalibrate(
       mSystick(systick) {}
 
 void MotorCtlCalibrate::start() {
+  uint16_t dc;
+
   mSampleId = 0;
 
   mElecAngleEstimator->reset();
@@ -32,12 +34,14 @@ void MotorCtlCalibrate::start() {
   if (!mElecAngleEstimator->enabled()) {
     mElecAngleEstimator->enable();
   }
-  mMotorSupplyVoltage = mParam->getValue<float>("motor_supply_voltage"_hash);
   mCalibrateVoltage = mParam->getValue<float>("calibrate_voltage"_hash);
   mCalibrateDuration = mParam->getValue<int32_t>("calibrate_duration"_hash);
+  mMotorSupplyVoltage = mParam->getValue<float>("motor_supply_voltage"_hash);
+
+  dc = static_cast<uint16_t>(UINT16_MAX * mCalibrateVoltage /
+                             mMotorSupplyVoltage);
   mMotor->enable();
-  mMotor->setVoltage(
-      uint16_t(mCalibrateVoltage / mMotorSupplyVoltage * UINT16_MAX), 0, 0);
+  mMotor->setPhaseDutyCycle(dc, 0, 0);
   startTimestamp = mSystick->systick_ms();
 }
 

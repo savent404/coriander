@@ -82,7 +82,7 @@ TEST(BoardStateCalibrateHandler, Calibrate) {
 
   EXPECT_CALL(*standbyBoardState, onExit()).Times(1);
   EXPECT_CALL(*motor, enable()).Times(1);
-  EXPECT_CALL(*motor, setVoltage(UINT16_MAX / 2, 0, 0)).Times(1);
+  EXPECT_CALL(*motor, setPhaseDutyCycle(UINT16_MAX / 2, 0, 0)).Times(1);
   EXPECT_CALL(*systick, systick_ms()).Times(1).WillOnce(testing::Return(0));
   EXPECT_CALL(*elecAngleEstimator, enable()).Times(1);
   event->raiseEvent(coriander::IBoardEvent::Event::CalibrateStart);
