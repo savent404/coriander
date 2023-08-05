@@ -19,7 +19,9 @@ using CorianderMainObject = std::shared_ptr<coriander::IBoardState>;
 
 template <typename... T_args>
 static inline auto coriander_create_injector(T_args&&... args) {
-  return detail::createInjector(std::forward<T_args>(args)...);
+  return boost::di::make_injector(
+      std::move(coriander::detail::defaultContainer()),
+      std::forward<T_args>(args)...);
 }
 
 template <typename T_hook, typename T_injector>

@@ -60,6 +60,7 @@ if (UNIT_TEST)
     aux_source_directory(tests ut_src ${backend_src})
     add_executable(ut ${ut_src})
     target_link_libraries(ut PRIVATE gtest_main gmock coriander)
+    target_include_directories(ut PRIVATE ${ut_src})
 else ()
     target_sources(app PRIVATE src/main.cc ${coriander_src} ${backend_src})
     target_include_directories(app PRIVATE

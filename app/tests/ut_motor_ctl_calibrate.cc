@@ -20,6 +20,7 @@
 #include "coriander/motorctl/motor_ctl_calibrate.h"
 #include "coriander/os/isystick.h"
 #include "coriander/parameters.h"
+#include "mocks.h"
 
 namespace {
 using namespace coriander;
@@ -27,35 +28,11 @@ using namespace coriander::motorctl;
 using namespace coriander::base;
 using namespace coriander::os;
 
-struct MockBldcDriver : public IBldcDriver {
-  MOCK_METHOD0(enable, void());
-  MOCK_METHOD0(disable, void());
-  MOCK_METHOD3(setVoltage, void(uint16_t, uint16_t, uint16_t));
-  MOCK_METHOD0(emergencyBreak, void());
-};
-
-struct MockElecAngleEstimator : public IElecAngleEstimator {
-  MOCK_METHOD(float, getElectricalAngle, (), (noexcept));
-  MOCK_METHOD0(enable, void());
-  MOCK_METHOD0(disable, void());
-  MOCK_METHOD0(enabled, bool());
-  MOCK_METHOD0(sync, void());
-  MOCK_METHOD0(calibrate, void());
-  MOCK_METHOD0(needCalibrate, bool());
-};
-
-struct MockSystick : public ISystick {
-  MOCK_METHOD0(systick_ms, uint32_t());
-  MOCK_METHOD0(systick_us, uint32_t());
-};
-struct MockBoardEvent : public IBoardEvent {
-  MOCK_METHOD(void, raiseEvent, (Event), (noexcept));
-  MOCK_METHOD(void, registerEventCallback, (Event, EventCallback), (noexcept));
-};
-
-struct MockLogger : public base::ILogger {
-  MOCK_METHOD(void, log, (const char* msg), (noexcept));
-};
+using MockBldcDriver = testing::mock::MockBldcDriver;
+using MockElecAngleEstimator = testing::mock::MockElecAngleEstimator;
+using MockSystick = testing::mock::MockSystick;
+using MockBoardEvent = testing::mock::MockBoardEvent;
+using MockLogger = testing::mock::MockLogger;
 
 }  // namespace
 
