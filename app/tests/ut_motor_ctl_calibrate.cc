@@ -69,8 +69,7 @@ TEST(MotorCtl, calibrate) {
   EXPECT_CALL(*elecAngle, enable()).Times(1);
   EXPECT_CALL(*elecAngle, enabled()).Times(1).WillOnce(Return(false));
   EXPECT_CALL(*systick, systick_ms()).Times(1).WillOnce(Return(0));
-  EXPECT_CALL(*motor, setVoltage(uint16_t(5 / 16.0f * UINT16_MAX), 0, 0))
-      .Times(1);
+  EXPECT_CALL(*motor, setPhaseDutyCycle(static_cast<uint16_t>(UINT16_MAX * 5.0f / 16.0f), 0, 0)).Times(1);
   mc->start();
 
   EXPECT_CALL(*elecAngle, sync()).Times(5);

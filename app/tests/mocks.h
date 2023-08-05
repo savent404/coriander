@@ -51,7 +51,7 @@ struct MockSystick : public os::ISystick {
 struct MockBldcDriver : public motorctl::IBldcDriver {
   MOCK_METHOD0(enable, void());
   MOCK_METHOD0(disable, void());
-  MOCK_METHOD3(setVoltage, void(uint16_t, uint16_t, uint16_t));
+  MOCK_METHOD3(setPhaseDutyCycle, void(uint16_t, uint16_t, uint16_t));
   MOCK_METHOD0(emergencyBreak, void());
 };
 

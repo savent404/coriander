@@ -24,9 +24,9 @@ namespace motorctl {
 /**
  * @brief Motor control for calibration
  *
- * @param motor_supply_voltage required float Motor supply voltage
  * @param calibrate_voltage required float Voltage for calibration
  * @param calibrate_duration required int32_t required Duration for calibration
+ * @param motor_supply_voltage required float Motor supply voltage
  */
 struct MotorCtlCalibrate : public IMotorCtl {
   using ISystick = os::ISystick;
@@ -49,9 +49,12 @@ struct MotorCtlCalibrate : public IMotorCtl {
   std::shared_ptr<IBoardEvent> mBoardEvent;
   std::shared_ptr<ISystick> mSystick;
 
-  float mMotorSupplyVoltage;
+  // parameters
   float mCalibrateVoltage;
   int32_t mCalibrateDuration;
+  float mMotorSupplyVoltage;
+
+  // runtime variables
   uint32_t startTimestamp;
   unsigned mSampleId;
 };
