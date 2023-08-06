@@ -22,18 +22,14 @@ MotorCtlCalibrate::MotorCtlCalibrate(
       mElecAngleEstimator(elecAngleEstimator),
       mParam(param),
       mBoardEvent(boardEvent),
-      mSystick(systick) {}
+      mSystick(systick),
+      mSensorHandler{mElecAngleEstimator} {}
 
 void MotorCtlCalibrate::start() {
   uint16_t dc;
 
-  mSampleId = 0;
+  mSensorHandler.enable();
 
-  mElecAngleEstimator->reset();
-
-  if (!mElecAngleEstimator->enabled()) {
-    mElecAngleEstimator->enable();
-  }
   mCalibrateVoltage = mParam->getValue<float>("calibrate_voltage"_hash);
   mCalibrateDuration = mParam->getValue<int32_t>("calibrate_duration"_hash);
   mMotorSupplyVoltage = mParam->getValue<float>("motor_supply_voltage"_hash);
@@ -47,19 +43,14 @@ void MotorCtlCalibrate::start() {
 
 void MotorCtlCalibrate::stop() {
   mMotor->disable();
-  if (mElecAngleEstimator->enabled()) {
-    mElecAngleEstimator->disable();
-  }
+  mSensorHandler.disable();
 }
 
 void MotorCtlCalibrate::loop() {
   uint32_t current = mSystick->systick_ms();
-  mSampleId += 1;
 
-  if (mElecAngleEstimator->needSync(mSampleId)) {
-    mElecAngleEstimator->sync();
-    mElecAngleEstimator->calibrate();
-  }
+  mSensorHandler.sync();
+  mElecAngleEstimator->calibrate();
 
   if (current > startTimestamp + mCalibrateDuration) {
     mBoardEvent->raiseEvent(IBoardEvent::Event::CalibrateDone);

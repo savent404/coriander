@@ -15,6 +15,7 @@
 #include "coriander/motorctl/imech_angle_estimator.h"
 #include "coriander/motorctl/imotorctl.h"
 #include "coriander/motorctl/ivelocity_estimator.h"
+#include "coriander/motorctl/sensor_handler.h"
 #include "coriander/os/isystick.h"
 #include "coriander/parameters.h"
 
@@ -55,8 +56,8 @@ struct MotorCtlCalibrate : public IMotorCtl {
   float mMotorSupplyVoltage;
 
   // runtime variables
+  SensorHandler mSensorHandler;
   uint32_t startTimestamp;
-  unsigned mSampleId;
 };
 }  // namespace motorctl
 }  // namespace coriander
