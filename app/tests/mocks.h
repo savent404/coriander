@@ -11,6 +11,8 @@
 
 #include <gmock/gmock.h>
 
+#include <memory>
+
 #include "coriander/application/iappstatus.h"
 #include "coriander/base/ilogger.h"
 #include "coriander/iboard_event.h"
@@ -141,6 +143,18 @@ struct MockBoardStateRebootHandler : public IBoardStateRebootHandler {
   MOCK_METHOD(void, onEnter, (), (noexcept));
   MOCK_METHOD(void, onExit, (), (noexcept));
   MOCK_METHOD(void, onLoop, (), (noexcept));
+};
+
+struct MockFocMotorDriver : public coriander::motorctl::FocMotorDriver {
+  MockFocMotorDriver(std::shared_ptr<coriander::motorctl::IElecAngleEstimator>
+                   elecAngleEstimator)
+      : coriander::motorctl::FocMotorDriver(elecAngleEstimator) {}
+  MOCK_METHOD0(enable, void());
+  MOCK_METHOD0(disable, void());
+  MOCK_METHOD0(emergencyBreak, void());
+  MOCK_METHOD0(fatalError, bool());
+  MOCK_METHOD(void, setPhaseDutyCycle, (uint16_t, uint16_t, uint16_t), (override));
+  // void setPhaseDutyCycle(uint16_t u, uint16_t v, uint16_t w) override {}
 };
 
 }  // namespace mock
