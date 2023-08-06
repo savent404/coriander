@@ -3,13 +3,13 @@
 #include <memory>
 
 #include "coriander/application/iappstatus.h"
-#include "coriander/iboard_state_run_handler.h"
+#include "coriander/iboard_state_standby_handler.h"
 
 namespace coriander {
 
 using application::IAppStatus;
-struct BoardStateRunHandler : public IBoardStateRunHandler {
-  BoardStateRunHandler(std::shared_ptr<IAppStatus> appStatus) noexcept
+struct BoardStateStandbyHandler : public IBoardStateStandbyHandler {
+  BoardStateStandbyHandler(std::shared_ptr<IAppStatus> appStatus) noexcept
       : mAppStatus(appStatus) {}
 
   virtual void onEnter() noexcept override {
