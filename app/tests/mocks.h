@@ -23,6 +23,7 @@
 #include "coriander/iboard_state_run_handler.h"
 #include "coriander/iboard_state_standby_handler.h"
 #include "coriander/istate_handler.h"
+#include "coriander/motorctl/foc_motor_driver.h"
 #include "coriander/motorctl/ibldc_driver.h"
 #include "coriander/motorctl/ielec_angle_estimator.h"
 #include "coriander/motorctl/iencoder.h"
