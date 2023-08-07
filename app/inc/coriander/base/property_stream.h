@@ -186,7 +186,6 @@ struct PropertyBinaryStream : public Property {
   friend T& operator>>(T& is, PropertyBinaryStream& p) {
     auto& value = p.value();
     detail::PropertyBinaryStreamHeader header = {0};
-    char* value_ptr = nullptr;
     uint64_t triple_buf[3] = {0};
     char* triple_buf_ptr = reinterpret_cast<char*>(triple_buf);
 
