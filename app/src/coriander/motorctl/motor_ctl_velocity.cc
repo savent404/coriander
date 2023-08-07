@@ -72,5 +72,9 @@ void MotorCtlVelocity::emergencyStop() {
 
 bool MotorCtlVelocity::fatalError() { return false; }
 
+void MotorCtlVelocity::setTargetVelocity(float velocityInRpm) {
+  mTargetVelocity = velocityInRpm;
+}
+
 }  // namespace motorctl
 }  // namespace coriander
