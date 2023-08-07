@@ -52,10 +52,10 @@ struct MotorCtlVelocity : public IMotorCtl {
         mVelocityEstimator{velocityEstimator},
         mParameters{parameters},
         mFocMotorDriver{focMotorDriver},
-        mSensorHandler{mElecAngleEstimator, mVelocityEstimator},
-        mVelocityPid{0.0f, 0.0f, 0.0f, 0.0f, 0.0f},
         mDurationEstimator{std::move(durationEstimator)},
-        mLogger{logger} {}
+        mLogger{logger},
+        mSensorHandler{mElecAngleEstimator, mVelocityEstimator},
+        mVelocityPid{0.0f, 0.0f, 0.0f, 0.0f, 0.0f} {}
 
   virtual void start();
   virtual void stop();
@@ -64,7 +64,9 @@ struct MotorCtlVelocity : public IMotorCtl {
   virtual void emergencyStop();
   virtual bool fatalError();
 
- protected:
+  void setTargetVelocity(float velocityInRpm);
+
+ private:
   // dependencies
   std::shared_ptr<IElecAngleEstimator> mElecAngleEstimator;
   std::shared_ptr<IVelocityEstimator> mVelocityEstimator;
