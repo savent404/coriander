@@ -125,7 +125,7 @@ bool ParameterMemoryMapper::isValid(std::span<uint8_t> data) const noexcept {
 
   // header items checks
   uint16_t offset = 0;
-  for (int idx = 0; idx < header->block_count; ++idx) {
+  for (unsigned idx = 0; idx < header->block_count; ++idx) {
     auto& item = header->items[idx];
 
     if (item.block_offset != offset) {
@@ -160,7 +160,7 @@ bool ParameterMemoryMapper::recovery(std::span<uint8_t> data,
   auto payloadOffset =
       sizeof(Header) + sizeof(HeaderItem) * header->block_count;
 
-  for (int idx = 0; idx < header->block_count; ++idx) {
+  for (unsigned idx = 0; idx < header->block_count; ++idx) {
     auto& item = header->items[idx];
     auto block =
         data.subspan(payloadOffset + item.block_offset, item.block_size);
