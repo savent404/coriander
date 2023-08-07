@@ -9,7 +9,7 @@
  */
 #include "coriander/motorctl/encoder_elec_angle_estimator.h"
 
-#include <cmath>
+#include "coriander/base/math.h"
 
 namespace coriander {
 namespace motorctl {
@@ -28,7 +28,7 @@ EncoderElecAngleEstimator::EncoderElecAngleEstimator(
 
 void EncoderElecAngleEstimator::enable() {
   // try to get parameter from parameter server
-  mPolePair = mParam->getValue<int>("pole_pair"_hash);
+  mPolePair = mParam->getValue<int32_t>("pole_pair"_hash);
   if (mParam->has("elec_angle_offset"_hash)) {
     mElecAngleOffset = mParam->getValue<float>("elec_angle_offset"_hash);
     mNeedCalibrate = false;
@@ -77,7 +77,7 @@ void EncoderElecAngleEstimator::calibrate() {
 bool EncoderElecAngleEstimator::needCalibrate() { return mNeedCalibrate; }
 
 static float modular_angle(float angle) {
-  angle = std::fmodf(angle, 360.0f);
+  angle = base::math::fmodf(angle, 360.0f);
   if (angle < 0) {
     angle += 360.0f;
   }

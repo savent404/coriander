@@ -22,11 +22,11 @@ using namespace coriander::base;
 struct ParameterBase : public base::PropertySet {
   template <typename T>
   T getValue(const char* name) const noexcept {
-    return get<T>(base::PropertySet::get(name).value());
+    return std::get<T>(base::PropertySet::get(name).value());
   }
   template <typename T>
   T getValue(uint32_t name_hash) const noexcept {
-    return get<T>(base::PropertySet::get(name_hash).value());
+    return std::get<T>(base::PropertySet::get(name_hash).value());
   }
 
   /**
