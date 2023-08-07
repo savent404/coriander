@@ -16,11 +16,13 @@
 #include "coriander/coriander.h"
 
 // backends
-
 #include "zephyr_appstatus.h"
 #include "zephyr_diagnosis.h"
+#include "zephyr_encoder.h"
 #include "zephyr_logger.h"
+#include "zephyr_motor.h"
 #include "zephyr_nvs.h"
+#include "zephyr_systick.h"
 
 LOG_MODULE_REGISTER(main);
 
@@ -32,7 +34,11 @@ using namespace boost;
 static auto zephyr_backends_bindings() {
   return di::make_injector(
       di::bind<coriander::base::ILogger>.to<coriander::base::zephyr::Logger>(),
-      di::bind<coriander::application::IAppStatus>.to<coriander::application::zephyr::AppStatus>());
+      di::bind<coriander::application::IAppStatus>.to<coriander::application::zephyr::AppStatus>(),
+      di::bind<coriander::motorctl::FocMotorDriver>.to<coriander::motorctl::zephyr::MotorDriver>(),
+      di::bind<coriander::motorctl::IBldcDriver>.to<coriander::motorctl::zephyr::MotorDriver>(),
+      di::bind<coriander::motorctl::IEncoder>.to<coriander::motorctl::zephyr::Encoder>(),
+      di::bind<coriander::os::ISystick>.to<coriander::os::zephyr::Systick>());
 }
 
 static int get_reboot_times() {

@@ -13,6 +13,7 @@
 #include "coriander/motorctl/encoder_elec_angle_estimator.h"
 #include "coriander/motorctl/encoder_mech_angle_estimator.h"
 #include "coriander/motorctl/imotorctl.h"
+#include "coriander/motorctl/ivelocity_estimator.h"
 #include "coriander/motorctl/motor_ctl_calibrate.h"
 #include "coriander/motorctl/motor_ctl_dummy.h"
 #include "coriander/motorctl/motor_ctl_velocity.h"

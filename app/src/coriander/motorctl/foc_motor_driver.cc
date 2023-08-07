@@ -9,6 +9,7 @@
  */
 #include "coriander/motorctl/foc_motor_driver.h"
 
+#include "coriander/base/math.h"
 #include "coriander/motorctl/foc.h"
 
 namespace coriander {
