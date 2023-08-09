@@ -50,7 +50,9 @@ static inline auto createInjector() {
       bind<coriander::IBoardStateRunHandler>()
           .to<testing::mock::MockBoardStateRunHandler>(),
       bind<coriander::IBoardStateStandbyHandler>()
-          .to<testing::mock::MockBoardStateStandbyHandler>());
+          .to<testing::mock::MockBoardStateStandbyHandler>(),
+      bind<coriander::os::ISemaphore>().to<testing::mock::MockSemaphore>(),
+      bind<coriander::os::IThread>().to<testing::mock::MockThread>());
 }
 }  // namespace
 

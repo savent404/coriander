@@ -15,6 +15,8 @@
 #include "coriander/board_event.h"
 #include "coriander/board_state.h"
 #include "posix_logger.h"
+#include "posix_semaphore.h"
+#include "posix_thread.h"
 
 namespace coriander {
 struct custom_hook {
@@ -164,27 +166,30 @@ TEST(BoardState, basic) {
       boost::di::bind<coriander::IBoardStateFirmwareUpdateHandler>.to<coriander::dummyFirmwareUpdate>(),
       boost::di::bind<coriander::IBoardStateRebootHandler>.to<coriander::dummyReboot>());
 
-  auto event = injector.create<std::shared_ptr<coriander::BoardEvent> >();
-  auto initHandler = injector.create<std::shared_ptr<coriander::dummyInit> >();
+  auto event = injector.create<std::shared_ptr<coriander::BoardEvent>>();
+  auto initHandler = injector.create<std::shared_ptr<coriander::dummyInit>>();
   auto standbyHandler =
-      injector.create<std::shared_ptr<coriander::dummyStandby> >();
-  auto runHandler = injector.create<std::shared_ptr<coriander::dummyRun> >();
-  auto errorHandler =
-      injector.create<std::shared_ptr<coriander::dummyError> >();
+      injector.create<std::shared_ptr<coriander::dummyStandby>>();
+  auto runHandler = injector.create<std::shared_ptr<coriander::dummyRun>>();
+  auto errorHandler = injector.create<std::shared_ptr<coriander::dummyError>>();
   auto calibrateHandler =
-      injector.create<std::shared_ptr<coriander::dummyCalibrate> >();
+      injector.create<std::shared_ptr<coriander::dummyCalibrate>>();
   auto firmwareUpdateHandler =
-      injector.create<std::shared_ptr<coriander::dummyFirmwareUpdate> >();
+      injector.create<std::shared_ptr<coriander::dummyFirmwareUpdate>>();
   auto rebootHandler =
-      injector.create<std::shared_ptr<coriander::dummyReboot> >();
+      injector.create<std::shared_ptr<coriander::dummyReboot>>();
+  auto semaphore =
+      injector.create<std::unique_ptr<coriander::os::posix::Semaphore>>();
+  auto thread =
+      injector.create<std::unique_ptr<coriander::os::posix::Thread>>();
   // board call init->entry at constructor
   initHandler->custom_enter = [event]() {
     event->raiseEvent(coriander::IBoardEvent::Event::BoardInited);
   };
 
-  coriander::BoardState board(initHandler, standbyHandler, runHandler,
-                              errorHandler, calibrateHandler,
-                              firmwareUpdateHandler, rebootHandler, event);
+  coriander::BoardState board(
+      initHandler, standbyHandler, runHandler, errorHandler, calibrateHandler,
+      firmwareUpdateHandler, rebootHandler, event, std::move(semaphore), std::move(thread));
   ASSERT_EQ(board.getState(), coriander::BoardState::State::Standby);
 
   // Test MotorStart, MotorStop

@@ -14,7 +14,9 @@ TEST(Coriander, DiagError) {
       boost::di::bind<coriander::motorctl::IEncoder>.to<testing::mock::MockEncoder>(),
       boost::di::bind<coriander::os::ISystick>.to<testing::mock::MockSystick>(),
       boost::di::bind<coriander::motorctl::IBldcDriver>.to<testing::mock::MockBldcDriver>(),
-      boost::di::bind<coriander::motorctl::FocMotorDriver>.to<testing::mock::MockFocMotorDriver>()));
+      boost::di::bind<coriander::motorctl::FocMotorDriver>.to<testing::mock::MockFocMotorDriver>(),
+      boost::di::bind<coriander::os::ISemaphore>.to<testing::mock::MockSemaphore>(),
+      boost::di::bind<coriander::os::IThread>.to<testing::mock::MockThread>()));
 
   auto dignosis = injector.template create<
       std::shared_ptr<coriander::application::Diagnosis>>();
