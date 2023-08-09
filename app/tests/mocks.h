@@ -30,7 +30,9 @@
 #include "coriander/motorctl/ielec_angle_estimator.h"
 #include "coriander/motorctl/iencoder.h"
 #include "coriander/motorctl/imech_angle_estimator.h"
+#include "coriander/os/isemaphore.h"
 #include "coriander/os/isystick.h"
+#include "coriander/os/ithread.h"
 
 namespace testing {
 namespace mock {
@@ -147,14 +149,25 @@ struct MockBoardStateRebootHandler : public IBoardStateRebootHandler {
 
 struct MockFocMotorDriver : public coriander::motorctl::FocMotorDriver {
   MockFocMotorDriver(std::shared_ptr<coriander::motorctl::IElecAngleEstimator>
-                   elecAngleEstimator)
+                         elecAngleEstimator)
       : coriander::motorctl::FocMotorDriver(elecAngleEstimator) {}
   MOCK_METHOD0(enable, void());
   MOCK_METHOD0(disable, void());
   MOCK_METHOD0(emergencyBreak, void());
   MOCK_METHOD0(fatalError, bool());
-  MOCK_METHOD(void, setPhaseDutyCycle, (uint16_t, uint16_t, uint16_t), (override));
+  MOCK_METHOD(void, setPhaseDutyCycle, (uint16_t, uint16_t, uint16_t),
+              (override));
   // void setPhaseDutyCycle(uint16_t u, uint16_t v, uint16_t w) override {}
+};
+
+struct MockSemaphore : public os::ISemaphore {
+  MOCK_METHOD(void, wait, (), (noexcept));
+  MOCK_METHOD(bool, tryWait, (), (noexcept));
+  MOCK_METHOD(void, post, (), (noexcept));
+};
+
+struct MockThread : public os::IThread {
+  MOCK_METHOD(size_t, currentThreadId, (), (noexcept));
 };
 
 }  // namespace mock

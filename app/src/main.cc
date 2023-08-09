@@ -22,7 +22,9 @@
 #include "zephyr_logger.h"
 #include "zephyr_motor.h"
 #include "zephyr_nvs.h"
+#include "zephyr_semaphore.h"
 #include "zephyr_systick.h"
+#include "zephyr_thread.h"
 
 LOG_MODULE_REGISTER(main);
 
@@ -38,7 +40,9 @@ static auto zephyr_backends_bindings() {
       di::bind<coriander::motorctl::FocMotorDriver>.to<coriander::motorctl::zephyr::MotorDriver>(),
       di::bind<coriander::motorctl::IBldcDriver>.to<coriander::motorctl::zephyr::MotorDriver>(),
       di::bind<coriander::motorctl::IEncoder>.to<coriander::motorctl::zephyr::Encoder>(),
-      di::bind<coriander::os::ISystick>.to<coriander::os::zephyr::Systick>());
+      di::bind<coriander::os::ISystick>.to<coriander::os::zephyr::Systick>(),
+      di::bind<coriander::os::ISemaphore>.to<coriander::os::zephyr::Semaphore>(),
+      di::bind<coriander::os::IThread>.to<coriander::os::zephyr::Thread>());
 }
 
 static int get_reboot_times() {

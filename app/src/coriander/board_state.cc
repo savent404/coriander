@@ -18,7 +18,8 @@ BoardState::BoardState(
     std::shared_ptr<IBoardStateCalibrateHandler> calibrateHandler,
     std::shared_ptr<IBoardStateFirmwareUpdateHandler> firmwareUpdateHandler,
     std::shared_ptr<IBoardStateRebootHandler> rebootHandler,
-    std::shared_ptr<IBoardEvent> event) noexcept
+    std::shared_ptr<IBoardEvent> event, std::unique_ptr<ISemaphore> semaphore,
+    std::unique_ptr<IThread> thread) noexcept
     : mState(State::Init),
       mStateInitHandler(initHandler),
       mStateStandbyHandler(standbyHandler),
@@ -27,7 +28,9 @@ BoardState::BoardState(
       mStateCalibrateHandler(calibrateHandler),
       mStateFirmwareUpdateHandler(firmwareUpdateHandler),
       mStateRebootHandler(rebootHandler),
-      mEvent(event) {
+      mEvent(event),
+      mSemaphore(std::move(semaphore)),
+      mThreadInfo(std::move(thread)) {
   mEvent->registerEventCallback(
       IBoardEvent::Event::BoardInited, [this](IBoardEvent::Event event) {
         switch (mState) {
@@ -148,18 +151,51 @@ void BoardState::setState(State state) noexcept {
   auto currentStateHandler = getHandler(mState);
   auto nextStateHandler = getHandler(state);
 
+  enterCritical();
+
   if (currentStateHandler) currentStateHandler->onExit();
   if (nextStateHandler) nextStateHandler->onEnter();
-
-  // TODO(savent): add a mutex
   mState = state;
+
+  exitCritical();
 }
 
 BoardState::State BoardState::getState() const noexcept { return mState; }
 
 void BoardState::loop() noexcept {
   auto currentStateHandler = getHandler(mState);
-  if (currentStateHandler) currentStateHandler->onLoop();
+  if (currentStateHandler) {
+    enterCritical();
+    currentStateHandler->onLoop();
+    exitCritical();
+  }
+}
+
+void BoardState::enterCritical() noexcept {
+  if (threadInCritical == mThreadInfo->currentThreadId()) {
+    return;
+  }
+  if (mIsCritical) {
+    // someone else is in critical section
+    mCriticalCount++;
+    mSemaphore->wait();
+  } else {
+    // the first one enters critical section
+    mIsCritical = true;
+  }
+  threadInCritical = mThreadInfo->currentThreadId();
+}
+
+void BoardState::exitCritical() noexcept {
+  threadInCritical = 0;
+  if (mCriticalCount > 0) {
+    // leave critical section to someone else
+    mCriticalCount--;
+    mSemaphore->post();
+  } else {
+    // the last one leaves critical section
+    mIsCritical = false;
+  }
 }
 
 }  // namespace coriander

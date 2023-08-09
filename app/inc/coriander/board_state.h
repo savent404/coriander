@@ -9,6 +9,7 @@
  */
 #pragma once
 
+#include <atomic>
 #include <memory>
 
 #include "coriander/application/iappstatus.h"
@@ -21,10 +22,14 @@
 #include "coriander/iboard_state_reboot_handler.h"
 #include "coriander/iboard_state_run_handler.h"
 #include "coriander/iboard_state_standby_handler.h"
+#include "coriander/os/isemaphore.h"
+#include "coriander/os/ithread.h"
 
 namespace coriander {
 
 struct BoardState : public IBoardState {
+  using ISemaphore = coriander::os::ISemaphore;
+  using IThread = coriander::os::IThread;
   BoardState(const BoardState&) = delete;
   BoardState(BoardState&&) = delete;
   virtual BoardState& operator=(const BoardState&) = delete;
@@ -37,13 +42,17 @@ struct BoardState : public IBoardState {
       std::shared_ptr<IBoardStateCalibrateHandler> calibrateHandler,
       std::shared_ptr<IBoardStateFirmwareUpdateHandler> firmwareUpdateHandler,
       std::shared_ptr<IBoardStateRebootHandler> rebootHandler,
-      std::shared_ptr<IBoardEvent> event) noexcept;
+      std::shared_ptr<IBoardEvent> event, std::unique_ptr<ISemaphore> semaphore,
+      std::unique_ptr<IThread> thread) noexcept;
 
   virtual void setState(State state) noexcept override;
   virtual State getState() const noexcept override;
   virtual void loop() noexcept override;
 
  private:
+  void enterCritical() noexcept;
+  void exitCritical() noexcept;
+
   State mState;
   std::shared_ptr<IBoardStateInitHandler> mStateInitHandler;
   std::shared_ptr<IBoardStateStandbyHandler> mStateStandbyHandler;
@@ -53,6 +62,12 @@ struct BoardState : public IBoardState {
   std::shared_ptr<IBoardStateFirmwareUpdateHandler> mStateFirmwareUpdateHandler;
   std::shared_ptr<IBoardStateRebootHandler> mStateRebootHandler;
   std::shared_ptr<IBoardEvent> mEvent;
+  std::unique_ptr<ISemaphore> mSemaphore;
+  std::unique_ptr<IThread> mThreadInfo;
+
+  bool mIsCritical = false;
+  int mCriticalCount = 0;
+  size_t threadInCritical = 0;
 
   IStateHandler* getHandler(State s) {
     switch (s) {
