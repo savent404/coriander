@@ -15,8 +15,7 @@
 #include "coriander/motorctl/imotorctl.h"
 #include "coriander/motorctl/ivelocity_estimator.h"
 #include "coriander/motorctl/motor_ctl_calibrate.h"
-#include "coriander/motorctl/motor_ctl_dummy.h"
-#include "coriander/motorctl/motor_ctl_velocity.h"
+#include "coriander/motorctl/motor_ctl_wrapper.h"
 #include "coriander/motorctl/velocity_estimator.h"
 #include "coriander/parameters.h"
 
@@ -32,22 +31,7 @@ static inline auto createInjector() {
       bind<IMechAngleEstimator>().to<EncoderMechAngleEstimator>(),
       bind<IVelocityEstimator>().to<VelocityEstimator>(),
       bind<MotorCtlCalibrate>().to<MotorCtlCalibrate>(),
-      bind<IMotorCtl>().to([](const auto &injector)
-                               -> std::shared_ptr<IMotorCtl> {
-        int mode = 0;
-        auto param = injector.template create<std::shared_ptr<ParameterBase>>();
-        if (param->has("motorctl.mode"_hash)) {
-          mode = param->template getValue<int>("motorctl.mode"_hash);
-        }
-        switch (mode) {
-          case 0:
-          default:
-            return injector.template create<std::shared_ptr<MotorCtlDummy>>();
-          case 1:
-            return injector
-                .template create<std::shared_ptr<MotorCtlVelocity>>();
-        }
-      }));
+      bind<IMotorCtl>().to<DynamicMotorCtl>());
 }
 
 }  // namespace detail

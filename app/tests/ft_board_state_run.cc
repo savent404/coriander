@@ -20,6 +20,7 @@
 #include "coriander/motorctl/iencoder.h"
 #include "coriander/motorctl/imotorctl.h"
 #include "coriander/motorctl/motor_ctl_velocity.h"
+#include "coriander/motorctl/motor_ctl_wrapper.h"
 #include "coriander/os/isystick.h"
 #include "coriander/parameters.h"
 #include "mocks.h"
@@ -67,6 +68,9 @@ TEST(BoardStateRun, basic) {
   param->add(coriander::base::Property{3500, "velocity_sample_window_time"});
   param->add(coriander::base::Property{50, "velocity_sample_minimal_duration"});
   param->add(coriander::base::Property{4, "pole_pair"});
+  param->add(coriander::base::Property{
+      static_cast<int>(coriander::motorctl::DynamicMotorCtl::Mode::Velocity),
+      "motorctl.mode"});
 
   auto encoder = c.create<std::shared_ptr<testing::mock::MockEncoder>>();
 
