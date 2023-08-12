@@ -23,6 +23,9 @@
 #include "coriander/os/isystick.h"
 #include "coriander/parameters.h"
 #include "mocks.h"
+#include "posix_mutex.h"
+#include "posix_semaphore.h"
+#include "posix_thread.h"
 
 namespace {
 using coriander::base::operator""_hash;
@@ -39,6 +42,9 @@ static auto createInjector() {
       boost::di::bind<coriander::application::IAppStatus>.to<testing::mock::MockAppStatus>(),
       boost::di::bind<coriander::base::ILogger>.to<testing::mock::MockLogger>(),
       boost::di::bind<coriander::os::ISystick>.to<testing::mock::MockSystick>(),
+      boost::di::bind<coriander::os::IThread>.to<testing::mock::MockThread>(),
+      boost::di::bind<coriander::os::IMutex>.to<coriander::os::posix::Mutex>(),
+      boost::di::bind<coriander::os::ISemaphore>.to<coriander::os::posix::Semaphore>(),
       boost::di::bind<coriander::motorctl::IEncoder>.to<testing::mock::MockEncoder>(),
       boost::di::bind<coriander::motorctl::FocMotorDriver>.to<testing::mock::MockFocMotorDriver>());
 }

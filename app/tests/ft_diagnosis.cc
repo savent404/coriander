@@ -6,6 +6,7 @@
 #include "mocks.h"
 #include "posix_appstatus.h"
 #include "posix_logger.h"
+#include "posix_mutex.h"
 
 TEST(Coriander, DiagError) {
   auto injector = coriander::coriander_create_injector(boost::di::make_injector(
@@ -16,7 +17,8 @@ TEST(Coriander, DiagError) {
       boost::di::bind<coriander::motorctl::IBldcDriver>.to<testing::mock::MockBldcDriver>(),
       boost::di::bind<coriander::motorctl::FocMotorDriver>.to<testing::mock::MockFocMotorDriver>(),
       boost::di::bind<coriander::os::ISemaphore>.to<testing::mock::MockSemaphore>(),
-      boost::di::bind<coriander::os::IThread>.to<testing::mock::MockThread>()));
+      boost::di::bind<coriander::os::IThread>.to<testing::mock::MockThread>(),
+      boost::di::bind<coriander::os::IMutex>.to<coriander::os::posix::Mutex>()));
 
   auto dignosis = injector.template create<
       std::shared_ptr<coriander::application::Diagnosis>>();

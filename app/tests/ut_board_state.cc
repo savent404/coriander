@@ -17,6 +17,7 @@
 #include "posix_logger.h"
 #include "posix_semaphore.h"
 #include "posix_thread.h"
+#include "posix_mutex.h"
 
 namespace coriander {
 struct custom_hook {
@@ -164,7 +165,10 @@ TEST(BoardState, basic) {
       boost::di::bind<coriander::IBoardStateErrorHandler>.to<coriander::dummyError>(),
       boost::di::bind<coriander::IBoardStateCalibrateHandler>.to<coriander::dummyCalibrate>(),
       boost::di::bind<coriander::IBoardStateFirmwareUpdateHandler>.to<coriander::dummyFirmwareUpdate>(),
-      boost::di::bind<coriander::IBoardStateRebootHandler>.to<coriander::dummyReboot>());
+      boost::di::bind<coriander::IBoardStateRebootHandler>.to<coriander::dummyReboot>(),
+      boost::di::bind<coriander::os::IMutex>.to<coriander::os::posix::Mutex>(),
+      boost::di::bind<coriander::os::ISemaphore>.to<coriander::os::posix::Semaphore>(),
+      boost::di::bind<coriander::os::IThread>.to<coriander::os::posix::Thread>());
 
   auto event = injector.create<std::shared_ptr<coriander::BoardEvent>>();
   auto initHandler = injector.create<std::shared_ptr<coriander::dummyInit>>();
@@ -189,7 +193,7 @@ TEST(BoardState, basic) {
 
   coriander::BoardState board(
       initHandler, standbyHandler, runHandler, errorHandler, calibrateHandler,
-      firmwareUpdateHandler, rebootHandler, event, std::move(semaphore), std::move(thread));
+      firmwareUpdateHandler, rebootHandler, event);
   ASSERT_EQ(board.getState(), coriander::BoardState::State::Standby);
 
   // Test MotorStart, MotorStop
