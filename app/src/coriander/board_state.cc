@@ -58,6 +58,9 @@ BoardState::BoardState(
           case State::Run:
             setState(State::Standby);
             break;
+          case State::Standby:
+          case State::Error:
+            break;
           default:
             mEvent->raiseEvent(IBoardEvent::Event::Crap);
             break;

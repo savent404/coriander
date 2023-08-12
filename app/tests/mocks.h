@@ -33,6 +33,7 @@
 #include "coriander/os/isemaphore.h"
 #include "coriander/os/isystick.h"
 #include "coriander/os/ithread.h"
+#include "coriander/iprotocol_ctl.h"
 
 namespace testing {
 namespace mock {
@@ -170,6 +171,12 @@ struct MockSemaphore : public os::ISemaphore {
 
 struct MockThread : public os::IThread {
   MOCK_METHOD(size_t, currentThreadId, (), (noexcept));
+};
+
+struct MockProtoCtl : public IProtocolCtl {
+  MOCK_METHOD(void, enable, (), (noexcept));
+  MOCK_METHOD(void, disable, (), (noexcept));
+  MOCK_METHOD(void, loop, (), (noexcept));
 };
 
 }  // namespace mock
