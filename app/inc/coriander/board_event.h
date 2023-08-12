@@ -9,6 +9,8 @@
  */
 #pragma once
 
+#include <forward_list>
+
 #include "coriander/base/ilogger.h"
 #include "coriander/base/loggerstream.h"
 #include "coriander/iboard_event.h"
@@ -19,21 +21,23 @@ struct BoardEvent : public IBoardEvent {
       : mLogger(logger), mEventCallbacks{} {}
 
   virtual void raiseEvent(Event event) noexcept override {
-    if (mEventCallbacks[static_cast<int>(event)]) {
-      base::LoggerStream os(mLogger);
+    base::LoggerStream os(mLogger);
 
-      os << "Raise event: " << static_cast<int>(event) << std::endl;
-      mEventCallbacks[static_cast<int>(event)](event);
+    os << "Raise event: " << static_cast<int>(event) << std::endl;
+
+    for (auto &cb : mEventCallbacks[static_cast<int>(event)]) {
+      cb(event);
     }
   }
 
   virtual void registerEventCallback(Event event,
                                      EventCallback callback) noexcept override {
-    mEventCallbacks[static_cast<int>(event)] = callback;
+    mEventCallbacks[static_cast<int>(event)].push_front(callback);
   }
 
  private:
   std::shared_ptr<base::ILogger> mLogger;
-  EventCallback mEventCallbacks[static_cast<int>(Event::MAX_EVENT)];
+  std::forward_list<EventCallback>
+      mEventCallbacks[static_cast<int>(Event::MAX_EVENT)];
 };
 }  // namespace coriander
