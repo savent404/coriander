@@ -42,6 +42,8 @@ using namespace coriander;
 struct MockBoardEvent : public IBoardEvent {
   MOCK_METHOD(void, raiseEvent, (Event), (noexcept));
   MOCK_METHOD(void, registerEventCallback, (Event, EventCallback), (noexcept));
+  MOCK_METHOD0(eventLock, void());
+  MOCK_METHOD0(eventUnlock, void());
 };
 
 struct MockLogger : public base::ILogger {

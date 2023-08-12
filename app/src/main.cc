@@ -21,6 +21,7 @@
 #include "zephyr_encoder.h"
 #include "zephyr_logger.h"
 #include "zephyr_motor.h"
+#include "zephyr_mutex.h"
 #include "zephyr_nvs.h"
 #include "zephyr_semaphore.h"
 #include "zephyr_systick.h"
@@ -42,7 +43,8 @@ static auto zephyr_backends_bindings() {
       di::bind<coriander::motorctl::IEncoder>.to<coriander::motorctl::zephyr::Encoder>(),
       di::bind<coriander::os::ISystick>.to<coriander::os::zephyr::Systick>(),
       di::bind<coriander::os::ISemaphore>.to<coriander::os::zephyr::Semaphore>(),
-      di::bind<coriander::os::IThread>.to<coriander::os::zephyr::Thread>());
+      di::bind<coriander::os::IThread>.to<coriander::os::zephyr::Thread>(),
+      di::bind<coriander::os::IMutex>.to<coriander::os::zephyr::Mutex>());
 }
 
 static int get_reboot_times() {

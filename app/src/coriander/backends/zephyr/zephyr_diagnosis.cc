@@ -107,13 +107,13 @@ void DiagnosisRegister::applyAll(coriander::application::Diagnosis& diagnosis) {
   using DiagDevId = coriander::application::Diagnosis::DiagDevId;
 
   diagnosis.setDiagDev(DiagDevId::CtlrBoardPsVoltage, [this]() {
-    while (mPsVoltage == Diagnosis::DeviceStatus::Unknown) {
+    while (mPsVoltage == DeviceStatus::Unknown) {
       k_sleep(K_MSEC(1));
     }
     return mPsVoltage;
   });
   diagnosis.setDiagDev(DiagDevId::CtlrBoardPsCurrent, [this]() {
-    while (mPsCurrent == Diagnosis::DeviceStatus::Unknown) {
+    while (mPsCurrent == DeviceStatus::Unknown) {
       k_sleep(K_MSEC(1));
     }
     return mPsCurrent;

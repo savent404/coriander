@@ -22,6 +22,7 @@
 #include "coriander/motorctl/ielec_angle_estimator.h"
 #include "coriander/os/isystick.h"
 #include "mocks.h"
+#include "posix_mutex.h"
 
 namespace {
 static inline auto createInjector() {
@@ -52,6 +53,7 @@ static inline auto createInjector() {
       bind<coriander::IBoardStateStandbyHandler>()
           .to<testing::mock::MockBoardStateStandbyHandler>(),
       bind<coriander::os::ISemaphore>().to<testing::mock::MockSemaphore>(),
+      bind<coriander::os::IMutex>().to<coriander::os::posix::Mutex>(),
       bind<coriander::os::IThread>().to<testing::mock::MockThread>());
 }
 }  // namespace
