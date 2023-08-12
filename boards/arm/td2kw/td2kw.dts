@@ -38,7 +38,7 @@
 			compatible = "zephyr,fstab,littlefs";
 			read-size = <16>;
 			prog-size = <16>;
-			cache-size = <4096>; // TODO: scale with RAM size
+			cache-size = <1024>;
 			lookahead-size = <32>;
 			block-cycles = <512>;
 			partition = <&fs_partition>;
