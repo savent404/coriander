@@ -24,6 +24,7 @@
 #include "zephyr_mutex.h"
 #include "zephyr_nvs.h"
 #include "zephyr_semaphore.h"
+#include "zephyr_shell_protocol.h"
 #include "zephyr_systick.h"
 #include "zephyr_thread.h"
 
@@ -44,7 +45,8 @@ static auto zephyr_backends_bindings() {
       di::bind<coriander::os::ISystick>.to<coriander::os::zephyr::Systick>(),
       di::bind<coriander::os::ISemaphore>.to<coriander::os::zephyr::Semaphore>(),
       di::bind<coriander::os::IThread>.to<coriander::os::zephyr::Thread>(),
-      di::bind<coriander::os::IMutex>.to<coriander::os::zephyr::Mutex>());
+      di::bind<coriander::os::IMutex>.to<coriander::os::zephyr::Mutex>(),
+      di::bind<coriander::IProtocolCtl>.to<coriander::zephyr::ShellProtocol>());
 }
 
 static int get_reboot_times() {
