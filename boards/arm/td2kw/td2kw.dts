@@ -175,27 +175,29 @@
 		#address-cells = <1>;
 		#size-cells = <1>;
 
+		/**
+		 * boot    0x0000'0000  64K
+		 * p1      0x0001'0000 448K
+		 * p2      0x0008'0000 448K
+		 * scratch 0x000F'0000  64K
+		 */
+
 		boot_partition: partition@0 {
 			label = "mcuboot";
 			reg = <0x00000000 DT_SIZE_K(64)>;
 			read-only;
 		};
-
-		/*
-		 * The flash starting at offset 0x10000 and ending at
-		 * offset 0x1ffff is reserved for use by the application.
-		 */
-		slot0_partition: partition@20000 {
+		slot0_partition: partition@10000 {
 			label = "image-0";
-			reg = <0x00020000 DT_SIZE_K(128)>;
+			reg = <0x00010000 DT_SIZE_K(448)>;
 		};
-		slot1_partition: partition@40000 {
+		slot1_partition: partition@80000 {
 			label = "image-1";
-			reg = <0x00040000 DT_SIZE_K(128)>;
+			reg = <0x00080000 DT_SIZE_K(448)>;
 		};
-		scratch_partition: partition@60000 {
+		scratch_partition: partition@f0000 {
 			label = "image-scratch";
-			reg = <0x00060000 DT_SIZE_K(128)>;
+			reg = <0x000f0000 DT_SIZE_K(64)>;
 		};
 	};
 };
