@@ -81,11 +81,15 @@ int main(void) {
   os << "Coriander version " << APP_VERSION_STRING << std::endl;
   os << "Reboot times: " << get_reboot_times() << std::endl;
 
+  auto param = injector.create<std::shared_ptr<coriander::ParameterBase>>();
+  param->add(coriander::base::Property{0, "motorctl.mode"});
+
   auto diag_regsiter =
       coriander::application::zephyr::DiagnosisRegister::getInstance();
   auto diag =
       injector.create<std::shared_ptr<coriander::application::Diagnosis>>();
   diag_regsiter->applyAll(*diag);
+
 
   coriander::coriander_loop(loop_hook, std::move(injector));
   return 0;

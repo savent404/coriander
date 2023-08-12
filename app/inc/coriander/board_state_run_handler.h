@@ -21,7 +21,7 @@ struct BoardStateRunHandler : public IBoardStateRunHandler {
     mMotorCtl->start();
 
     if (mMotorCtl->fatalError()) {
-      mMotorCtl->stop();
+      mMotorCtl->emergencyStop();
       mAppStatus->setStatus(IAppStatus::Status::Error);
       mBoardEvent->raiseEvent(IBoardEvent::Event::Crap);
     }
@@ -30,7 +30,7 @@ struct BoardStateRunHandler : public IBoardStateRunHandler {
   virtual void onLoop() noexcept override {
     mMotorCtl->loop();
     if (mMotorCtl->fatalError()) {
-      mMotorCtl->stop();
+      mMotorCtl->emergencyStop();
       mAppStatus->setStatus(IAppStatus::Status::Error);
       mBoardEvent->raiseEvent(IBoardEvent::Event::Crap);
     }
@@ -40,5 +40,6 @@ struct BoardStateRunHandler : public IBoardStateRunHandler {
   std::shared_ptr<IBoardEvent> mBoardEvent;
   std::shared_ptr<motorctl::IMotorCtl> mMotorCtl;
   std::shared_ptr<IAppStatus> mAppStatus;
+  int mSyncId;
 };
 }  // namespace coriander
