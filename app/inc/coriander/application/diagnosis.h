@@ -32,6 +32,7 @@ struct Diagnosis {
     CtrlBoardUpperCommunication,
     CtrlBoardP2pCommunication,
     CtrlBoardLowerCommunication,
+    DrvBoardTemp,
     MAX_ID,
   };
   using DiagDevFunc = std::function<DeviceStatus()>;
