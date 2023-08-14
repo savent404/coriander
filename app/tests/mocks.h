@@ -24,6 +24,7 @@
 #include "coriander/iboard_state_reboot_handler.h"
 #include "coriander/iboard_state_run_handler.h"
 #include "coriander/iboard_state_standby_handler.h"
+#include "coriander/iprotocol_ctl.h"
 #include "coriander/istate_handler.h"
 #include "coriander/motorctl/foc_motor_driver.h"
 #include "coriander/motorctl/ibldc_driver.h"
@@ -33,7 +34,8 @@
 #include "coriander/os/isemaphore.h"
 #include "coriander/os/isystick.h"
 #include "coriander/os/ithread.h"
-#include "coriander/iprotocol_ctl.h"
+#include "coriander/parameter_requirements.h"
+#include "coriander/parameter_requirements_validator.h"
 
 namespace testing {
 namespace mock {
