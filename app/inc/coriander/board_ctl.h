@@ -32,6 +32,12 @@ struct BoardCtl {
     mBoardEvent->eventUnlock();
   }
 
+  void parameterUpdate() {
+    mBoardEvent->eventLock();
+    mBoardEvent->raiseEvent(IBoardEvent::Event::ParameterUpdate);
+    mBoardEvent->eventUnlock();
+  }
+
  private:
   std::shared_ptr<IBoardEvent> mBoardEvent;
   std::shared_ptr<ParameterBase> mParameterBase;
