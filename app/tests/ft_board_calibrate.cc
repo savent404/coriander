@@ -54,7 +54,9 @@ static inline auto createInjector() {
           .to<testing::mock::MockBoardStateStandbyHandler>(),
       bind<coriander::os::ISemaphore>().to<testing::mock::MockSemaphore>(),
       bind<coriander::os::IMutex>().to<coriander::os::posix::Mutex>(),
-      bind<coriander::os::IThread>().to<testing::mock::MockThread>());
+      bind<coriander::os::IThread>().to<testing::mock::MockThread>(),
+      bind<coriander::IParamReqValidator>()
+          .to<testing::mock::MockParamReqValidator>());
 }
 }  // namespace
 

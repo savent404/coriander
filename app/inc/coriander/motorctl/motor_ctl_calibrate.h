@@ -17,6 +17,7 @@
 #include "coriander/motorctl/ivelocity_estimator.h"
 #include "coriander/motorctl/sensor_handler.h"
 #include "coriander/os/isystick.h"
+#include "coriander/parameter_requirements.h"
 #include "coriander/parameters.h"
 
 namespace coriander {
@@ -25,23 +26,31 @@ namespace motorctl {
 /**
  * @brief Motor control for calibration
  *
- * @param calibrate_voltage required float Voltage for calibration
- * @param calibrate_duration required int32_t required Duration for calibration
- * @param motor_supply_voltage required float Motor supply voltage
  */
-struct MotorCtlCalibrate : public IMotorCtl {
+struct MotorCtlCalibrate : public IMotorCtl, public IParamReq {
   using ISystick = os::ISystick;
   MotorCtlCalibrate(std::shared_ptr<IBldcDriver> motor,
                     std::shared_ptr<IElecAngleEstimator> elecAngleEstimator,
                     std::shared_ptr<ParameterBase> param,
                     std::shared_ptr<IBoardEvent> boardEvent,
-                    std::shared_ptr<ISystick> systick);
+                    std::shared_ptr<ISystick> systick,
+                    std::shared_ptr<IParamReqValidator> paramReqValidator);
   virtual void start();
   virtual void stop();
   virtual void loop();
 
   virtual void emergencyStop();
   virtual bool fatalError();
+
+  virtual const ParameterRequireItem* requiredParameters() const {
+    using Type = coriander::base::TypeId;
+    static const ParameterRequireItem items[] = {
+        {"calibrate_voltage", Type::Float},
+        {"calibrate_duration", Type::Int32},
+        {"motor_supply_voltage", Type::Float},
+        PARAMETER_REQ_EOF};
+    return items;
+  }
 
  private:
   std::shared_ptr<IBldcDriver> mMotor;

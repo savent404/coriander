@@ -70,26 +70,55 @@ static int get_reboot_times() {
   return reboot_times;
 }
 
+template <typename T>
+static void zephyr_backend_setup(T& injector) {
+  auto os = coriander::base::LoggerStream(
+      injector.template create<std::shared_ptr<coriander::base::ILogger>>());
+  os << "Coriander version " << APP_VERSION_STRING << std::endl;
+  os << "Reboot times: " << get_reboot_times() << std::endl;
+
+  auto param =
+      injector.template create<std::shared_ptr<coriander::ParameterBase>>();
+  using Property = coriander::base::Property;
+  param->add(Property{0, "motorctl.mode"});
+  param->add(Property{1, "pole_pair"});
+  param->add(Property{0.0f, "elec_angle_offset"});
+  param->add(Property(0.0f, "persist_raw_elec_angle"));
+  param->add(Property(0.0f, "persist_raw_mech_angle"));
+  param->add(Property(0.0f, "mech_angle_offset"));
+  param->add(Property(3.0f, "calibrate_voltage"));
+  param->add(Property(3000, "calibrate_duration"));
+  param->add(Property(24.0f, "motor_supply_voltage"));
+  param->add(Property(0.0f, "mech_angle_pid_p"));
+  param->add(Property(0.0f, "mech_angle_pid_i"));
+  param->add(Property(0.0f, "mech_angle_pid_d"));
+  param->add(Property(0.0f, "mech_angle_pid_output_ramp"));
+  param->add(Property(0.0f, "mech_angle_pid_limit"));
+  param->add(Property(0.0f, "target_position"));
+  param->add(Property(0.0f, "target_velocity"));
+  param->add(Property(0.0f, "velocity_pid_p"));
+  param->add(Property(0.0f, "velocity_pid_i"));
+  param->add(Property(0.0f, "velocity_pid_d"));
+  param->add(Property(0.0f, "velocity_pid_output_ramp"));
+  param->add(Property(0.0f, "velocity_pid_limit"));
+  param->add(Property(16, "velocity_sample_window_size"));
+  param->add(Property(1000, "velocity_sample_window_time"));
+  param->add(Property(10, "velocity_sample_minimal_duration"));
+
+  auto diag_regsiter =
+      coriander::application::zephyr::DiagnosisRegister::getInstance();
+  auto diag = injector.template create<
+      std::shared_ptr<coriander::application::Diagnosis>>();
+  diag_regsiter->applyAll(*diag);
+}
+
 }  // namespace
 
 int main(void) {
   auto injector =
       coriander::coriander_create_injector(zephyr_backends_bindings());
 
-  auto os = coriander::base::LoggerStream(
-      injector.create<std::shared_ptr<coriander::base::ILogger>>());
-  os << "Coriander version " << APP_VERSION_STRING << std::endl;
-  os << "Reboot times: " << get_reboot_times() << std::endl;
-
-  auto param = injector.create<std::shared_ptr<coriander::ParameterBase>>();
-  param->add(coriander::base::Property{0, "motorctl.mode"});
-
-  auto diag_regsiter =
-      coriander::application::zephyr::DiagnosisRegister::getInstance();
-  auto diag =
-      injector.create<std::shared_ptr<coriander::application::Diagnosis>>();
-  diag_regsiter->applyAll(*diag);
-
+  zephyr_backend_setup(injector);
 
   coriander::coriander_loop(loop_hook, std::move(injector));
   return 0;

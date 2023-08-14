@@ -12,6 +12,7 @@
 #include "coriander/motorctl/encoder_mech_angle_estimator.h"
 #include "coriander/motorctl/iencoder.h"
 #include "coriander/parameters.h"
+#include "mocks.h"
 
 using namespace coriander;
 using namespace coriander::base;
@@ -39,8 +40,10 @@ struct dummyEncoder : public IEncoder {
 TEST(ISensor, BasicEncoderMechAngleEstimator) {
   auto encoder = std::make_shared<::dummyEncoder>();
   auto param = std::make_shared<ParameterBase>();
+  auto paramReqValidator =
+      std::make_shared<testing::mock::MockParamReqValidator>();
 
-  EncoderMechAngleEstimator estimator(encoder, param);
+  EncoderMechAngleEstimator estimator(encoder, param, paramReqValidator);
 
   encoder->mCC = 0;
   encoder->mOverflow = 2;
@@ -55,8 +58,10 @@ TEST(ISensor, BasicEncoderMechAngleEstimator) {
 TEST(ISensor, CalibrateEncoderMechAngleEstimator) {
   std::shared_ptr<::dummyEncoder> encoder = std::make_shared<::dummyEncoder>();
   std::shared_ptr<ParameterBase> param = std::make_shared<ParameterBase>();
+  auto paramReqValidator =
+      std::make_shared<testing::mock::MockParamReqValidator>();
 
-  EncoderMechAngleEstimator estimator(encoder, param);
+  EncoderMechAngleEstimator estimator(encoder, param, paramReqValidator);
 
   param->add(Property{0.0f, "mech_angle_offset"});
 
@@ -74,8 +79,10 @@ TEST(ISensor, CalibrateEncoderMechAngleEstimator) {
 TEST(ISensor, PersistEncoderMechAngleEstimator) {
   auto encoder = std::make_shared<::dummyEncoder>();
   auto param = std::make_shared<ParameterBase>();
+  auto paramReqValidator =
+      std::make_shared<testing::mock::MockParamReqValidator>();
 
-  EncoderMechAngleEstimator estimator(encoder, param);
+  EncoderMechAngleEstimator estimator(encoder, param, paramReqValidator);
 
   param->add(Property{0.0f, "mech_angle_offset"});
   param->add(Property{0.0f, "persist_raw_mech_angle"});

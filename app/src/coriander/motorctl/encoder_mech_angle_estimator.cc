@@ -12,15 +12,17 @@
 namespace coriander {
 namespace motorctl {
 EncoderMechAngleEstimator::EncoderMechAngleEstimator(
-    std::shared_ptr<IEncoder> encoder,
-    std::shared_ptr<ParameterBase> param) noexcept
+    std::shared_ptr<IEncoder> encoder, std::shared_ptr<ParameterBase> param,
+    std::shared_ptr<IParamReqValidator> paramReqValidator) noexcept
     : mEncoder(encoder),
       mParam(param),
       mRawMechAngle(0.0f),
       mPersistOffset(0.0f),
       mMechAngleOffset(0.0f),
       mMechAngle(0.0f),
-      mNeedCalibrate(true) {}
+      mNeedCalibrate(true) {
+  paramReqValidator->addParamReq(this);
+}
 
 void EncoderMechAngleEstimator::enable() {
   if (mParam->has("mech_angle_offset"_hash)) {

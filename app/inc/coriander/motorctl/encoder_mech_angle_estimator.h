@@ -12,6 +12,7 @@
 #include "coriander/base/const_hash.h"
 #include "coriander/motorctl/iencoder.h"
 #include "coriander/motorctl/imech_angle_estimator.h"
+#include "coriander/parameter_requirements.h"
 #include "coriander/parameters.h"
 
 namespace coriander {
@@ -21,14 +22,12 @@ using namespace coriander::base;
 
 /**
  * @brief Mechanical angle estimator based on encoder
- *
- * @param mech_angle_offset       float   mechanical angle offset
- * @param persist_raw_mech_angle  float   persist mechanical angle, used to
- *                                        after power off
  */
-struct EncoderMechAngleEstimator : public IMechAngleEstimator {
-  EncoderMechAngleEstimator(std::shared_ptr<IEncoder> encoder,
-                            std::shared_ptr<ParameterBase> param) noexcept;
+struct EncoderMechAngleEstimator : public IMechAngleEstimator,
+                                   public IParamReq {
+  EncoderMechAngleEstimator(
+      std::shared_ptr<IEncoder> encoder, std::shared_ptr<ParameterBase> param,
+      std::shared_ptr<IParamReqValidator> paramReqValidator) noexcept;
 
   virtual void enable();
   virtual void disable();
@@ -37,6 +36,16 @@ struct EncoderMechAngleEstimator : public IMechAngleEstimator {
   virtual void calibrate();
   virtual bool needCalibrate();
   virtual float getMechanicalAngle() noexcept;
+
+  virtual const ParameterRequireItem* requiredParameters() const {
+    using coriander::base::operator""_hash;
+    using Type = coriander::base::TypeId;
+    static const ParameterRequireItem requiredParam[] = {
+        {"mech_angle_offset", Type::Float},
+        {"persist_raw_mech_angle", Type::Float},
+        PARAMETER_REQ_EOF};
+    return requiredParam;
+  }
 
  private:
   std::shared_ptr<IEncoder> mEncoder;

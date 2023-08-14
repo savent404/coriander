@@ -8,19 +8,22 @@
 #include "coriander/base/loggerstream.h"
 #include "coriander/iboard_event.h"
 #include "coriander/iboard_state_init_handler.h"
+#include "coriander/parameter_requirements.h"
 
 namespace coriander {
 
 using application::IAppStatus;
 struct BoardStateInitHandler : public IBoardStateInitHandler {
-  BoardStateInitHandler(std::shared_ptr<IAppStatus> appStatus,
-                        std::shared_ptr<IBoardEvent> event,
-                        std::shared_ptr<application::Diagnosis> diagnosis,
-                        std::shared_ptr<base::ILogger> logger) noexcept
+  BoardStateInitHandler(
+      std::shared_ptr<IAppStatus> appStatus, std::shared_ptr<IBoardEvent> event,
+      std::shared_ptr<application::Diagnosis> diagnosis,
+      std::shared_ptr<base::ILogger> logger,
+      std::shared_ptr<IParamReqValidator> paramReqValidator) noexcept
       : mAppStatus(appStatus),
         mEvent(event),
         mDiagnosis(diagnosis),
-        mLogger(logger) {
+        mLogger(logger),
+        mParamReqValidator(paramReqValidator) {
     if (mDiagnosis) {
       mDiagnosis->addDiagInspector(
           [this](application::Diagnosis::DiagDevId id,
@@ -43,6 +46,12 @@ struct BoardStateInitHandler : public IBoardStateInitHandler {
   virtual void onEnter() noexcept override {
     mAppStatus->setStatus(IAppStatus::Status::Busy);
 
+    // do parma check, if any error, goto error state
+    if (mParamReqValidator->validate() == false) {
+      mEvent->raiseEvent(IBoardEvent::Event::Crap);
+      return;
+    }
+
     // do diagnosis, if any error, goto error state
     mDiagnosis->inspect();
   }
@@ -60,6 +69,7 @@ struct BoardStateInitHandler : public IBoardStateInitHandler {
   std::shared_ptr<IBoardEvent> mEvent;
   std::shared_ptr<application::Diagnosis> mDiagnosis;
   std::shared_ptr<base::ILogger> mLogger;
+  std::shared_ptr<IParamReqValidator> mParamReqValidator;
   bool initDone = false;
 };
 

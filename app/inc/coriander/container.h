@@ -24,6 +24,8 @@
 #include "coriander/board_state_run_handler.h"
 #include "coriander/board_state_standby_handler.h"
 #include "coriander/motorctl/container.h"
+#include "coriander/parameter_requirements.h"
+#include "coriander/parameter_requirements_validator.h"
 
 namespace coriander {
 
@@ -45,7 +47,8 @@ static inline auto createInjector() {
       boost::di::bind<coriander::IBoardStateCalibrateHandler>.to<coriander::BoardStateCalibrateHandler>(),
       boost::di::bind<coriander::IBoardStateFirmwareUpdateHandler>.to<coriander::BoardStateFirmwareUpdateHandler>(),
       boost::di::bind<coriander::IBoardStateRebootHandler>.to<coriander::BoardStateRebootHandler>(),
-      boost::di::bind<coriander::IBoardEvent>.to<coriander::BoardEvent>());
+      boost::di::bind<coriander::IBoardEvent>.to<coriander::BoardEvent>(),
+      boost::di::bind<coriander::IParamReqValidator>.to<coriander::ParamReqValidator>());
 }
 
 static inline auto defaultContainer() {

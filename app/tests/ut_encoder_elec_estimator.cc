@@ -11,6 +11,7 @@
 #include <gtest/gtest.h>
 
 #include "coriander/motorctl/encoder_elec_angle_estimator.h"
+#include "mocks.h"
 
 using namespace coriander;
 using namespace coriander::motorctl;
@@ -35,8 +36,9 @@ struct dummyEncoder : public IEncoder {
 TEST(ISensor, CalibrateEncoderElecAngleEstimator) {
   auto encoder = std::make_shared<::dummyEncoder>();
   auto param = std::make_shared<ParameterBase>();
+  auto paramReqValidator = std::make_shared<testing::mock::MockParamReqValidator>();
 
-  EncoderElecAngleEstimator estimator(encoder, param);
+  EncoderElecAngleEstimator estimator(encoder, param, paramReqValidator);
 
   param->add(Property{4, "pole_pair"});
   ASSERT_TRUE(param->has("pole_pair"_hash));
@@ -58,8 +60,9 @@ TEST(ISensor, CalibrateEncoderElecAngleEstimator) {
 TEST(ISensor, CalibrateEncoderElecAngleEstimatorWithPersist) {
   auto encoder = std::make_shared<::dummyEncoder>();
   auto param = std::make_shared<ParameterBase>();
+  auto paramReqValidator = std::make_shared<testing::mock::MockParamReqValidator>();
 
-  EncoderElecAngleEstimator estimator(encoder, param);
+  EncoderElecAngleEstimator estimator(encoder, param, paramReqValidator);
 
   param->add(Property{4, "pole_pair"});
   param->add(Property{0.0f, "persist_raw_elec_angle"});
@@ -86,8 +89,9 @@ TEST(ISensor, CalibrateEncoderElecAngleEstimatorWithPersist) {
 TEST(ISensor, CalibratedEncoderElecAngleEstimator) {
   auto encoder = std::make_shared<::dummyEncoder>();
   auto param = std::make_shared<ParameterBase>();
+  auto paramReqValidator = std::make_shared<testing::mock::MockParamReqValidator>();
 
-  EncoderElecAngleEstimator estimator(encoder, param);
+  EncoderElecAngleEstimator estimator(encoder, param, paramReqValidator);
 
   param->add(Property{4, "pole_pair"});
   param->add(Property{0.0f, "elec_angle_offset"});
@@ -106,8 +110,9 @@ TEST(ISensor, CalibratedEncoderElecAngleEstimator) {
 TEST(ISensor, CalibratedEncoderElecAngleEstimatorWithPersist) {
   auto encoder = std::make_shared<::dummyEncoder>();
   auto param = std::make_shared<ParameterBase>();
+  auto paramReqValidator = std::make_shared<testing::mock::MockParamReqValidator>();
 
-  EncoderElecAngleEstimator estimator(encoder, param);
+  EncoderElecAngleEstimator estimator(encoder, param, paramReqValidator);
 
   param->add(Property{4, "pole_pair"});
   param->add(Property{10.0f, "elec_angle_offset"});
@@ -132,8 +137,9 @@ TEST(ISensor, CalibratedEncoderElecAngleEstimatorWithPersist) {
 TEST(ISensor, EncoderElecAngleEstimatorRecoveryAfterPowerOn) {
   auto encoder = std::make_shared<::dummyEncoder>();
   auto param = std::make_shared<ParameterBase>();
+  auto paramReqValidator = std::make_shared<testing::mock::MockParamReqValidator>();
 
-  EncoderElecAngleEstimator estimator(encoder, param);
+  EncoderElecAngleEstimator estimator(encoder, param, paramReqValidator);
 
   param->add(Property{4, "pole_pair"});
   param->add(Property{0.0f, "elec_angle_offset"});

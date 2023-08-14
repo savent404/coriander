@@ -14,7 +14,8 @@ namespace motorctl {
 
 VelocityEstimator::VelocityEstimator(
     std::shared_ptr<IMechAngleEstimator> mechAngleEstimator,
-    std::shared_ptr<ParameterBase> param, std::shared_ptr<ISystick> systick)
+    std::shared_ptr<ParameterBase> param, std::shared_ptr<ISystick> systick,
+    std::shared_ptr<IParamReqValidator> paramReqValidator)
     : mMechAngleEstimator(mechAngleEstimator),
       mParam(param),
       mSystick(systick),
@@ -23,7 +24,9 @@ VelocityEstimator::VelocityEstimator(
       mMaxSamples(0),
       mMaxSampleWindowTime(0),
       mMinSampleTime(0),
-      mEnabled(false) {}
+      mEnabled(false) {
+  paramReqValidator->addParamReq(this);
+}
 
 void VelocityEstimator::enable() {
   mMaxSamples = mParam->getValue<int32_t>("velocity_sample_window_size"_hash);

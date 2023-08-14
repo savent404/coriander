@@ -13,6 +13,7 @@
 
 #include "coriander/motorctl/velocity_estimator.h"
 #include "coriander/parameters.h"
+#include "mocks.h"
 
 namespace {
 struct DummyMechAngleEstimator
@@ -43,6 +44,8 @@ TEST(ISensor, BasicVelocityEstimator) {
   auto mechAngleEstimator = std::make_shared<DummyMechAngleEstimator>();
   auto systick = std::make_shared<DummySystick>();
   auto param = std::make_shared<ParameterBase>();
+  auto paramReqValidator =
+      std::make_shared<testing::mock::MockParamReqValidator>();
 
   param->add(Property{16, "velocity_sample_window_size"});
   param->add(Property{500, "velocity_sample_window_time"});
@@ -50,7 +53,7 @@ TEST(ISensor, BasicVelocityEstimator) {
 
   auto velocityEstimator =
       std::make_shared<coriander::motorctl::VelocityEstimator>(
-          mechAngleEstimator, param, systick);
+          mechAngleEstimator, param, systick, paramReqValidator);
 
   velocityEstimator->enable();
 

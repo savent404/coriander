@@ -23,16 +23,12 @@ using namespace coriander::base;
 /**
  * @brief Elecangle estimator based on encoder
  *
- * @param pole_pair<required>     int32_t motor pole pair
- * @param elec_angle_offset       float   electrical angle offset
- * @param persist_raw_elec_angle  float   persist electrical angle, used to
- *                                        after power off
- *
  */
 struct EncoderElecAngleEstimator : public IElecAngleEstimator,
                                    public IParamReq {
-  EncoderElecAngleEstimator(std::shared_ptr<IEncoder> encoder,
-                            std::shared_ptr<ParameterBase> param) noexcept;
+  EncoderElecAngleEstimator(
+      std::shared_ptr<IEncoder> encoder, std::shared_ptr<ParameterBase> param,
+      std::shared_ptr<IParamReqValidator> paramReqValidator) noexcept;
 
   virtual void enable();
   virtual void disable();
@@ -42,15 +38,12 @@ struct EncoderElecAngleEstimator : public IElecAngleEstimator,
   virtual bool needCalibrate();
   virtual float getElectricalAngle() noexcept;
 
- protected:
   virtual const ParameterRequireItem* requiredParameters() const {
-    using coriander::base::operator""_hash;
     constexpr static const ParameterRequireItem items[] = {
-        {"pole_pair", "pole_pair"_hash, TypeId::Int32},
-        {"elec_angle_offset", "elec_angle_offset"_hash, TypeId::Float},
-        {"persist_raw_elec_angle", "persist_raw_elec_angle"_hash,
-         TypeId::Float},
-        {"null", 0, TypeId::Invalid}};
+        {"pole_pair", TypeId::Int32},
+        {"elec_angle_offset", TypeId::Float},
+        {"persist_raw_elec_angle", TypeId::Float},
+        PARAMETER_REQ_EOF};
 
     return &items[0];
   }
