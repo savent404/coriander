@@ -11,6 +11,7 @@
 
 #include "coriander/motorctl/imotorctl.h"
 #include "coriander/motorctl/motor_ctl_dummy.h"
+#include "coriander/motorctl/motor_ctl_position.h"
 #include "coriander/motorctl/motor_ctl_velocity.h"
 #include "coriander/parameter_requirements.h"
 #include "coriander/parameters.h"
@@ -18,13 +19,16 @@
 namespace coriander {
 namespace motorctl {
 struct DynamicMotorCtl : public IMotorCtl, public IParamReq {
-  enum class Mode : int { Dummy = 0, Velocity, MODE_MAX };
+  enum class Mode : int { Dummy = 0, Velocity, Position, MODE_MAX };
 
   DynamicMotorCtl(std::shared_ptr<ParameterBase> param,
                   std::shared_ptr<MotorCtlDummy> dummyMc,
                   std::shared_ptr<MotorCtlVelocity> velocityMc,
+                  std::shared_ptr<MotorCtlPosition> positionMc,
                   std::shared_ptr<IParamReqValidator> paramReqValidator)
-      : mParam(param), mMotorCtl{dummyMc, velocityMc}, mCurrentMc(dummyMc) {
+      : mParam(param),
+        mMotorCtl{dummyMc, velocityMc, positionMc},
+        mCurrentMc(dummyMc) {
     paramReqValidator->addParamReq(this);
   }
 
