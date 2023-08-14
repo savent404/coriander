@@ -15,8 +15,8 @@ namespace coriander {
 namespace motorctl {
 
 EncoderElecAngleEstimator::EncoderElecAngleEstimator(
-    std::shared_ptr<IEncoder> encoder,
-    std::shared_ptr<ParameterBase> param) noexcept
+    std::shared_ptr<IEncoder> encoder, std::shared_ptr<ParameterBase> param,
+    std::shared_ptr<IParamReqValidator> paramReqValidator) noexcept
     : mEncoder(encoder),
       mParam(param),
       mPolePair(-1),
@@ -24,7 +24,9 @@ EncoderElecAngleEstimator::EncoderElecAngleEstimator(
       mRawElecAngle(0),
       mPersistOffset(0),
       mElecAngleOffset(-1),
-      mNeedCalibrate(true) {}
+      mNeedCalibrate(true) {
+  paramReqValidator->addParamReq(this);
+}
 
 void EncoderElecAngleEstimator::enable() {
   // try to get parameter from parameter server

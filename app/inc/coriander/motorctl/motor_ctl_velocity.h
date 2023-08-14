@@ -20,6 +20,7 @@
 #include "coriander/motorctl/pid.h"
 #include "coriander/motorctl/sensor_handler.h"
 #include "coriander/os/isystick.h"
+#include "coriander/parameter_requirements.h"
 #include "coriander/parameters.h"
 
 namespace coriander {
@@ -28,15 +29,8 @@ namespace motorctl {
 /**
  * @brief Motor control for velocity control(without current loop)
  *
- * @param target_velocity required float Target velocity
- * @param motor_supply_voltage required float Motor supply voltage
- * @param velocity_pid_p required float P of velocity pid
- * @param velocity_pid_i required float I of velocity pid
- * @param velocity_pid_d required float D of velocity pid
- * @param velocity_pid_output_ramp required float Output ramp of velocity pid
- * @param velocity_pid_limit required float Limit of velocity pid
  */
-struct MotorCtlVelocity : public IMotorCtl {
+struct MotorCtlVelocity : public IMotorCtl, public IParamReq {
   using DurationEstimator =
       detail::DurationEstimator<detail::DurationEstimatorType::OneShot,
                                 detail::DurationEstimatorUnit::US>;
@@ -47,7 +41,8 @@ struct MotorCtlVelocity : public IMotorCtl {
                    std::shared_ptr<ParameterBase> parameters,
                    std::shared_ptr<FocMotorDriver> focMotorDriver,
                    std::unique_ptr<DurationEstimator> durationEstimator,
-                   std::shared_ptr<base::ILogger> logger)
+                   std::shared_ptr<base::ILogger> logger,
+                   std::shared_ptr<IParamReqValidator> paramReqValidator)
       : mElecAngleEstimator{elecAngleEstimator},
         mVelocityEstimator{velocityEstimator},
         mParameters{parameters},
@@ -55,7 +50,9 @@ struct MotorCtlVelocity : public IMotorCtl {
         mDurationEstimator{std::move(durationEstimator)},
         mLogger{logger},
         mSensorHandler{mElecAngleEstimator, mVelocityEstimator},
-        mVelocityPid{0.0f, 0.0f, 0.0f, 0.0f, 0.0f} {}
+        mVelocityPid{0.0f, 0.0f, 0.0f, 0.0f, 0.0f} {
+    paramReqValidator->addParamReq(this);
+  }
 
   virtual void start();
   virtual void stop();
@@ -65,6 +62,20 @@ struct MotorCtlVelocity : public IMotorCtl {
   virtual bool fatalError();
 
   void setTargetVelocity(float velocityInRpm);
+
+  virtual const ParameterRequireItem* requiredParameters() const {
+    using Type = coriander::base::TypeId;
+    static const ParameterRequireItem items[] = {
+        {"target_velocity", Type::Float},
+        {"motor_supply_voltage", Type::Float},
+        {"velocity_pid_p", Type::Float},
+        {"velocity_pid_i", Type::Float},
+        {"velocity_pid_d", Type::Float},
+        {"velocity_pid_output_ramp", Type::Float},
+        {"velocity_pid_limit", Type::Float},
+        PARAMETER_REQ_EOF};
+    return items;
+  }
 
  private:
   // dependencies

@@ -12,17 +12,21 @@
 #include "coriander/motorctl/imotorctl.h"
 #include "coriander/motorctl/motor_ctl_dummy.h"
 #include "coriander/motorctl/motor_ctl_velocity.h"
+#include "coriander/parameter_requirements.h"
 #include "coriander/parameters.h"
 
 namespace coriander {
 namespace motorctl {
-struct DynamicMotorCtl : public IMotorCtl {
+struct DynamicMotorCtl : public IMotorCtl, public IParamReq {
   enum class Mode : int { Dummy = 0, Velocity, MODE_MAX };
 
   DynamicMotorCtl(std::shared_ptr<ParameterBase> param,
                   std::shared_ptr<MotorCtlDummy> dummyMc,
-                  std::shared_ptr<MotorCtlVelocity> velocityMc)
-      : mParam(param), mMotorCtl{dummyMc, velocityMc}, mCurrentMc(dummyMc) {}
+                  std::shared_ptr<MotorCtlVelocity> velocityMc,
+                  std::shared_ptr<IParamReqValidator> paramReqValidator)
+      : mParam(param), mMotorCtl{dummyMc, velocityMc}, mCurrentMc(dummyMc) {
+    paramReqValidator->addParamReq(this);
+  }
 
   virtual void start() override {
     parseMode();
@@ -33,6 +37,13 @@ struct DynamicMotorCtl : public IMotorCtl {
 
   virtual void emergencyStop() override { mCurrentMc->emergencyStop(); }
   virtual bool fatalError() override { return mCurrentMc->fatalError(); }
+
+  virtual const ParameterRequireItem* requiredParameters() const override {
+    using Type = coriander::base::TypeId;
+    static const ParameterRequireItem items[] = {{"motorctl.mode", Type::Int32},
+                                                 PARAMETER_REQ_EOF};
+    return items;
+  }
 
  protected:
   void parseMode() {

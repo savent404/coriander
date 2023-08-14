@@ -14,6 +14,7 @@
 #include "coriander/motorctl/imech_angle_estimator.h"
 #include "coriander/motorctl/ivelocity_estimator.h"
 #include "coriander/os/isystick.h"
+#include "coriander/parameter_requirements.h"
 #include "coriander/parameters.h"
 
 namespace coriander {
@@ -22,14 +23,8 @@ namespace motorctl {
 /**
  * @brief Velocity Estimator based on time windows(default method)
  *
- * @param velocity_sample_window_size<required> int32_t max size of velocity
- * sample window
- * @param velocity_sample_window_time<required> int32_t max time of velocity
- * sample window
- * @param velocity_sample_minimal_duration<required> int32_t minimal duration
- * of velocity sample
  */
-struct VelocityEstimator : public IVelocityEstimator {
+struct VelocityEstimator : public IVelocityEstimator, public IParamReq {
   using ISystick = coriander::os::ISystick;
 
   struct RecordItem {
@@ -39,9 +34,10 @@ struct VelocityEstimator : public IVelocityEstimator {
 
   using Records = std::list<RecordItem>;
 
-  explicit VelocityEstimator(std::shared_ptr<IMechAngleEstimator> mechAngleEstimator,
-                             std::shared_ptr<ParameterBase> param,
-                             std::shared_ptr<ISystick> systick);
+  explicit VelocityEstimator(
+      std::shared_ptr<IMechAngleEstimator> mechAngleEstimator,
+      std::shared_ptr<ParameterBase> param, std::shared_ptr<ISystick> systick,
+      std::shared_ptr<IParamReqValidator> paramReqValidator);
   virtual void enable();
   virtual void disable();
   virtual bool enabled();
@@ -49,6 +45,17 @@ struct VelocityEstimator : public IVelocityEstimator {
   virtual void calibrate();
   virtual bool needCalibrate();
   virtual float getVelocity();
+
+  virtual const ParameterRequireItem* requiredParameters() const {
+    using coriander::base::operator""_hash;
+    using Type = coriander::base::TypeId;
+    static const ParameterRequireItem requiredParam[] = {
+        {"velocity_sample_window_size", Type::Int32},
+        {"velocity_sample_window_time", Type::Int32},
+        {"velocity_sample_minimal_duration", Type::Int32},
+        PARAMETER_REQ_EOF};
+    return requiredParam;
+  }
 
  private:
   std::shared_ptr<IMechAngleEstimator> mMechAngleEstimator;

@@ -181,5 +181,10 @@ struct MockProtoCtl : public IProtocolCtl {
   MOCK_METHOD(void, loop, (), (noexcept));
 };
 
+struct MockParamReqValidator : public IParamReqValidator {
+  MOCK_METHOD(void, addParamReq, (IParamReq*));
+  MOCK_METHOD(bool, validate, ());
+};
+
 }  // namespace mock
 }  // namespace testing

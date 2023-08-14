@@ -16,23 +16,27 @@
 #include "coriander/motorctl/imech_angle_estimator.h"
 #include "coriander/motorctl/motor_ctl_velocity.h"
 #include "coriander/motorctl/sensor_handler.h"
+#include "coriander/parameter_requirements.h"
 
 namespace coriander {
 namespace motorctl {
 
-struct MotorCtlPosition : public IMotorCtl {
+struct MotorCtlPosition : public IMotorCtl, public IParamReq {
   MotorCtlPosition(std::shared_ptr<MotorCtlVelocity> motorCtlVelocity,
                    std::shared_ptr<IMechAngleEstimator> mechAngleEstimator,
                    std::unique_ptr<DurationEstimatorDefault> durationEstimator,
                    std::shared_ptr<ParameterBase> parameters,
-                   std::shared_ptr<base::ILogger> logger)
+                   std::shared_ptr<base::ILogger> logger,
+                   std::shared_ptr<IParamReqValidator> paramReqValidator)
       : mMotorCtlVelocity{motorCtlVelocity},
         mMechAngleEstimator{mechAngleEstimator},
         mParameters{parameters},
         mDurationEstimator{std::move(durationEstimator)},
         mLogger{logger},
         mSensorHandler{mMechAngleEstimator},
-        mMechAnglePid(0.0f, 0.0f, 0.0f, 0.0f, 0.0f) {}
+        mMechAnglePid(0.0f, 0.0f, 0.0f, 0.0f, 0.0f) {
+    paramReqValidator->addParamReq(this);
+  }
 
   virtual void start();
   virtual void stop();
@@ -40,6 +44,19 @@ struct MotorCtlPosition : public IMotorCtl {
 
   virtual void emergencyStop();
   virtual bool fatalError();
+
+  virtual const ParameterRequireItem* requiredParameters() const {
+    using Type = coriander::base::TypeId;
+    static const ParameterRequireItem items[] = {
+        {"mech_angle_pid_p", Type::Float},
+        {"mech_angle_pid_i", Type::Float},
+        {"mech_angle_pid_d", Type::Float},
+        {"mech_angle_pid_output_ramp", Type::Float},
+        {"mech_angle_pid_limit", Type::Float},
+        {"target_position", Type::Float},
+        PARAMETER_REQ_EOF};
+    return items;
+  }
 
  protected:
   std::shared_ptr<MotorCtlVelocity> mMotorCtlVelocity;

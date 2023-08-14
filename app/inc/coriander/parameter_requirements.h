@@ -16,9 +16,11 @@ namespace coriander {
 
 struct ParameterRequireItem {
   const char* name;
-  uint32_t name_hash;
   base::TypeId type;
 };
+
+#define PARAMETER_REQ_EOF \
+  { nullptr, coriander::base::TypeId::Invalid }
 
 struct IParamReq {
   virtual ~IParamReq() = default;

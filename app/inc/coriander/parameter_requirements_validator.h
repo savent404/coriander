@@ -26,9 +26,9 @@ struct ParamReqValidator : public IParamReqValidator {
 
   virtual void addParamReq(IParamReq *req) {
     const ParameterRequireItem *items = req->requiredParameters();
-    while (items->name_hash != 0 &&
+    while (items->name != nullptr &&
            items->type != coriander::base::TypeId::Invalid) {
-      mParamMap[items->name_hash] = items;
+      mParamMap[coriander::base::string_hash(items->name)] = items;
       items++;
     }
   }
@@ -36,12 +36,12 @@ struct ParamReqValidator : public IParamReqValidator {
   virtual bool validate() {
     for (auto &it : mParamMap) {
       auto &item = it.second;
-      if (!mParam->has(item->name_hash)) {
+      if (!mParam->has(item->name)) {
         auto os = coriander::base::LoggerStream(mLogger);
         os << "required param " << item->name << " not found" << std::endl;
         return false;
       }
-      auto &param = mParam->get(item->name_hash);
+      auto &param = mParam->get(item->name);
       auto &v = param.value();
       if (coriander::base::TypeHelper::type(std::move(v)) != item->type) {
         auto os = coriander::base::LoggerStream(mLogger);

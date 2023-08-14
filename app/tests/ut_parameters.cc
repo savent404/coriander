@@ -69,19 +69,17 @@ namespace {
 struct Foo : public coriander::IParamReq {
  protected:
   virtual const coriander::ParameterRequireItem* requiredParameters() const {
-    using coriander::base::operator""_hash;
     constexpr static const coriander::ParameterRequireItem items[] = {
-        {"t1", "t1"_hash, coriander::TypeId::Int32},
-        {"t2", "t2"_hash, coriander::TypeId::Float},
-        {"t3", "t3"_hash, coriander::TypeId::String},
-        {"null", 0, coriander::TypeId::Invalid}};
+        {"t1", coriander::TypeId::Int32},
+        {"t2", coriander::TypeId::Float},
+        {"t3", coriander::TypeId::String},
+        {nullptr, coriander::TypeId::Invalid}};
 
     return &items[0];
   }
 };
 }  // namespace
 
-#if 1
 TEST(Parameter, requirements) {
   using Property = coriander::Property;
   auto param = std::make_shared<coriander::ParameterBase>();
@@ -97,4 +95,3 @@ TEST(Parameter, requirements) {
   param->add(Property{"foo", "t3", "null for t3"});
   ASSERT_EQ(validator->validate(), true);
 }
-#endif

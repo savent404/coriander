@@ -39,13 +39,15 @@ using MockLogger = testing::mock::MockLogger;
 using namespace boost::di;
 
 static auto createInjector() {
-  return make_injector(bind<IBldcDriver>().to<MockBldcDriver>(),
-                       bind<IElecAngleEstimator>().to<MockElecAngleEstimator>(),
-                       bind<ISystick>().to<MockSystick>(),
-                       bind<ParameterBase>().to<ParameterBase>(),
-                       bind<ILogger>().to<MockLogger>(),
-                       bind<IBoardEvent>().to<MockBoardEvent>(),
-                       bind<IMotorCtl>().to<MotorCtlCalibrate>());
+  return make_injector(
+      bind<IBldcDriver>().to<MockBldcDriver>(),
+      bind<IElecAngleEstimator>().to<MockElecAngleEstimator>(),
+      bind<ISystick>().to<MockSystick>(),
+      bind<ParameterBase>().to<ParameterBase>(),
+      bind<ILogger>().to<MockLogger>(),
+      bind<IBoardEvent>().to<MockBoardEvent>(),
+      bind<IMotorCtl>().to<MotorCtlCalibrate>(),
+      bind<IParamReqValidator>().to<testing::mock::MockParamReqValidator>());
 }
 
 using testing::Return;
@@ -69,7 +71,10 @@ TEST(MotorCtl, calibrate) {
   EXPECT_CALL(*elecAngle, enable()).Times(1);
   EXPECT_CALL(*elecAngle, enabled()).Times(1).WillOnce(Return(false));
   EXPECT_CALL(*systick, systick_ms()).Times(1).WillOnce(Return(0));
-  EXPECT_CALL(*motor, setPhaseDutyCycle(static_cast<uint16_t>(UINT16_MAX * 5.0f / 16.0f), 0, 0)).Times(1);
+  EXPECT_CALL(
+      *motor,
+      setPhaseDutyCycle(static_cast<uint16_t>(UINT16_MAX * 5.0f / 16.0f), 0, 0))
+      .Times(1);
   mc->start();
 
   EXPECT_CALL(*elecAngle, sync()).Times(5);
