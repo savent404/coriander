@@ -12,6 +12,7 @@
 #include "coriander/base/const_hash.h"
 #include "coriander/motorctl/ielec_angle_estimator.h"
 #include "coriander/motorctl/iencoder.h"
+#include "coriander/parameter_requirements.h"
 #include "coriander/parameters.h"
 
 namespace coriander {
@@ -28,7 +29,8 @@ using namespace coriander::base;
  *                                        after power off
  *
  */
-struct EncoderElecAngleEstimator : public IElecAngleEstimator {
+struct EncoderElecAngleEstimator : public IElecAngleEstimator,
+                                   public IParamReq {
   EncoderElecAngleEstimator(std::shared_ptr<IEncoder> encoder,
                             std::shared_ptr<ParameterBase> param) noexcept;
 
@@ -39,6 +41,19 @@ struct EncoderElecAngleEstimator : public IElecAngleEstimator {
   virtual void calibrate();
   virtual bool needCalibrate();
   virtual float getElectricalAngle() noexcept;
+
+ protected:
+  virtual const ParameterRequireItem* requiredParameters() const {
+    using coriander::base::operator""_hash;
+    constexpr static const ParameterRequireItem items[] = {
+        {"pole_pair", "pole_pair"_hash, TypeId::Int32},
+        {"elec_angle_offset", "elec_angle_offset"_hash, TypeId::Float},
+        {"persist_raw_elec_angle", "persist_raw_elec_angle"_hash,
+         TypeId::Float},
+        {"null", 0, TypeId::Invalid}};
+
+    return &items[0];
+  }
 
  private:
   std::shared_ptr<IEncoder> mEncoder;

@@ -9,7 +9,10 @@
  */
 #include <gtest/gtest.h>
 
+#include "coriander/parameter_requirements.h"
+#include "coriander/parameter_requirements_validator.h"
 #include "coriander/parameters.h"
+#include "posix_logger.h"
 
 TEST(Parameter, basic) {
   using namespace coriander;
@@ -61,3 +64,37 @@ TEST(Parameter, basic_map) {
   ASSERT_EQ(mirror_param.getValue<int>("t1"), 0);
   ASSERT_EQ(mirror_param.getValue<int>("t2"), 1);
 }
+
+namespace {
+struct Foo : public coriander::IParamReq {
+ protected:
+  virtual const coriander::ParameterRequireItem* requiredParameters() const {
+    using coriander::base::operator""_hash;
+    constexpr static const coriander::ParameterRequireItem items[] = {
+        {"t1", "t1"_hash, coriander::TypeId::Int32},
+        {"t2", "t2"_hash, coriander::TypeId::Float},
+        {"t3", "t3"_hash, coriander::TypeId::String},
+        {"null", 0, coriander::TypeId::Invalid}};
+
+    return &items[0];
+  }
+};
+}  // namespace
+
+#if 1
+TEST(Parameter, requirements) {
+  using Property = coriander::Property;
+  auto param = std::make_shared<coriander::ParameterBase>();
+  auto validator = std::make_shared<coriander::ParamReqValidator>(
+      std::make_shared<coriander::base::posix::Logger>(), param);
+  auto foo = std::make_shared<Foo>();
+
+  validator->addParamReq(foo.get());
+  ASSERT_FALSE(validator->validate());
+
+  param->add(Property{0, "t1", "null for t1"});
+  param->add(Property{1.0f, "t2", "null for t2"});
+  param->add(Property{"foo", "t3", "null for t3"});
+  ASSERT_EQ(validator->validate(), true);
+}
+#endif
