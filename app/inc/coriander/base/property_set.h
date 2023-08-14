@@ -39,6 +39,15 @@ struct IPropertyVisitor {
   virtual void visit(const Property& property) noexcept = 0;
 };
 
+struct PropertyVisitorWrapper : IPropertyVisitor {
+  PropertyVisitorWrapper(std::function<void(const Property&)> func)
+      : func(func) {}
+  virtual void visit(const Property& property) noexcept { func(property); }
+
+ private:
+  std::function<void(const Property&)> func;
+};
+
 struct IPropertySet {
   virtual ~IPropertySet() = default;
 
