@@ -70,6 +70,47 @@ static int get_reboot_times() {
   return reboot_times;
 }
 
+static void parameter_default_value_setup(
+    std::shared_ptr<coriander::ParameterBase> param) {
+  using Property = coriander::base::Property;
+  using P = Property;
+
+  const static Property properties[] = {
+      P{0, "motorctl.mode", "0:dummy, 1:velocity, 2:position"},
+      P{1, "pole_pair", "motor pole pair"},
+      P{0.0f, "elec_angle_offset", "electrical angle offset, unit: degree"},
+      P{0.0f, "persist_raw_elec_angle",
+        "electrical angle, persistent value, unit: degree"},
+      P{0.0f, "persist_raw_mech_angle",
+        "mechanical angle, persistent value. unit: degree"},
+      P{0.0f, "mech_angle_offset", "mechanical angle offset, unit: degree"},
+      P{3.0f, "calibrate_voltage", "calibrate voltage, unit: volt"},
+      P{3000, "calibrate_duration", "calibrate duration, unit: ms"},
+      P{24.0f, "motor_supply_voltage", "motor supply voltage, unit: volt"},
+      P{0.0f, "mech_angle_pid_p"},
+      P{0.0f, "mech_angle_pid_i"},
+      P{0.0f, "mech_angle_pid_d"},
+      P{0.0f, "mech_angle_pid_output_ramp", "maxium ramp of output"},
+      P{0.0f, "mech_angle_pid_limit", "maxium output"},
+      P{0.0f, "target_position", "target position, unit: degree"},
+      P{0.0f, "target_velocity", "target velocity, unit: RPM"},
+      P{0.0f, "velocity_pid_p"},
+      P{0.0f, "velocity_pid_i"},
+      P{0.0f, "velocity_pid_d"},
+      P{0.0f, "velocity_pid_output_ramp", "maxium ramp of output"},
+      P{0.0f, "velocity_pid_limit", "maxium output"},
+      P{16, "velocity_sample_window_size",
+        "window size of velocity estimator, default: 16"},
+      P{1000, "velocity_sample_window_time",
+        "max window time of velocity estimator, default: 1000ms"},
+      P{10, "velocity_sample_minimal_duration",
+        "minimal duration of velocity estimator, default: 10ms"},
+  };
+  for (auto& p : properties) {
+    param->add(p);
+  }
+}
+
 template <typename T>
 static void zephyr_backend_setup(T& injector) {
   auto os = coriander::base::LoggerStream(
@@ -79,31 +120,7 @@ static void zephyr_backend_setup(T& injector) {
 
   auto param =
       injector.template create<std::shared_ptr<coriander::ParameterBase>>();
-  using Property = coriander::base::Property;
-  param->add(Property{0, "motorctl.mode"});
-  param->add(Property{1, "pole_pair"});
-  param->add(Property{0.0f, "elec_angle_offset"});
-  param->add(Property(0.0f, "persist_raw_elec_angle"));
-  param->add(Property(0.0f, "persist_raw_mech_angle"));
-  param->add(Property(0.0f, "mech_angle_offset"));
-  param->add(Property(3.0f, "calibrate_voltage"));
-  param->add(Property(3000, "calibrate_duration"));
-  param->add(Property(24.0f, "motor_supply_voltage"));
-  param->add(Property(0.0f, "mech_angle_pid_p"));
-  param->add(Property(0.0f, "mech_angle_pid_i"));
-  param->add(Property(0.0f, "mech_angle_pid_d"));
-  param->add(Property(0.0f, "mech_angle_pid_output_ramp"));
-  param->add(Property(0.0f, "mech_angle_pid_limit"));
-  param->add(Property(0.0f, "target_position"));
-  param->add(Property(0.0f, "target_velocity"));
-  param->add(Property(0.0f, "velocity_pid_p"));
-  param->add(Property(0.0f, "velocity_pid_i"));
-  param->add(Property(0.0f, "velocity_pid_d"));
-  param->add(Property(0.0f, "velocity_pid_output_ramp"));
-  param->add(Property(0.0f, "velocity_pid_limit"));
-  param->add(Property(16, "velocity_sample_window_size"));
-  param->add(Property(1000, "velocity_sample_window_time"));
-  param->add(Property(10, "velocity_sample_minimal_duration"));
+  parameter_default_value_setup(param);
 
   auto diag_regsiter =
       coriander::application::zephyr::DiagnosisRegister::getInstance();
