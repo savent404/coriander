@@ -39,6 +39,7 @@ struct DummySystick : public coriander::os::ISystick {
 using Property = coriander::base::Property;
 using namespace coriander;
 using namespace coriander::base;
+using ParamId = coriander::base::ParamId;
 
 TEST(ISensor, BasicVelocityEstimator) {
   auto mechAngleEstimator = std::make_shared<DummyMechAngleEstimator>();
@@ -47,9 +48,9 @@ TEST(ISensor, BasicVelocityEstimator) {
   auto paramReqValidator =
       std::make_shared<testing::mock::MockParamReqValidator>();
 
-  param->add(Property{16, "velocity_sample_window_size"});
-  param->add(Property{500, "velocity_sample_window_time"});
-  param->add(Property{30, "velocity_sample_minimal_duration"});
+  param->add(Property{16, ParamId::VelocitySampleWindowSize});
+  param->add(Property{500, ParamId::VelocitySampleWindowTime});
+  param->add(Property{30, ParamId::VelocitySampleMinimalDuration});
 
   auto velocityEstimator =
       std::make_shared<coriander::motorctl::VelocityEstimator>(

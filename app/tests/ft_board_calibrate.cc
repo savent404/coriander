@@ -79,9 +79,10 @@ TEST(BoardStateCalibrateHandler, Calibrate) {
       c.create<std::shared_ptr<testing::mock::MockElecAngleEstimator>>();
 
   // init required parameters
-  param->add(Property{5.0f, "calibrate_voltage"});
-  param->add(Property{3000, "calibrate_duration"});
-  param->add(Property{10.0f, "motor_supply_voltage"});
+  using ParamId = coriander::base::ParamId;
+  param->add(Property{5.0f, ParamId::CalibrateVoltage});
+  param->add(Property{3000, ParamId::CalibrateDuration});
+  param->add(Property{10.0f, ParamId::MotorSupplyVoltage});
 
   auto board = c.create<std::shared_ptr<coriander::IBoardState>>();
   event->raiseEvent(coriander::IBoardEvent::Event::BoardInited);

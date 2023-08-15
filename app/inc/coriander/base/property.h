@@ -13,30 +13,35 @@
 #include <functional>
 
 #include "coriander/base/const_hash.h"
+#include "coriander/base/param.h"
 #include "coriander/base/type.h"
+#include "param.h"
 
 namespace coriander {
 namespace base {
 
 struct Property {
-  explicit Property(const Type& value, const char* name,
-                    const char* desc = "null")
-      : m_value(value), m_name(name), m_desc(desc) {}
-  explicit Property(Type&& value, const char* name, const char* desc = "null")
-      : m_value(std::move(value)), m_name(name), m_desc(desc) {}
+  using ParamId = coriander::base::ParamId;
+  explicit Property(const Type& value, ParamId id)
+      : m_value(value),
+        m_name(id._to_string()),
+        m_desc(ParamDescriber::getParamDescription(id)),
+        m_id(id) {}
 
   Property(const Property&) = default;
   Property(Property&&) = default;
 
   Type& value() { return m_value; }
   const Type& value() const { return m_value; }
+
   void setValue(Type value) { m_value = value; }
+  ParamId id() const { return m_id; }
   const char* name() const { return m_name; }
   const char* desc() const { return m_desc; }
 
   bool operator==(const Property& other) const noexcept {
     return !std::strcmp(m_name, other.m_name) &&
-           !std::strcmp(m_desc, other.m_desc) &&
+           !std::strcmp(m_desc, other.m_desc) && m_id == other.m_id &&
            TypeHelper::TypeCompare(m_value, other.m_value);
   }
 
@@ -44,6 +49,7 @@ struct Property {
   Type m_value;
   const char* m_name;
   const char* m_desc;
+  base::ParamId m_id = base::ParamId::Unknow;
 };
 
 }  // namespace base

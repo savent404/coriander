@@ -52,25 +52,27 @@ static auto createInjector() {
 }  // namespace
 
 TEST(BoardStateRun, basic) {
+  using ParamId = coriander::base::ParamId;
+  using Property = coriander::base::Property;
   using AppStatus = coriander::application::IAppStatus::Status;
   auto c = coriander::coriander_create_injector(createInjector());
 
   auto param = c.create<std::shared_ptr<coriander::ParameterBase>>();
-  param->add(coriander::base::Property{1, "motorctl.mode"});
-  param->add(coriander::base::Property{1.0f, "velocity_pid_p"});
-  param->add(coriander::base::Property{0.0f, "velocity_pid_i"});
-  param->add(coriander::base::Property{0.0f, "velocity_pid_d"});
-  param->add(coriander::base::Property{99999.0f, "velocity_pid_output_ramp"});
-  param->add(coriander::base::Property{99999.0f, "velocity_pid_limit"});
-  param->add(coriander::base::Property{600.0f, "target_velocity"});
-  param->add(coriander::base::Property{16.0f, "motor_supply_voltage"});
-  param->add(coriander::base::Property(16, "velocity_sample_window_size"));
-  param->add(coriander::base::Property{3500, "velocity_sample_window_time"});
-  param->add(coriander::base::Property{50, "velocity_sample_minimal_duration"});
-  param->add(coriander::base::Property{4, "pole_pair"});
-  param->add(coriander::base::Property{
+  param->add(Property{1, ParamId::MotorCtlMode});
+  param->add(Property{1.0f, ParamId::VelocityPidP});
+  param->add(Property{0.0f, ParamId::VelocityPidI});
+  param->add(Property{0.0f, ParamId::VelocityPidD});
+  param->add(Property{99999.0f, ParamId::VelocityPidOutputRamp});
+  param->add(Property{99999.0f, ParamId::VelocityPidLimit});
+  param->add(Property{600.0f, ParamId::TargetVelocity});
+  param->add(Property{16.0f, ParamId::MotorSupplyVoltage});
+  param->add(Property(16, ParamId::VelocitySampleWindowSize));
+  param->add(Property{3500, ParamId::VelocitySampleWindowTime});
+  param->add(Property{50, ParamId::VelocitySampleMinimalDuration});
+  param->add(Property{4, ParamId::PolePair});
+  param->add(Property{
       static_cast<int>(coriander::motorctl::DynamicMotorCtl::Mode::Velocity),
-      "motorctl.mode"});
+      ParamId::MotorCtlMode});
 
   auto encoder = c.create<std::shared_ptr<testing::mock::MockEncoder>>();
 

@@ -29,11 +29,11 @@ VelocityEstimator::VelocityEstimator(
 }
 
 void VelocityEstimator::enable() {
-  mMaxSamples = mParam->getValue<int32_t>("velocity_sample_window_size"_hash);
+  mMaxSamples = mParam->getValue<int32_t>("VelocitySampleWindowSize"_hash);
   mMaxSampleWindowTime =
-      mParam->getValue<int32_t>("velocity_sample_window_time"_hash);
+      mParam->getValue<int32_t>("VelocitySampleWindowTime"_hash);
   mMinSampleTime =
-      mParam->getValue<int32_t>("velocity_sample_minimal_duration"_hash);
+      mParam->getValue<int32_t>("VelocitySampleMinimalDuration"_hash);
 
   if (!mMechAngleEstimator->enabled()) {
     mMechAngleEstimator->enable();

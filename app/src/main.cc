@@ -13,6 +13,7 @@
 #include "app_version.h"
 #include "coriander/application/diagnosis.h"
 #include "coriander/base/loggerstream.h"
+#include "coriander/base/param.h"
 #include "coriander/coriander.h"
 
 // backends
@@ -73,38 +74,34 @@ static int get_reboot_times() {
 static void parameter_default_value_setup(
     std::shared_ptr<coriander::ParameterBase> param) {
   using Property = coriander::base::Property;
+  using ID = coriander::base::ParamId;
   using P = Property;
 
   const static Property properties[] = {
-      P{0, "motorctl.mode", "0:dummy, 1:velocity, 2:position"},
-      P{1, "pole_pair", "motor pole pair"},
-      P{0.0f, "elec_angle_offset", "electrical angle offset, unit: degree"},
-      P{0.0f, "persist_raw_elec_angle",
-        "electrical angle, persistent value, unit: degree"},
-      P{0.0f, "persist_raw_mech_angle",
-        "mechanical angle, persistent value. unit: degree"},
-      P{0.0f, "mech_angle_offset", "mechanical angle offset, unit: degree"},
-      P{3.0f, "calibrate_voltage", "calibrate voltage, unit: volt"},
-      P{3000, "calibrate_duration", "calibrate duration, unit: ms"},
-      P{24.0f, "motor_supply_voltage", "motor supply voltage, unit: volt"},
-      P{0.0f, "mech_angle_pid_p"},
-      P{0.0f, "mech_angle_pid_i"},
-      P{0.0f, "mech_angle_pid_d"},
-      P{0.0f, "mech_angle_pid_output_ramp", "maxium ramp of output"},
-      P{0.0f, "mech_angle_pid_limit", "maxium output"},
-      P{0.0f, "target_position", "target position, unit: degree"},
-      P{0.0f, "target_velocity", "target velocity, unit: RPM"},
-      P{0.0f, "velocity_pid_p"},
-      P{0.0f, "velocity_pid_i"},
-      P{0.0f, "velocity_pid_d"},
-      P{0.0f, "velocity_pid_output_ramp", "maxium ramp of output"},
-      P{0.0f, "velocity_pid_limit", "maxium output"},
-      P{16, "velocity_sample_window_size",
-        "window size of velocity estimator, default: 16"},
-      P{1000, "velocity_sample_window_time",
-        "max window time of velocity estimator, default: 1000ms"},
-      P{10, "velocity_sample_minimal_duration",
-        "minimal duration of velocity estimator, default: 10ms"},
+      P{0, ID::MotorCtlMode},
+      P{1, ID::PolePair},
+      P{0.0f, ID::ElecAngleOffset},
+      P{0.0f, ID::PersistRawElecAngle},
+      P{0.0f, ID::PersistRawMechAngle},
+      P{0.0f, ID::MechAngleOffset},
+      P{3.0f, ID::CalibrateVoltage},
+      P{3000, ID::CalibrateDuration},
+      P{24.0f, ID::MotorSupplyVoltage},
+      P{0.0f, ID::MechAnglePidP},
+      P{0.0f, ID::MechAnglePidI},
+      P{0.0f, ID::MechAnglePidD},
+      P{0.0f, ID::MechAnglePidOutputRamp},
+      P{0.0f, ID::MechAnglePidLimit},
+      P{0.0f, ID::TargetPosition},
+      P{0.0f, ID::TargetVelocity},
+      P{0.0f, ID::VelocityPidP},
+      P{0.0f, ID::VelocityPidI},
+      P{0.0f, ID::VelocityPidD},
+      P{0.0f, ID::VelocityPidOutputRamp},
+      P{0.0f, ID::VelocityPidLimit},
+      P{16, ID::VelocitySampleWindowSize},
+      P{1000, ID::VelocitySampleWindowTime},
+      P{10, ID::VelocitySampleMinimalDuration},
   };
   for (auto& p : properties) {
     param->add(p);
