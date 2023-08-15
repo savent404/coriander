@@ -11,11 +11,11 @@
 
 #include <array>
 #include <cstdint>
+#include <memory>
 #include <string>
-#include <unordered_map>
-#include <unordered_set>
 
 #include "coriander/base/property.h"
+#include "coriander/base/type.h"
 
 namespace coriander {
 namespace base {
@@ -33,80 +33,83 @@ struct PropertyVisitorWrapper : IPropertyVisitor {
   std::function<void(const Property&)> func;
 };
 
-struct IPropertySet {
-  virtual ~IPropertySet() = default;
+struct PropertyStaticMap {
+  using map_t = std::array<std::unique_ptr<Property>, ParamId::MAX_PARAM_ID>;
 
-  virtual bool has(const char* name) const noexcept = 0;
-  virtual bool has(ParamId id) const noexcept { return has(id._to_string()); }
-  virtual bool has(const Property& property) { return has(property.name()); }
-
-  virtual const Property& get(const char* name) const noexcept = 0;
-  virtual const Property& get(ParamId id) const noexcept {
-    return get(id._to_string());
+  bool has(const char* name) const noexcept {
+    auto t = ParamId::_from_string_nothrow(name);
+    if (t) {
+      return has(*t);
+    }
+    return false;
   }
-  virtual const Property& get(const Property& property) {
+
+  bool has(ParamId id) const noexcept {
+    return m_map[id._to_index()] != nullptr;
+  }
+
+  bool has(const Property& property) const noexcept {
+    return has(property.name());
+  }
+
+  const Property& get(const char* name) const noexcept {
+    static const Property empty;
+    auto t = ParamId::_from_string_nothrow(name);
+    if (t) {
+      return get(*t);
+    }
+    return empty;
+  }
+
+  const Property& get(ParamId id) const noexcept {
+    return *m_map[id._to_index()];
+  }
+
+  virtual const Property& get(const Property& property) const noexcept {
     return get(property.name());
   }
 
-  virtual void add(const Property& property) noexcept = 0;
-
-  virtual void remove(const char* name) noexcept = 0;
-  virtual void remove(ParamId id) noexcept { remove(id._to_string()); }
-  virtual void remove(const Property& property) { remove(property.name()); }
-
-  virtual void replace(const Property& property) noexcept {
-    remove(property);
-    add(property);
-  }
-  virtual void replace(Property&& property) noexcept {
-    remove(property);
-    add(std::move(property));
+  void add(Property&& property) noexcept {
+    m_map[property.id()._to_index()] =
+        std::make_unique<Property>(std::move(property));
   }
 
-  virtual void accept(IPropertyVisitor& visitor) const = 0;
-};
-
-struct PropertyUnorderedMap : public IPropertySet {
-  using map_t = std::unordered_map<std::uint32_t, Property>;
-
-  virtual bool has(const char* name) const noexcept {
-    return m_map.find(string_hash(name)) != m_map.end();
+  void add(const Property& property) noexcept {
+    m_map[property.id()._to_index()] = std::make_unique<Property>(property);
   }
 
-  // [[deprecated]]
-  virtual bool has(std::uint32_t name_hash) const noexcept {
-    return m_map.find(name_hash) != m_map.end();
+  void remove(const char* name) noexcept {
+    auto t = ParamId::_from_string_nothrow(name);
+    if (t) {
+      remove(*t);
+    }
   }
-  virtual const Property& get(const char* name) const noexcept {
-    return m_map.at(string_hash(name));
+  void remove(ParamId id) noexcept { m_map[id._to_index()] = nullptr; }
+
+  virtual void remove(const Property& property) noexcept {
+    remove(property.name());
   }
-  // [[deprecated]]
-  virtual const Property& get(std::uint32_t name_hash) const noexcept {
-    return m_map.at(name_hash);
+
+  void replace(const Property& property) noexcept {
+    m_map[property.id()._to_index()] = std::make_unique<Property>(property);
   }
-  virtual void add(Property&& property) noexcept {
-    m_map.insert({string_hash(property.name()), std::move(property)});
+
+  void replace(Property&& property) noexcept {
+    m_map[property.id()._to_index()] = std::make_unique<Property>(property);
   }
-  virtual void add(const Property& property) noexcept {
-    m_map.insert({string_hash(property.name()), property});
-  }
-  virtual void remove(const char* name) noexcept {
-    m_map.erase(string_hash(name));
-  }
-  // [[deprecated]]
-  virtual void remove(std::uint32_t name_hash) noexcept {
-    m_map.erase(name_hash);
-  }
-  virtual void accept(IPropertyVisitor& visitor) const {
-    for (const auto& [_, property] : m_map) {
-      visitor.visit(property);
+
+  void accept(IPropertyVisitor& visitor) const {
+    for (auto& p : m_map) {
+      if (p) {
+        visitor.visit(*p);
+      }
     }
   }
 
  private:
   map_t m_map;
 };
-using PropertySet = PropertyUnorderedMap;
+using PropertySet = PropertyStaticMap;
 
 }  // namespace base
 }  // namespace coriander
