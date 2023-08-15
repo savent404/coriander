@@ -1,5 +1,9 @@
 # Coriander Project
 
+[![pr-check](https://github.com/savent404/coriander/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/savent404/coriander/actions/workflows/build.yml)
+
+[![release-publish](https://github.com/savent404/coriander/actions/workflows/publish.yml/badge.svg)](https://github.com/savent404/coriander/actions/workflows/publish.yml)
+
 Coriander project is FOC motor control firmware.
 
 ## Build dependency
