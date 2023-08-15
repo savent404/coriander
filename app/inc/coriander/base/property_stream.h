@@ -33,8 +33,13 @@ struct PropertyTextStream : public Property {
 
     is >> p.m_dynamic_name >> type >> p.m_dynamic_desc;
 
-    p.m_name = p.m_dynamic_name.c_str();
-    p.m_desc = p.m_dynamic_desc.c_str();
+    auto name = p.m_dynamic_name.c_str();
+    auto m_id_option = ParamId::_from_string_nothrow(name);
+    if (m_id_option) {
+      p.m_id = m_id_option.value();
+    } else {
+      p.m_id = ParamId::Unknow;
+    }
 
     switch (TypeHelper::type(type.c_str())) {
       case TypeId::Int32: {
@@ -195,8 +200,13 @@ struct PropertyBinaryStream : public Property {
     is.read(p.m_dynamic_name.data(), header.name_size);
     is.read(p.m_dynamic_desc.data(), header.desc_size);
 
-    p.m_name = p.m_dynamic_name.c_str();
-    p.m_desc = p.m_dynamic_desc.c_str();
+    auto name = p.m_dynamic_name.c_str();
+    auto m_id_option = ParamId::_from_string_nothrow(name);
+    if (m_id_option) {
+      p.m_id = *m_id_option;
+    } else {
+      p.m_id = ParamId::Unknow;
+    }
 
     switch (TypeHelper::type(header.type)) {
       case TypeId::Int32: {
