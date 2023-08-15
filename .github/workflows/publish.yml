@@ -28,7 +28,8 @@ jobs:
           west build -b td2kw app
       
       - name: Publish firmware
-        uses: actions/upload-artifact@v2
+        uses: diamondburned/action-upload-release@main
         with:
-          name: firmware
-          path: coriander/build/zephyr/zephyr.bin
+          files: |
+            /__w/coriander/coriander/coriander/build//zephyr/zephyr.bin
+            /__w/coriander/coriander/coriander/build//zephyr/zephyr.elf
