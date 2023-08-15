@@ -20,7 +20,7 @@ jobs:
         working-directory: coriander
         run: |
           west init -l .
-          west update
+          west update -o=--depth=1 -n
 
       - name: Build firmware
         working-directory: coriander
