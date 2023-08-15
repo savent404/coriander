@@ -25,8 +25,8 @@ struct ParameterBase : public base::PropertySet {
     return std::get<T>(base::PropertySet::get(name).value());
   }
   template <typename T>
-  T getValue(uint32_t name_hash) const noexcept {
-    return std::get<T>(base::PropertySet::get(name_hash).value());
+  T getValue(ParamId id) const noexcept {
+    return std::get<T>(base::PropertySet::get(id).value());
   }
 
   /**
@@ -48,20 +48,11 @@ struct ParameterBase : public base::PropertySet {
     }
   }
 
-  /**
-   * @brief Set the Value object
-   *
-   * @param name_hash
-   * @param t
-   * @note Can't create new property if not exist
-   * @return true set value success
-   * @return false set value failed
-   */
-  bool setValue(uint32_t name_hash, Type t) noexcept {
-    if (has(name_hash)) {
-      auto p = get(name_hash);
+  bool setValue(ParamId id, Type t) noexcept {
+    if (has(id)) {
+      auto p = get(id);
       p.setValue(t);
-      remove(name_hash);
+      remove(id);
       add(p);
       return true;
     } else {
