@@ -25,8 +25,8 @@ EncoderMechAngleEstimator::EncoderMechAngleEstimator(
 }
 
 void EncoderMechAngleEstimator::enable() {
-  if (mParam->has("MechAngleOffset"_hash)) {
-    mMechAngleOffset = mParam->getValue<float>("MechAngleOffset"_hash);
+  if (mParam->has(ParamId::MechAngleOffset)) {
+    mMechAngleOffset = mParam->getValue<float>(ParamId::MechAngleOffset);
     mNeedCalibrate = false;
   }
 
@@ -34,13 +34,13 @@ void EncoderMechAngleEstimator::enable() {
     mEncoder->enable();
   }
 
-  if (mParam->has("PersistRawMechAngle"_hash)) {
+  if (mParam->has(ParamId::PersistRawMechAngle)) {
     // force sync encoder and initialize mRawMechAngle
     mEncoder->sync();
     mPersistOffset = 0;
     getMechanicalAngle();
     mPersistOffset =
-        mRawMechAngle - mParam->getValue<float>("PersistRawMechAngle"_hash);
+        mRawMechAngle - mParam->getValue<float>(ParamId::PersistRawMechAngle);
   }
 }
 
@@ -48,8 +48,8 @@ void EncoderMechAngleEstimator::disable() {
   if (mEncoder->enabled()) {
     mEncoder->disable();
   }
-  if (mParam->has("PersistRawMechAngle"_hash)) {
-    mParam->setValue("PersistRawMechAngle"_hash, mRawMechAngle);
+  if (mParam->has(ParamId::PersistRawMechAngle)) {
+    mParam->setValue(ParamId::PersistRawMechAngle, mRawMechAngle);
   }
 }
 
@@ -64,8 +64,8 @@ void EncoderMechAngleEstimator::sync() {
 void EncoderMechAngleEstimator::calibrate() {
   mNeedCalibrate = true;
   mMechAngleOffset = -mRawMechAngle;
-  if (mParam->has("MechAngleOffset"_hash)) {
-    mParam->setValue("MechAngleOffset"_hash, mMechAngleOffset);
+  if (mParam->has(ParamId::MechAngleOffset)) {
+    mParam->setValue(ParamId::MechAngleOffset, mMechAngleOffset);
   }
 }
 

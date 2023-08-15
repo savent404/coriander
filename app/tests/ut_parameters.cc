@@ -24,14 +24,14 @@ TEST(Parameter, basic) {
   ASSERT_EQ(param.has("Unknow"), false);
   param.add(Property{0, ParamId::Unknow});
   ASSERT_EQ(param.has("Unknow"), true);
-  ASSERT_EQ(param.has("Unknow"_hash), true);
+  ASSERT_EQ(param.has(ParamId::Unknow), true);
   ASSERT_EQ(param.getValue<int>("Unknow"), 0);
-  ASSERT_EQ(param.getValue<int>("Unknow"_hash), 0);
+  ASSERT_EQ(param.getValue<int>(ParamId::Unknow), 0);
   ASSERT_EQ(param.setValue("Unknow", 1), true);
   ASSERT_EQ(param.getValue<int>("Unknow"), 1);
   ASSERT_EQ(param.setValue("t2", 1), false);
 
-  param.remove("Unknow"_hash);
+  param.remove(ParamId::Unknow);
   ASSERT_EQ(param.has("Unknow"), false);
 }
 

@@ -14,18 +14,18 @@ namespace motorctl {
 
 void MotorCtlVelocity::start() {
   // reset pid
-  mVelocityPid.P = mParameters->getValue<float>("VelocityPidP"_hash);
-  mVelocityPid.I = mParameters->getValue<float>("VelocityPidI"_hash);
-  mVelocityPid.D = mParameters->getValue<float>("VelocityPidD"_hash);
+  mVelocityPid.P = mParameters->getValue<float>(ParamId::VelocityPidP);
+  mVelocityPid.I = mParameters->getValue<float>(ParamId::VelocityPidI);
+  mVelocityPid.D = mParameters->getValue<float>(ParamId::VelocityPidD);
   mVelocityPid.output_ramp =
-      mParameters->getValue<float>("VelocityPidOutputRamp"_hash);
-  mVelocityPid.limit = mParameters->getValue<float>("VelocityPidLimit"_hash);
+      mParameters->getValue<float>(ParamId::VelocityPidOutputRamp);
+  mVelocityPid.limit = mParameters->getValue<float>(ParamId::VelocityPidLimit);
   mVelocityPid.reset();
 
   // read parameters
-  mTargetVelocity = mParameters->getValue<float>("TargetVelocity"_hash);
+  mTargetVelocity = mParameters->getValue<float>(ParamId::TargetVelocity);
   mMotorSupplyVoltage =
-      mParameters->getValue<float>("MotorSupplyVoltage"_hash);
+      mParameters->getValue<float>(ParamId::MotorSupplyVoltage);
 
   // enable sensors, motor
   mSensorHandler.enable();

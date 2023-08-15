@@ -37,9 +37,13 @@ struct IPropertySet {
   virtual ~IPropertySet() = default;
 
   virtual bool has(const char* name) const noexcept = 0;
+  virtual bool has(ParamId id) const noexcept { return has(id._to_string()); }
   virtual bool has(const Property& property) { return has(property.name()); }
 
   virtual const Property& get(const char* name) const noexcept = 0;
+  virtual const Property& get(ParamId id) const noexcept {
+    return get(id._to_string());
+  }
   virtual const Property& get(const Property& property) {
     return get(property.name());
   }
@@ -47,6 +51,7 @@ struct IPropertySet {
   virtual void add(const Property& property) noexcept = 0;
 
   virtual void remove(const char* name) noexcept = 0;
+  virtual void remove(ParamId id) noexcept { remove(id._to_string()); }
   virtual void remove(const Property& property) { remove(property.name()); }
 
   virtual void replace(const Property& property) noexcept {
@@ -67,12 +72,15 @@ struct PropertyUnorderedMap : public IPropertySet {
   virtual bool has(const char* name) const noexcept {
     return m_map.find(string_hash(name)) != m_map.end();
   }
+
+  // [[deprecated]]
   virtual bool has(std::uint32_t name_hash) const noexcept {
     return m_map.find(name_hash) != m_map.end();
   }
   virtual const Property& get(const char* name) const noexcept {
     return m_map.at(string_hash(name));
   }
+  // [[deprecated]]
   virtual const Property& get(std::uint32_t name_hash) const noexcept {
     return m_map.at(name_hash);
   }
@@ -85,6 +93,7 @@ struct PropertyUnorderedMap : public IPropertySet {
   virtual void remove(const char* name) noexcept {
     m_map.erase(string_hash(name));
   }
+  // [[deprecated]]
   virtual void remove(std::uint32_t name_hash) noexcept {
     m_map.erase(name_hash);
   }
