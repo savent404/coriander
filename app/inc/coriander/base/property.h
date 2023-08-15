@@ -22,11 +22,7 @@ namespace base {
 
 struct Property {
   using ParamId = coriander::base::ParamId;
-  explicit Property(const Type& value, ParamId id)
-      : m_value(value),
-        m_name(id._to_string()),
-        m_desc(ParamDescriber::getParamDescription(id)),
-        m_id(id) {}
+  explicit Property(const Type& value, ParamId id) : m_value(value), m_id(id) {}
 
   Property(const Property&) = default;
   Property(Property&&) = default;
@@ -36,19 +32,16 @@ struct Property {
 
   void setValue(Type value) { m_value = value; }
   ParamId id() const { return m_id; }
-  const char* name() const { return m_name; }
-  const char* desc() const { return m_desc; }
+  const char* name() const { return m_id._to_string(); }
+  const char* desc() const { return ParamDescriber::getParamDescription(m_id); }
 
   bool operator==(const Property& other) const noexcept {
-    return !std::strcmp(m_name, other.m_name) &&
-           !std::strcmp(m_desc, other.m_desc) && m_id == other.m_id &&
+    return m_id == other.m_id &&
            TypeHelper::TypeCompare(m_value, other.m_value);
   }
 
  protected:
   Type m_value;
-  const char* m_name;
-  const char* m_desc;
   base::ParamId m_id = base::ParamId::Unknow;
 };
 
