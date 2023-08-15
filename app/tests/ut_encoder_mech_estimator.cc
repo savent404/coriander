@@ -17,6 +17,7 @@
 using namespace coriander;
 using namespace coriander::base;
 using namespace coriander::motorctl;
+using ParamId = coriander::base::ParamId;
 
 namespace {
 struct dummyEncoder : public IEncoder {
@@ -63,7 +64,7 @@ TEST(ISensor, CalibrateEncoderMechAngleEstimator) {
 
   EncoderMechAngleEstimator estimator(encoder, param, paramReqValidator);
 
-  param->add(Property{0.0f, "mech_angle_offset"});
+  param->add(Property{0.0f, ParamId::MechAngleOffset});
 
   encoder->mOverflow = 1;
 
@@ -84,8 +85,8 @@ TEST(ISensor, PersistEncoderMechAngleEstimator) {
 
   EncoderMechAngleEstimator estimator(encoder, param, paramReqValidator);
 
-  param->add(Property{0.0f, "mech_angle_offset"});
-  param->add(Property{0.0f, "persist_raw_mech_angle"});
+  param->add(Property{0.0f, ParamId::MechAngleOffset});
+  param->add(Property{0.0f, ParamId::PersistRawMechAngle});
 
   encoder->mOverflow = 1;
 

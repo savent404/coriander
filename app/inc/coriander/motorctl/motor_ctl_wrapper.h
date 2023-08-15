@@ -44,14 +44,14 @@ struct DynamicMotorCtl : public IMotorCtl, public IParamReq {
 
   virtual const ParameterRequireItem* requiredParameters() const override {
     using Type = coriander::base::TypeId;
-    static const ParameterRequireItem items[] = {{"motorctl.mode", Type::Int32},
+    static const ParameterRequireItem items[] = {{"MotorCtlMode", Type::Int32},
                                                  PARAMETER_REQ_EOF};
     return items;
   }
 
  protected:
   void parseMode() {
-    auto mode = mParam->getValue<int>("motorctl.mode");
+    auto mode = mParam->getValue<int>("MotorCtlMode");
     if (mode < static_cast<int>(Mode::MODE_MAX)) {
       setMode(static_cast<Mode>(mode));
     } else {

@@ -15,6 +15,7 @@
 
 using namespace coriander;
 using namespace coriander::motorctl;
+using ParamId = coriander::base::ParamId;
 
 namespace {
 struct dummyEncoder : public IEncoder {
@@ -40,8 +41,8 @@ TEST(ISensor, CalibrateEncoderElecAngleEstimator) {
 
   EncoderElecAngleEstimator estimator(encoder, param, paramReqValidator);
 
-  param->add(Property{4, "pole_pair"});
-  ASSERT_TRUE(param->has("pole_pair"_hash));
+  param->add(Property{4, ParamId::PolePair});
+  ASSERT_TRUE(param->has("PolePair"));
 
   encoder->mCC = 1024;
   estimator.enable();
@@ -64,8 +65,8 @@ TEST(ISensor, CalibrateEncoderElecAngleEstimatorWithPersist) {
 
   EncoderElecAngleEstimator estimator(encoder, param, paramReqValidator);
 
-  param->add(Property{4, "pole_pair"});
-  param->add(Property{0.0f, "persist_raw_elec_angle"});
+  param->add(Property{4, ParamId::PolePair});
+  param->add(Property{0.0f, ParamId::PersistRawElecAngle});
 
   encoder->mCC = 1024;
   estimator.enable();
@@ -93,8 +94,8 @@ TEST(ISensor, CalibratedEncoderElecAngleEstimator) {
 
   EncoderElecAngleEstimator estimator(encoder, param, paramReqValidator);
 
-  param->add(Property{4, "pole_pair"});
-  param->add(Property{0.0f, "elec_angle_offset"});
+  param->add(Property{4, ParamId::PolePair});
+  param->add(Property{0.0f, ParamId::ElecAngleOffset});
 
   encoder->mCC = 512;
   estimator.enable();
@@ -108,15 +109,16 @@ TEST(ISensor, CalibratedEncoderElecAngleEstimator) {
 }
 
 TEST(ISensor, CalibratedEncoderElecAngleEstimatorWithPersist) {
+  using ParamId = coriander::base::ParamId;
   auto encoder = std::make_shared<::dummyEncoder>();
   auto param = std::make_shared<ParameterBase>();
   auto paramReqValidator = std::make_shared<testing::mock::MockParamReqValidator>();
 
   EncoderElecAngleEstimator estimator(encoder, param, paramReqValidator);
 
-  param->add(Property{4, "pole_pair"});
-  param->add(Property{10.0f, "elec_angle_offset"});
-  param->add(Property{180.0f, "persist_raw_elec_angle"});
+  param->add(Property{4, ParamId::PolePair});
+  param->add(Property{10.0f, ParamId::ElecAngleOffset});
+  param->add(Property{180.0f, ParamId::PersistRawElecAngle});
 
   encoder->mCC = 512;
   estimator.enable();
@@ -135,15 +137,16 @@ TEST(ISensor, CalibratedEncoderElecAngleEstimatorWithPersist) {
 }
 
 TEST(ISensor, EncoderElecAngleEstimatorRecoveryAfterPowerOn) {
+  using ParamId = coriander::base::ParamId;
   auto encoder = std::make_shared<::dummyEncoder>();
   auto param = std::make_shared<ParameterBase>();
   auto paramReqValidator = std::make_shared<testing::mock::MockParamReqValidator>();
 
   EncoderElecAngleEstimator estimator(encoder, param, paramReqValidator);
 
-  param->add(Property{4, "pole_pair"});
-  param->add(Property{0.0f, "elec_angle_offset"});
-  param->add(Property{0.0f, "persist_raw_elec_angle"});
+  param->add(Property{4, ParamId::PolePair});
+  param->add(Property{0.0f, ParamId::ElecAngleOffset});
+  param->add(Property{0.0f, ParamId::PersistRawElecAngle});
 
   encoder->mCC = 0;
   estimator.enable();

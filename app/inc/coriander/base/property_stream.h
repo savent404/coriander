@@ -22,7 +22,7 @@ namespace base {
 struct PropertyTextStream : public Property {
   PropertyTextStream(Property&& p) noexcept : Property{std::move(p)} {}
   explicit PropertyTextStream() noexcept
-      : Property{Type{Invalid{}}, "unknow"} {}
+      : Property{Type{Invalid{}}, ParamId::Unknow} {}
 
   ~PropertyTextStream() noexcept = default;
 
@@ -178,7 +178,7 @@ struct PropertyBinaryStream : public Property {
   PropertyBinaryStream(Property&& p) noexcept : Property{std::move(p)} {}
   PropertyBinaryStream(const Property& p) noexcept : Property{p} {}
   explicit PropertyBinaryStream() noexcept
-      : Property{Type{Invalid{}}, "unknow"} {}
+      : Property{Type{Invalid{}}, ParamId::Unknow} {}
 
   ~PropertyBinaryStream() noexcept = default;
 

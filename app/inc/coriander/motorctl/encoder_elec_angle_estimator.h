@@ -40,9 +40,9 @@ struct EncoderElecAngleEstimator : public IElecAngleEstimator,
 
   virtual const ParameterRequireItem* requiredParameters() const {
     constexpr static const ParameterRequireItem items[] = {
-        {"pole_pair", TypeId::Int32},
-        {"elec_angle_offset", TypeId::Float},
-        {"persist_raw_elec_angle", TypeId::Float},
+        {"PolePair", TypeId::Int32},
+        {"ElecAngleOffset", TypeId::Float},
+        {"PersistRawElecAngle", TypeId::Float},
         PARAMETER_REQ_EOF};
 
     return &items[0];

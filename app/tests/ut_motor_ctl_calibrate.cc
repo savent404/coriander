@@ -37,6 +37,7 @@ using MockLogger = testing::mock::MockLogger;
 }  // namespace
 
 using namespace boost::di;
+using ParamId = coriander::base::ParamId;
 
 static auto createInjector() {
   return make_injector(
@@ -61,9 +62,9 @@ TEST(MotorCtl, calibrate) {
   auto systick = c.create<std::shared_ptr<MockSystick>>();
   auto boardEvent = c.create<std::shared_ptr<MockBoardEvent>>();
 
-  param->add(Property{5.0f, "calibrate_voltage"});
-  param->add(Property{3000, "calibrate_duration"});
-  param->add(Property{16.0f, "motor_supply_voltage"});
+  param->add(Property{5.0f, ParamId::CalibrateVoltage});
+  param->add(Property{3000, ParamId::CalibrateDuration});
+  param->add(Property{16.0f, ParamId::MotorSupplyVoltage});
 
   auto mc = c.create<std::shared_ptr<IMotorCtl>>();
 

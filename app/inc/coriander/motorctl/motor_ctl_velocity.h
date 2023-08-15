@@ -66,13 +66,13 @@ struct MotorCtlVelocity : public IMotorCtl, public IParamReq {
   virtual const ParameterRequireItem* requiredParameters() const {
     using Type = coriander::base::TypeId;
     static const ParameterRequireItem items[] = {
-        {"target_velocity", Type::Float},
-        {"motor_supply_voltage", Type::Float},
-        {"velocity_pid_p", Type::Float},
-        {"velocity_pid_i", Type::Float},
-        {"velocity_pid_d", Type::Float},
-        {"velocity_pid_output_ramp", Type::Float},
-        {"velocity_pid_limit", Type::Float},
+        {"TargetVelocity", Type::Float},
+        {"MotorSupplyVoltage", Type::Float},
+        {"VelocityPidP", Type::Float},
+        {"VelocityPidI", Type::Float},
+        {"VelocityPidD", Type::Float},
+        {"VelocityPidOutputRamp", Type::Float},
+        {"VelocityPidLimit", Type::Float},
         PARAMETER_REQ_EOF};
     return items;
   }

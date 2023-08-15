@@ -17,32 +17,34 @@
 TEST(Parameter, basic) {
   using namespace coriander;
   using namespace coriander::base;
+  using ParamId = coriander::base::ParamId;
 
   ParameterBase param;
 
-  ASSERT_EQ(param.has("t1"), false);
-  param.add(Property{0, "t1", "null for t1"});
-  ASSERT_EQ(param.has("t1"), true);
-  ASSERT_EQ(param.has("t1"_hash), true);
-  ASSERT_EQ(param.getValue<int>("t1"), 0);
-  ASSERT_EQ(param.getValue<int>("t1"_hash), 0);
-  ASSERT_EQ(param.setValue("t1", 1), true);
-  ASSERT_EQ(param.getValue<int>("t1"), 1);
+  ASSERT_EQ(param.has("Unknow"), false);
+  param.add(Property{0, ParamId::Unknow});
+  ASSERT_EQ(param.has("Unknow"), true);
+  ASSERT_EQ(param.has("Unknow"_hash), true);
+  ASSERT_EQ(param.getValue<int>("Unknow"), 0);
+  ASSERT_EQ(param.getValue<int>("Unknow"_hash), 0);
+  ASSERT_EQ(param.setValue("Unknow", 1), true);
+  ASSERT_EQ(param.getValue<int>("Unknow"), 1);
   ASSERT_EQ(param.setValue("t2", 1), false);
 
-  param.remove("t1"_hash);
-  ASSERT_EQ(param.has("t1"), false);
+  param.remove("Unknow"_hash);
+  ASSERT_EQ(param.has("Unknow"), false);
 }
 
 TEST(Parameter, basic_map) {
   using namespace coriander;
   using namespace coriander::base;
+  using ParamId = coriander::base::ParamId;
 
   ParameterBase param;
   ParameterMemoryMapper mapper;
 
-  param.add(Property{0, "t1", "null for t1"});
-  param.add(Property{1, "t2", "null for t2"});
+  param.add(Property{0, ParamId::CalibrateDuration});
+  param.add(Property{1, ParamId::CalibrateVoltage});
 
   auto map = mapper.map(&param);
   ASSERT_TRUE(mapper.isValid(map));
@@ -56,13 +58,13 @@ TEST(Parameter, basic_map) {
   ASSERT_TRUE(mapper.recovery(std::span<uint8_t>{mirror.get(), map.size()},
                               &mirror_param));
 
-  ASSERT_TRUE(mirror_param.has("t1"));
-  ASSERT_TRUE(mirror_param.has("t2"));
+  ASSERT_TRUE(mirror_param.has("CalibrateDuration"));
+  ASSERT_TRUE(mirror_param.has("CalibrateVoltage"));
   ASSERT_FALSE(mirror_param.has("t3"));
-  ASSERT_EQ(get<int>(mirror_param.get("t1").value()), 0);
-  ASSERT_EQ(get<int>(mirror_param.get("t2").value()), 1);
-  ASSERT_EQ(mirror_param.getValue<int>("t1"), 0);
-  ASSERT_EQ(mirror_param.getValue<int>("t2"), 1);
+  ASSERT_EQ(get<int>(mirror_param.get("CalibrateDuration").value()), 0);
+  ASSERT_EQ(get<int>(mirror_param.get("CalibrateVoltage").value()), 1);
+  ASSERT_EQ(mirror_param.getValue<int>("CalibrateDuration"), 0);
+  ASSERT_EQ(mirror_param.getValue<int>("CalibrateVoltage"), 1);
 }
 
 namespace {
@@ -70,9 +72,9 @@ struct Foo : public coriander::IParamReq {
  protected:
   virtual const coriander::ParameterRequireItem* requiredParameters() const {
     constexpr static const coriander::ParameterRequireItem items[] = {
-        {"t1", coriander::TypeId::Int32},
-        {"t2", coriander::TypeId::Float},
-        {"t3", coriander::TypeId::String},
+        {"Unknow", coriander::TypeId::Int32},
+        {"CalibrateDuration", coriander::TypeId::Float},
+        {"CalibrateVoltage", coriander::TypeId::String},
         {nullptr, coriander::TypeId::Invalid}};
 
     return &items[0];
@@ -82,6 +84,7 @@ struct Foo : public coriander::IParamReq {
 
 TEST(Parameter, requirements) {
   using Property = coriander::Property;
+  using ParamId = coriander::base::ParamId;
   auto param = std::make_shared<coriander::ParameterBase>();
   auto validator = std::make_shared<coriander::ParamReqValidator>(
       std::make_shared<coriander::base::posix::Logger>(), param);
@@ -90,8 +93,8 @@ TEST(Parameter, requirements) {
   validator->addParamReq(foo.get());
   ASSERT_FALSE(validator->validate());
 
-  param->add(Property{0, "t1", "null for t1"});
-  param->add(Property{1.0f, "t2", "null for t2"});
-  param->add(Property{"foo", "t3", "null for t3"});
+  param->add(Property{0, ParamId::Unknow});
+  param->add(Property{1.0f, ParamId::CalibrateDuration});
+  param->add(Property{"foo", ParamId::CalibrateVoltage});
   ASSERT_EQ(validator->validate(), true);
 }

@@ -33,9 +33,9 @@ void MotorCtlCalibrate::start() {
 
   mSensorHandler.enable();
 
-  mCalibrateVoltage = mParam->getValue<float>("calibrate_voltage"_hash);
-  mCalibrateDuration = mParam->getValue<int32_t>("calibrate_duration"_hash);
-  mMotorSupplyVoltage = mParam->getValue<float>("motor_supply_voltage"_hash);
+  mCalibrateVoltage = mParam->getValue<float>("CalibrateVoltage"_hash);
+  mCalibrateDuration = mParam->getValue<int32_t>("CalibrateDuration"_hash);
+  mMotorSupplyVoltage = mParam->getValue<float>("MotorSupplyVoltage"_hash);
 
   dc = static_cast<uint16_t>(UINT16_MAX * mCalibrateVoltage /
                              mMotorSupplyVoltage);

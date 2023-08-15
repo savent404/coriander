@@ -30,9 +30,9 @@ EncoderElecAngleEstimator::EncoderElecAngleEstimator(
 
 void EncoderElecAngleEstimator::enable() {
   // try to get parameter from parameter server
-  mPolePair = mParam->getValue<int32_t>("pole_pair"_hash);
-  if (mParam->has("elec_angle_offset"_hash)) {
-    mElecAngleOffset = mParam->getValue<float>("elec_angle_offset"_hash);
+  mPolePair = mParam->getValue<int32_t>("PolePair"_hash);
+  if (mParam->has("ElecAngleOffset"_hash)) {
+    mElecAngleOffset = mParam->getValue<float>("ElecAngleOffset"_hash);
     mNeedCalibrate = false;
   }
 
@@ -40,14 +40,14 @@ void EncoderElecAngleEstimator::enable() {
     mEncoder->enable();
   }
 
-  if (mParam->has("persist_raw_elec_angle"_hash)) {
+  if (mParam->has("PersistRawElecAngle"_hash)) {
     // force sync encoder and initialize mRawElecAngle
     mEncoder->sync();
     mPersistOffset = 0;
     getElectricalAngle();
 
     mPersistOffset =
-        mRawElecAngle - mParam->getValue<float>("persist_raw_elec_angle"_hash);
+        mRawElecAngle - mParam->getValue<float>("PersistRawElecAngle"_hash);
   }
 }
 
@@ -55,8 +55,8 @@ void EncoderElecAngleEstimator::disable() {
   if (mEncoder->enabled()) {
     mEncoder->disable();
   }
-  if (mParam->has("persist_raw_elec_angle"_hash)) {
-    mParam->setValue("persist_raw_elec_angle"_hash, mRawElecAngle);
+  if (mParam->has("PersistRawElecAngle"_hash)) {
+    mParam->setValue("PersistRawElecAngle"_hash, mRawElecAngle);
   }
 }
 
@@ -71,8 +71,8 @@ bool EncoderElecAngleEstimator::enabled() { return mEncoder->enabled(); }
 void EncoderElecAngleEstimator::calibrate() {
   mNeedCalibrate = false;
   mElecAngleOffset = -mRawElecAngle;
-  if (mParam->has("elec_angle_offset"_hash)) {
-    mParam->setValue("elec_angle_offset"_hash, mElecAngleOffset);
+  if (mParam->has("ElecAngleOffset"_hash)) {
+    mParam->setValue("ElecAngleOffset"_hash, mElecAngleOffset);
   }
 }
 

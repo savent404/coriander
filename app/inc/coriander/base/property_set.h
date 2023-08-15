@@ -9,28 +9,13 @@
  */
 #pragma once
 
+#include <array>
 #include <cstdint>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
 
 #include "coriander/base/property.h"
-
-template <>
-struct std::hash<coriander::base::Property> {
-  std::size_t operator()(const coriander::base::Property& s) const noexcept {
-    return coriander::base::string_hash(s.name());
-  }
-};
-
-template <>
-struct std::equal_to<coriander::base::Property> {
-  bool operator()(const coriander::base::Property& lhs,
-                  const coriander::base::Property& rhs) const noexcept {
-    return coriander::base::string_hash(lhs.name()) ==
-           coriander::base::string_hash(rhs.name());
-  }
-};
 
 namespace coriander {
 namespace base {
@@ -112,40 +97,6 @@ struct PropertyUnorderedMap : public IPropertySet {
  private:
   map_t m_map;
 };
-
-// TODO(savent): something wrong, ignore it
-#if 0
-struct PropertyUnorderedSet : public IPropertySet {
-    using set_t = std::unordered_set<Property, std::hash<Property>, std::equal_to<Property>>;
-
-    virtual bool has(const char* name) const noexcept
-    {
-        return m_set.find(Property { Type { Invalid {} }, name }) != m_set.end();
-    }
-    virtual const Property& get(const char* name) const noexcept
-    {
-        return *m_set.find(Property { Type { Invalid {} }, name });
-    }
-    virtual void add(const Property& property) noexcept
-    {
-        m_set.insert(property);
-    }
-    virtual void remove(const char* name) noexcept
-    {
-        m_set.erase(Property { Type { Invalid {} }, name });
-    }
-    virtual void accept(IPropertyVisitor& visitor) const
-    {
-        for (const auto& property : m_set) {
-            visitor.visit(property);
-        }
-    }
-
-private:
-    set_t m_set;
-};
-#endif
-
 using PropertySet = PropertyUnorderedMap;
 
 }  // namespace base

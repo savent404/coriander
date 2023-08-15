@@ -13,16 +13,16 @@ namespace coriander {
 namespace motorctl {
 
 void MotorCtlPosition::start() {
-  mMechAnglePid.P = mParameters->getValue<float>("mech_angle_pid_p"_hash);
-  mMechAnglePid.I = mParameters->getValue<float>("mech_angle_pid_i"_hash);
-  mMechAnglePid.D = mParameters->getValue<float>("mech_angle_pid_d"_hash);
+  mMechAnglePid.P = mParameters->getValue<float>("MechAnglePidP"_hash);
+  mMechAnglePid.I = mParameters->getValue<float>("MechAnglePidI"_hash);
+  mMechAnglePid.D = mParameters->getValue<float>("MechAnglePidD"_hash);
   mMechAnglePid.output_ramp =
-      mParameters->getValue<float>("mech_angle_pid_output_ramp"_hash);
+      mParameters->getValue<float>("MechAnglePidOutputRamp"_hash);
   mMechAnglePid.limit =
-      mParameters->getValue<float>("mech_angle_pid_limit"_hash);
+      mParameters->getValue<float>("MechAnglePidLimit"_hash);
   mMechAnglePid.reset();
 
-  mTargetPosition = mParameters->getValue<float>("target_position"_hash);
+  mTargetPosition = mParameters->getValue<float>("TargetPosition"_hash);
 
   mSensorHandler.enable();
   mMotorCtlVelocity->start();
