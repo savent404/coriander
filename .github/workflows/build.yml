@@ -26,3 +26,8 @@ jobs:
         working-directory: coriander
         run: |
           west build -b td2kw app
+      
+      - name: Build manufatory firmware
+        working-directory: coriander
+        run: |
+          west build -b td2kw app -d build-manu --sysbuild
