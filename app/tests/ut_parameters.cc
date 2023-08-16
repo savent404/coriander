@@ -43,8 +43,9 @@ TEST(Parameter, basic_map) {
   ParameterBase param;
   ParameterMemoryMapper mapper;
 
-  param.add(Property{0, ParamId::CalibrateDuration});
-  param.add(Property{1, ParamId::CalibrateVoltage});
+  for (int i =0; i < ParamId::MAX_PARAM_ID; i++) {
+    param.add(Property{i, ParamId::_from_index_nothrow(i).value()});
+  }
 
   auto map = mapper.map(&param);
   ASSERT_TRUE(mapper.isValid(map));
@@ -61,10 +62,14 @@ TEST(Parameter, basic_map) {
   ASSERT_TRUE(mirror_param.has("CalibrateDuration"));
   ASSERT_TRUE(mirror_param.has("CalibrateVoltage"));
   ASSERT_FALSE(mirror_param.has("t3"));
-  ASSERT_EQ(get<int>(mirror_param.get("CalibrateDuration").value()), 0);
-  ASSERT_EQ(get<int>(mirror_param.get("CalibrateVoltage").value()), 1);
-  ASSERT_EQ(mirror_param.getValue<int>("CalibrateDuration"), 0);
-  ASSERT_EQ(mirror_param.getValue<int>("CalibrateVoltage"), 1);
+  ASSERT_EQ(get<int>(mirror_param.get("CalibrateDuration").value()), ParamId::CalibrateDuration);
+  ASSERT_EQ(get<int>(mirror_param.get("CalibrateVoltage").value()), ParamId::CalibrateVoltage);
+  ASSERT_EQ(mirror_param.getValue<int>("CalibrateDuration"), ParamId::CalibrateDuration);
+  ASSERT_EQ(mirror_param.getValue<int>("CalibrateVoltage"), ParamId::CalibrateVoltage);
+
+  for (int i =0; i < ParamId::MAX_PARAM_ID; i++) {
+    ASSERT_EQ(mirror_param.getValue<int>(ParamId::_from_index_nothrow(i).value()), i);
+  }
 }
 
 namespace {
