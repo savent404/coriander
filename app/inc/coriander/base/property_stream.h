@@ -27,89 +27,6 @@ struct PropertyTextStream : public Property {
   ~PropertyTextStream() noexcept = default;
 
   template <typename T>
-  friend T& operator>>(T& is, PropertyTextStream& p) {
-    auto& value = p.value();
-    std::string type;
-
-    is >> p.m_dynamic_name >> type >> p.m_dynamic_desc;
-
-    auto name = p.m_dynamic_name.c_str();
-    auto m_id_option = ParamId::_from_string_nothrow(name);
-    if (m_id_option) {
-      p.m_id = m_id_option.value();
-    } else {
-      p.m_id = ParamId::Unknow;
-    }
-
-    switch (TypeHelper::type(type.c_str())) {
-      case TypeId::Int32: {
-        int32_t v;
-        is >> v;
-        value = v;
-        break;
-      }
-      case TypeId::Int64: {
-        int64_t v;
-        is >> v;
-        value = v;
-        break;
-      }
-      case TypeId::UInt32: {
-        uint32_t v;
-        is >> v;
-        value = v;
-        break;
-      }
-      case TypeId::UInt64: {
-        uint64_t v;
-        is >> v;
-        value = v;
-        break;
-      }
-      case TypeId::Float: {
-        float v;
-        is >> v;
-        value = v;
-        break;
-      }
-      case TypeId::Double: {
-        double v;
-        is >> v;
-        value = v;
-        break;
-      }
-      case TypeId::String: {
-        is >> p.m_dynamic_str_value;
-        value = p.m_dynamic_str_value.c_str();
-        break;
-      }
-      case TypeId::TripleInt32: {
-        int32_t v1, v2, v3;
-        is >> v1 >> v2 >> v3;
-        value = TripleBaseType<int32_t>{v1, v2, v3};
-        break;
-      }
-      case TypeId::TripleFloat: {
-        float v1, v2, v3;
-        is >> v1 >> v2 >> v3;
-        value = TripleBaseType<float>{v1, v2, v3};
-        break;
-      }
-      case TypeId::TripleDouble: {
-        double v1, v2, v3;
-        is >> v1 >> v2 >> v3;
-        value = TripleBaseType<double>{v1, v2, v3};
-        break;
-      }
-      case TypeId::Invalid: {
-        value = Invalid{};
-        break;
-      }
-    }
-    return is;
-  }
-
-  template <typename T>
   friend T& operator<<(T& os, const Property& p) {
     auto& value = p.value();
     auto id = TypeHelper::type(value);
@@ -172,8 +89,7 @@ namespace detail {
 #pragma pack(push, 1)
 struct PropertyBinaryStreamHeader {
   std::uint8_t type;
-  std::uint8_t name_size;
-  std::uint8_t desc_size;
+  std::uint8_t id;
   std::uint8_t value_size;
 };
 #pragma pack(pop)
@@ -195,13 +111,7 @@ struct PropertyBinaryStream : public Property {
     char* triple_buf_ptr = reinterpret_cast<char*>(triple_buf);
 
     is.read(reinterpret_cast<char*>(&header), sizeof(header));
-    p.m_dynamic_name.resize(header.name_size);
-    p.m_dynamic_desc.resize(header.desc_size);
-    is.read(p.m_dynamic_name.data(), header.name_size);
-    is.read(p.m_dynamic_desc.data(), header.desc_size);
-
-    auto name = p.m_dynamic_name.c_str();
-    auto m_id_option = ParamId::_from_string_nothrow(name);
+    auto m_id_option = ParamId::_from_index_nothrow(header.id);
     if (m_id_option) {
       p.m_id = *m_id_option;
     } else {
@@ -289,9 +199,9 @@ struct PropertyBinaryStream : public Property {
     auto& value = p.value();
     auto type = TypeHelper::type(value);
     detail::PropertyBinaryStreamHeader header = {
-        static_cast<uint8_t>(value.index()),
-        static_cast<uint8_t>(std::strlen(p.name())),
-        static_cast<uint8_t>(std::strlen(p.desc())), 0};
+      .type = static_cast<uint8_t>(value.index()),
+      .id = static_cast<uint8_t>(p.id()._to_index()),
+      .value_size = 0,};
     const char* value_ptr = nullptr;
     uint64_t triple_buf[3] = {0};
     char* triple_buf_ptr = reinterpret_cast<char*>(triple_buf);
@@ -363,8 +273,6 @@ struct PropertyBinaryStream : public Property {
     }
 
     os.write(reinterpret_cast<const char*>(&header), sizeof(header));
-    os.write(p.name(), header.name_size);
-    os.write(p.desc(), header.desc_size);
     os.write(value_ptr, header.value_size);
     return os;
   }
@@ -374,8 +282,6 @@ struct PropertyBinaryStream : public Property {
   }
 
  private:
-  std::string m_dynamic_name;
-  std::string m_dynamic_desc;
   std::string m_dynamic_str_value;
 };
 
