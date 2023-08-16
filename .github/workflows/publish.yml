@@ -26,9 +26,26 @@ jobs:
         working-directory: coriander
         run: |
           west build -b td2kw app
-      
+
+      - name: Build manufatory firmware
+        working-directory: coriander
+        run: |
+          west build -b td2kw app -d build-manu --sysbuild
+
+      - name: Package firmware
+        working-directory: coriander
+        run: |
+          mkdir -p firmware
+          mkdir -p firmware/app
+          mkdir -p firmware/bootloader
+          rm build-manu/app/zephyr/*pre*
+          cp build-manu/app/zephyr/zephyr.*.bin firmware/app
+          rm build-manu/mcuboot/zephyr/*pre*
+          cp build-manu/mcuboot/zephyr/zephyr.*.bin firmware/bootloader
+
       - name: Publish firmware
         uses: actions/upload-artifact@v2
         with:
           name: firmware
-          path: coriander/build/zephyr/zephyr.bin
+          path: coriander/firmware/
+                  
