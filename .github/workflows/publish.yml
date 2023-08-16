@@ -39,9 +39,9 @@ jobs:
           mkdir -p firmware/app
           mkdir -p firmware/bootloader
           rm build-manu/app/zephyr/*pre*
-          cp build-manu/app/zephyr/zephyr.*.bin firmware/app
+          cp build-manu/app/zephyr/zephyr.* firmware/app
           rm build-manu/mcuboot/zephyr/*pre*
-          cp build-manu/mcuboot/zephyr/zephyr.*.bin firmware/bootloader
+          cp build-manu/mcuboot/zephyr/zephyr.* firmware/bootloader
 
       - name: Publish firmware
         uses: actions/upload-artifact@v2
