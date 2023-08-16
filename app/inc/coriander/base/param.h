@@ -11,7 +11,7 @@
 
 #include <array>
 
-#include "coriander/base/enum.h"
+#include "enum.h"
 
 namespace coriander {
 
