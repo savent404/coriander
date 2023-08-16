@@ -267,12 +267,14 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 SHELL_STATIC_SUBCMD_SET_CREATE(
     param_cmd, SHELL_CMD_ARG(list, NULL, "list params", shell_param_list, 1, 0),
     SHELL_CMD_ARG(get, NULL, "get param", shell_param_get, 2, 0),
-    SHELL_CMD_ARG(set, NULL, "set param", shell_param_set, 3, 0));
+    SHELL_CMD_ARG(set, NULL, "set param", shell_param_set, 3, 0),
+    SHELL_SUBCMD_SET_END /* Array terminated. */);
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
     fs_cmd, SHELL_CMD_ARG(ls, NULL, "list files", shell_fs_ls, 2, 0),
     SHELL_CMD_ARG(cat, NULL, "read file", shell_fs_cat, 2, 0),
-    SHELL_CMD_ARG(rm, NULL, "remove file", shell_fs_rm, 2, 0));
+    SHELL_CMD_ARG(rm, NULL, "remove file", shell_fs_rm, 2, 0),
+    SHELL_SUBCMD_SET_END /* Array terminated. */);
 
 SHELL_CMD_REGISTER(motor, &motor_cmd, "motor control", NULL);
 SHELL_CMD_REGISTER(param, &param_cmd, "param control", NULL);
