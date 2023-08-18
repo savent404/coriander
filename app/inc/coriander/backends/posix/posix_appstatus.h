@@ -18,9 +18,9 @@ namespace posix {
 struct AppStatus : public IAppStatus {
   Status mStatus = Status::Ok;
 
-  virtual void setStatus(Status status) noexcept override { mStatus = status; }
+  void setStatus(Status status) noexcept override { mStatus = status; }
 
-  virtual Status getStatus() const noexcept override { return mStatus; }
+  Status getStatus() const noexcept override { return mStatus; }
 };
 }  // namespace posix
 }  // namespace application

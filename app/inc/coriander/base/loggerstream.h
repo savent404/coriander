@@ -11,6 +11,7 @@
 
 #include <memory>
 #include <sstream>
+#include <utility>
 
 #include "coriander/base/ilogger.h"
 
@@ -18,7 +19,7 @@ namespace coriander {
 namespace base {
 
 struct LoggerStream {
-  LoggerStream(std::shared_ptr<ILogger> logger) noexcept
+  explicit LoggerStream(std::shared_ptr<ILogger> logger) noexcept
       : mLogger(std::move(logger)) {}
   virtual ~LoggerStream() noexcept = default;
 

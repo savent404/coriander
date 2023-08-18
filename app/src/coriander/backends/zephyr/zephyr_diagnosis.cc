@@ -1,6 +1,14 @@
+/**
+ * @file zephyr_diagnosis.cc
+ * @author Savent Gate (savent_gate@outlook.com)
+ * @brief
+ * @date 2023-08-18
+ *
+ * Copyright 2023 savent_gate
+ *
+ */
 
-
-#include "zephyr_diagnosis.h"
+#include "zephyr/zephyr_diagnosis.h"
 
 #include <zephyr/drivers/adc.h>
 #include <zephyr/kernel.h>
@@ -102,17 +110,17 @@ DiagnosisRegister* DiagnosisRegister::getInstance() {
   return instance;
 }
 
-void DiagnosisRegister::applyAll(coriander::application::Diagnosis& diagnosis) {
+void DiagnosisRegister::applyAll(coriander::application::Diagnosis* diagnosis) {
   using DeviceStatus = coriander::application::Diagnosis::DeviceStatus;
   using DiagDevId = coriander::application::Diagnosis::DiagDevId;
 
-  diagnosis.setDiagDev(DiagDevId::CtlrBoardPsVoltage, [this]() {
+  diagnosis->setDiagDev(DiagDevId::CtlrBoardPsVoltage, [this]() {
     while (mPsVoltage == DeviceStatus::Unknown) {
       k_sleep(K_MSEC(1));
     }
     return mPsVoltage;
   });
-  diagnosis.setDiagDev(DiagDevId::CtlrBoardPsCurrent, [this]() {
+  diagnosis->setDiagDev(DiagDevId::CtlrBoardPsCurrent, [this]() {
     while (mPsCurrent == DeviceStatus::Unknown) {
       k_sleep(K_MSEC(1));
     }

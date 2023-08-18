@@ -40,32 +40,31 @@
 namespace testing {
 namespace mock {
 
-using namespace coriander;
-
-struct MockBoardEvent : public IBoardEvent {
+struct MockBoardEvent : public coriander::IBoardEvent {
   MOCK_METHOD(void, raiseEvent, (Event), (noexcept));
   MOCK_METHOD(void, registerEventCallback, (Event, EventCallback), (noexcept));
   MOCK_METHOD0(eventLock, void());
   MOCK_METHOD0(eventUnlock, void());
 };
 
-struct MockLogger : public base::ILogger {
+struct MockLogger : public coriander::base::ILogger {
   MOCK_METHOD(void, log, (const char* msg), (noexcept));
 };
 
-struct MockSystick : public os::ISystick {
+struct MockSystick : public coriander::os::ISystick {
   MOCK_METHOD(uint32_t, systick_ms, (), (noexcept));
   MOCK_METHOD(uint32_t, systick_us, (), (noexcept));
 };
 
-struct MockBldcDriver : public motorctl::IBldcDriver {
+struct MockBldcDriver : public coriander::motorctl::IBldcDriver {
   MOCK_METHOD0(enable, void());
   MOCK_METHOD0(disable, void());
   MOCK_METHOD3(setPhaseDutyCycle, void(uint16_t, uint16_t, uint16_t));
   MOCK_METHOD0(emergencyBreak, void());
 };
 
-struct MockElecAngleEstimator : public motorctl::IElecAngleEstimator {
+struct MockElecAngleEstimator
+    : public coriander::motorctl::IElecAngleEstimator {
   MOCK_METHOD(float, getElectricalAngle, (), (noexcept));
   MOCK_METHOD0(enable, void());
   MOCK_METHOD0(disable, void());
@@ -75,7 +74,8 @@ struct MockElecAngleEstimator : public motorctl::IElecAngleEstimator {
   MOCK_METHOD0(needCalibrate, bool());
 };
 
-struct MockMechAngleEstimator : public motorctl::IMechAngleEstimator {
+struct MockMechAngleEstimator
+    : public coriander::motorctl::IMechAngleEstimator {
   MOCK_METHOD(float, getMechanicalAngle, (), (noexcept));
   MOCK_METHOD0(enable, void());
   MOCK_METHOD0(disable, void());
@@ -86,7 +86,7 @@ struct MockMechAngleEstimator : public motorctl::IMechAngleEstimator {
   MOCK_METHOD0(calibrate, void());
 };
 
-struct MockEncoder : public motorctl::IEncoder {
+struct MockEncoder : public coriander::motorctl::IEncoder {
   MOCK_METHOD0(getEncoderCount, unsigned());
   MOCK_METHOD0(getEncoderCountPerRound, unsigned());
   MOCK_METHOD0(getOverflowCount, int());
@@ -98,55 +98,58 @@ struct MockEncoder : public motorctl::IEncoder {
   MOCK_METHOD0(calibrate, void());
 };
 
-struct MockAppStatus : public application::IAppStatus {
+struct MockAppStatus : public coriander::application::IAppStatus {
   MOCK_METHOD(void, setStatus, (Status), (noexcept));
   MOCK_METHOD(Status, getStatus, (), (const, noexcept));
 };
 
-struct MockStateHandler : public IStateHandler {
+struct MockStateHandler : public coriander::IStateHandler {
   MOCK_METHOD(void, onEnter, (), (noexcept));
   MOCK_METHOD(void, onExit, (), (noexcept));
   MOCK_METHOD(void, onLoop, (), (noexcept));
 };
 
-struct MockBoardStateInitHandler : public IBoardStateInitHandler {
+struct MockBoardStateInitHandler : public coriander::IBoardStateInitHandler {
   MOCK_METHOD(void, onEnter, (), (noexcept));
   MOCK_METHOD(void, onExit, (), (noexcept));
   MOCK_METHOD(void, onLoop, (), (noexcept));
 };
 
-struct MockBoardStateStandbyHandler : public IBoardStateStandbyHandler {
+struct MockBoardStateStandbyHandler
+    : public coriander::IBoardStateStandbyHandler {
   MOCK_METHOD(void, onEnter, (), (noexcept));
   MOCK_METHOD(void, onExit, (), (noexcept));
   MOCK_METHOD(void, onLoop, (), (noexcept));
 };
 
-struct MockBoardStateRunHandler : public IBoardStateRunHandler {
+struct MockBoardStateRunHandler : public coriander::IBoardStateRunHandler {
   MOCK_METHOD(void, onEnter, (), (noexcept));
   MOCK_METHOD(void, onExit, (), (noexcept));
   MOCK_METHOD(void, onLoop, (), (noexcept));
 };
 
-struct MockBoardStateErrorHandler : public IBoardStateErrorHandler {
+struct MockBoardStateErrorHandler : public coriander::IBoardStateErrorHandler {
   MOCK_METHOD(void, onEnter, (), (noexcept));
   MOCK_METHOD(void, onExit, (), (noexcept));
   MOCK_METHOD(void, onLoop, (), (noexcept));
 };
 
-struct MockBoardStateCalibrateHandler : public IBoardStateCalibrateHandler {
+struct MockBoardStateCalibrateHandler
+    : public coriander::IBoardStateCalibrateHandler {
   MOCK_METHOD(void, onEnter, (), (noexcept));
   MOCK_METHOD(void, onExit, (), (noexcept));
   MOCK_METHOD(void, onLoop, (), (noexcept));
 };
 
 struct MockBoardStateFirmwareUpdateHandler
-    : public IBoardStateFirmwareUpdateHandler {
+    : public coriander::IBoardStateFirmwareUpdateHandler {
   MOCK_METHOD(void, onEnter, (), (noexcept));
   MOCK_METHOD(void, onExit, (), (noexcept));
   MOCK_METHOD(void, onLoop, (), (noexcept));
 };
 
-struct MockBoardStateRebootHandler : public IBoardStateRebootHandler {
+struct MockBoardStateRebootHandler
+    : public coriander::IBoardStateRebootHandler {
   MOCK_METHOD(void, onEnter, (), (noexcept));
   MOCK_METHOD(void, onExit, (), (noexcept));
   MOCK_METHOD(void, onLoop, (), (noexcept));
@@ -165,23 +168,24 @@ struct MockFocMotorDriver : public coriander::motorctl::FocMotorDriver {
   // void setPhaseDutyCycle(uint16_t u, uint16_t v, uint16_t w) override {}
 };
 
-struct MockSemaphore : public os::ISemaphore {
+struct MockSemaphore : public coriander::os::ISemaphore {
   MOCK_METHOD(void, wait, (), (noexcept));
   MOCK_METHOD(bool, tryWait, (), (noexcept));
   MOCK_METHOD(void, post, (), (noexcept));
 };
 
-struct MockThread : public os::IThread {
+struct MockThread : public coriander::os::IThread {
   MOCK_METHOD(size_t, currentThreadId, (), (noexcept));
 };
 
-struct MockProtoCtl : public IProtocolCtl {
+struct MockProtoCtl : public coriander::IProtocolCtl {
   MOCK_METHOD(void, enable, (), (noexcept));
   MOCK_METHOD(void, disable, (), (noexcept));
   MOCK_METHOD(void, loop, (), (noexcept));
 };
 
-struct MockParamReqValidator : public IParamReqValidator {
+using coriander::IParamReq;
+struct MockParamReqValidator : public coriander::IParamReqValidator {
   MOCK_METHOD(void, addParamReq, (IParamReq*));
   MOCK_METHOD(bool, validate, ());
 };

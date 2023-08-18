@@ -24,8 +24,8 @@ void FocMotorDriver::setVoltage(float d, float q) {
   float vu, vv, vw;
   uint16_t u, v, w;
 
-  foc::invPark(d, q, sinTheta, cosTheta, alpha, beta);
-  foc::SpaceVectorPwm(alpha, beta, vu, vv, vw);
+  foc::invPark(d, q, sinTheta, cosTheta, &alpha, &beta);
+  foc::SpaceVectorPwm(alpha, beta, &vu, &vv, &vw);
   u = static_cast<uint16_t>(vu * UINT16_MAX);
   v = static_cast<uint16_t>(vv * UINT16_MAX);
   w = static_cast<uint16_t>(vw * UINT16_MAX);

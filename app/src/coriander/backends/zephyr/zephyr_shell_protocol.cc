@@ -7,7 +7,7 @@
  * Copyright 2023 savent_gate
  *
  */
-#include "zephyr_shell_protocol.h"
+#include "zephyr/zephyr_shell_protocol.h"
 
 #include <zephyr/fs/fs.h>
 #include <zephyr/shell/shell.h>
@@ -63,11 +63,11 @@ static int shell_param_list(const struct shell* shell, size_t argc,
     return -1;
   }
 
-  auto visitor =
-      coriander::PropertyVisitorWrapper([shell](const coriander::Property& p) {
+  auto visitor = coriander::base::PropertyVisitorWrapper(
+      [shell](const coriander::base::Property& p) {
         shell_print(shell, "%s\t%s", p.name(), p.desc());
       });
-  param->accept(visitor);
+  param->accept(&visitor);
 
   return 0;
 }
@@ -87,7 +87,7 @@ static int shell_param_get(const struct shell* shell, size_t argc,
   const char* name = argv[1];
   auto& p = param->get(name);
   auto& v = p.value();
-  auto id = coriander::TypeHelper::type(v);
+  auto id = coriander::base::TypeHelper::type(v);
 
   switch (id) {
     case TypeId::Int32:
@@ -139,7 +139,7 @@ static int shell_param_set(const struct shell* shell, size_t argc,
   const char* value = argv[2];
   auto p = param->get(name);
   auto& v = p.value();
-  auto id = coriander::TypeHelper::type(v);
+  auto id = coriander::base::TypeHelper::type(v);
 
   switch (id) {
     case TypeId::Int32:

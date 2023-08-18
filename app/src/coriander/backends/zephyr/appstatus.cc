@@ -11,7 +11,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
-#include "zephyr_appstatus.h"
+#include "zephyr/zephyr_appstatus.h"
 
 LOG_MODULE_REGISTER(appstatus, 2);
 

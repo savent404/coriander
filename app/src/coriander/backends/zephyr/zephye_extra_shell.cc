@@ -7,4 +7,5 @@
  * Copyright 2023 savent_gate
  *
  */
-#include "../../recovery/src/fs_shell.c"
+
+#include "../../recovery/src/fs_shell.c" // NOLINT, it is for import source code from recovery project

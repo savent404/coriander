@@ -17,7 +17,7 @@ struct LowPassFilter {
   /**
    * @param Tf - Low pass filter time constant
    */
-  LowPassFilter(float Tf);
+  explicit LowPassFilter(float Tf);
   ~LowPassFilter() = default;
 
   float operator()(float x, float Ts);

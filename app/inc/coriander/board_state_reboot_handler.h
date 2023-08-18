@@ -15,9 +15,9 @@ namespace coriander {
 
 struct BoardStateRebootHandler : public IBoardStateRebootHandler {
   BoardStateRebootHandler() noexcept {}
-  virtual void onEnter() noexcept override {}
-  virtual void onExit() noexcept override {}
-  virtual void onLoop() noexcept override {}
+  void onEnter() noexcept override {}
+  void onExit() noexcept override {}
+  void onLoop() noexcept override {}
 };
 
 }  // namespace coriander

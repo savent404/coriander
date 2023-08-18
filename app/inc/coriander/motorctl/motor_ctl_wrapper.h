@@ -9,6 +9,8 @@
  */
 #pragma once
 
+#include <memory>
+
 #include "coriander/motorctl/imotorctl.h"
 #include "coriander/motorctl/motor_ctl_dummy.h"
 #include "coriander/motorctl/motor_ctl_position.h"
@@ -32,17 +34,17 @@ struct DynamicMotorCtl : public IMotorCtl, public IParamReq {
     paramReqValidator->addParamReq(this);
   }
 
-  virtual void start() override {
+  void start() override {
     parseMode();
     mCurrentMc->start();
   }
-  virtual void stop() override { mCurrentMc->stop(); }
-  virtual void loop() override { mCurrentMc->loop(); }
+  void stop() override { mCurrentMc->stop(); }
+  void loop() override { mCurrentMc->loop(); }
 
-  virtual void emergencyStop() override { mCurrentMc->emergencyStop(); }
-  virtual bool fatalError() override { return mCurrentMc->fatalError(); }
+  void emergencyStop() override { mCurrentMc->emergencyStop(); }
+  bool fatalError() override { return mCurrentMc->fatalError(); }
 
-  virtual const ParameterRequireItem* requiredParameters() const override {
+  const ParameterRequireItem* requiredParameters() const override {
     using Type = coriander::base::TypeId;
     static const ParameterRequireItem items[] = {{"MotorCtlMode", Type::Int32},
                                                  PARAMETER_REQ_EOF};
@@ -57,7 +59,7 @@ struct DynamicMotorCtl : public IMotorCtl, public IParamReq {
     } else {
       setMode(Mode::Dummy);
     }
-  };
+  }
 
   void setMode(Mode mode) {
     if (static_cast<int>(mode) < static_cast<int>(Mode::MODE_MAX)) {

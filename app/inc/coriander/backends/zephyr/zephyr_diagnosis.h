@@ -24,7 +24,7 @@ struct DiagnosisRegister {
   ~DiagnosisRegister() = delete;
 
   DiagnosisRegister();
-  void applyAll(coriander::application::Diagnosis& diagnosis);
+  void applyAll(coriander::application::Diagnosis* diagnosis);
   void updateStatus(uint32_t ref_2048, uint32_t ps28Voltage,
                     uint32_t ps5Voltage, uint32_t psCurrent);
   static DiagnosisRegister* getInstance();

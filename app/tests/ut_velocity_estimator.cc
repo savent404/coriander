@@ -13,7 +13,7 @@
 
 #include "coriander/motorctl/velocity_estimator.h"
 #include "coriander/parameters.h"
-#include "mocks.h"
+#include "tests/mocks.h"
 
 namespace {
 struct DummyMechAngleEstimator
@@ -37,9 +37,8 @@ struct DummySystick : public coriander::os::ISystick {
 };
 
 using Property = coriander::base::Property;
-using namespace coriander;
-using namespace coriander::base;
 using ParamId = coriander::base::ParamId;
+using ParameterBase = coriander::ParameterBase;
 
 TEST(ISensor, BasicVelocityEstimator) {
   auto mechAngleEstimator = std::make_shared<DummyMechAngleEstimator>();

@@ -23,10 +23,10 @@
 #include "coriander/motorctl/motor_ctl_wrapper.h"
 #include "coriander/os/isystick.h"
 #include "coriander/parameters.h"
-#include "mocks.h"
-#include "posix_mutex.h"
-#include "posix_semaphore.h"
-#include "posix_thread.h"
+#include "tests/mocks.h"
+#include "posix/posix_mutex.h"
+#include "posix/posix_semaphore.h"
+#include "posix/posix_thread.h"
 
 namespace {
 using coriander::base::operator""_hash;
@@ -39,15 +39,18 @@ struct MockIMotorCtl : public coriander::motorctl::IMotorCtl {
   MOCK_METHOD0(fatalError, bool());
 };
 static auto createInjector() {
+  using boost::di::bind;
+  using testing::mock::MockAppStatus;
+  using testing::mock::MockFocMotorDriver;
   return boost::di::make_injector(
-      boost::di::bind<coriander::application::IAppStatus>.to<testing::mock::MockAppStatus>(),
-      boost::di::bind<coriander::base::ILogger>.to<testing::mock::MockLogger>(),
-      boost::di::bind<coriander::os::ISystick>.to<testing::mock::MockSystick>(),
-      boost::di::bind<coriander::os::IThread>.to<testing::mock::MockThread>(),
-      boost::di::bind<coriander::os::IMutex>.to<coriander::os::posix::Mutex>(),
-      boost::di::bind<coriander::os::ISemaphore>.to<coriander::os::posix::Semaphore>(),
-      boost::di::bind<coriander::motorctl::IEncoder>.to<testing::mock::MockEncoder>(),
-      boost::di::bind<coriander::motorctl::FocMotorDriver>.to<testing::mock::MockFocMotorDriver>());
+      bind<coriander::application::IAppStatus>.to<MockAppStatus>(),
+      bind<coriander::base::ILogger>.to<testing::mock::MockLogger>(),
+      bind<coriander::os::ISystick>.to<testing::mock::MockSystick>(),
+      bind<coriander::os::IThread>.to<testing::mock::MockThread>(),
+      bind<coriander::os::IMutex>.to<coriander::os::posix::Mutex>(),
+      bind<coriander::os::ISemaphore>.to<coriander::os::posix::Semaphore>(),
+      bind<coriander::motorctl::IEncoder>.to<testing::mock::MockEncoder>(),
+      bind<coriander::motorctl::FocMotorDriver>.to<MockFocMotorDriver>());
 }
 }  // namespace
 

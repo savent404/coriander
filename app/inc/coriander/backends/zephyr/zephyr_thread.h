@@ -18,7 +18,7 @@ namespace os {
 namespace zephyr {
 class Thread : public IThread {
  public:
-  virtual size_t currentThreadId() override {
+  size_t currentThreadId() override {
     return reinterpret_cast<size_t>(k_current_get());
   }
 };

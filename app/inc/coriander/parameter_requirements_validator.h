@@ -9,15 +9,21 @@
  */
 #pragma once
 
+#include <memory>
 #include <unordered_map>
+#include <utility>
 
 #include "base/ilogger.h"
 #include "base/loggerstream.h"
-#include "parameter_requirements.h"
+#include "coriander/parameter_requirements.h"
 
 namespace coriander {
 
 struct ParamReqValidator : public IParamReqValidator {
+  using ILogger = coriander::base::ILogger;
+  using ParameterBase = coriander::ParameterBase;
+  using ParameterRequireItem = coriander::ParameterRequireItem;
+
   ParamReqValidator(std::shared_ptr<ILogger> logger,
                     std::shared_ptr<ParameterBase> param)
       : mLogger(logger), mParam(param) {

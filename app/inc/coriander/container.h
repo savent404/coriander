@@ -11,8 +11,9 @@
 
 #include <memory.h>
 
-#include <boost/di.hpp>
+#include <utility>
 
+#include "boost/di.hpp"
 // dependencies
 #include "coriander/board_event.h"
 #include "coriander/board_state.h"
@@ -23,6 +24,8 @@
 #include "coriander/board_state_reboot_handler.h"
 #include "coriander/board_state_run_handler.h"
 #include "coriander/board_state_standby_handler.h"
+#include "coriander/iboard_state_calibrate_handler.h"
+#include "coriander/iboard_state_firmware_update_handler.h"
 #include "coriander/motorctl/container.h"
 #include "coriander/parameter_requirements.h"
 #include "coriander/parameter_requirements_validator.h"
@@ -38,17 +41,31 @@ static inline auto extendContainer(T_injector&& injector, T_args&&... args) {
 }
 
 static inline auto createInjector() {
+  using boost::di::bind;
+  using coriander::IBoardEvent;
+  using coriander::IBoardState;
+  using coriander::IBoardStateCalibrateHandler;
+  using coriander::IBoardStateErrorHandler;
+  using coriander::IBoardStateFirmwareUpdateHandler;
+  using coriander::IBoardStateInitHandler;
+  using coriander::IBoardStateRebootHandler;
+  using coriander::IBoardStateRunHandler;
+  using coriander::IBoardStateStandbyHandler;
+  using coriander::IParamReqValidator;
+  using bsfuh = coriander::BoardStateFirmwareUpdateHandler;
+  using bsch = coriander::BoardStateCalibrateHandler;
+
   return boost::di::make_injector(
-      boost::di::bind<coriander::IBoardState>.to<coriander::BoardState>(),
-      boost::di::bind<coriander::IBoardStateInitHandler>.to<coriander::BoardStateInitHandler>(),
-      boost::di::bind<coriander::IBoardStateStandbyHandler>.to<coriander::BoardStateStandbyHandler>(),
-      boost::di::bind<coriander::IBoardStateRunHandler>.to<coriander::BoardStateRunHandler>(),
-      boost::di::bind<coriander::IBoardStateErrorHandler>.to<coriander::BoardStateErrorHandler>(),
-      boost::di::bind<coriander::IBoardStateCalibrateHandler>.to<coriander::BoardStateCalibrateHandler>(),
-      boost::di::bind<coriander::IBoardStateFirmwareUpdateHandler>.to<coriander::BoardStateFirmwareUpdateHandler>(),
-      boost::di::bind<coriander::IBoardStateRebootHandler>.to<coriander::BoardStateRebootHandler>(),
-      boost::di::bind<coriander::IBoardEvent>.to<coriander::BoardEvent>(),
-      boost::di::bind<coriander::IParamReqValidator>.to<coriander::ParamReqValidator>());
+      bind<IBoardState>.to<coriander::BoardState>(),
+      bind<IBoardStateInitHandler>.to<coriander::BoardStateInitHandler>(),
+      bind<IBoardStateStandbyHandler>.to<coriander::BoardStateStandbyHandler>(),
+      bind<IBoardStateRunHandler>.to<coriander::BoardStateRunHandler>(),
+      bind<IBoardStateErrorHandler>.to<coriander::BoardStateErrorHandler>(),
+      bind<IBoardStateCalibrateHandler>.to<bsch>(),
+      bind<IBoardStateFirmwareUpdateHandler>.to<bsfuh>(),
+      bind<IBoardStateRebootHandler>.to<coriander::BoardStateRebootHandler>(),
+      bind<IBoardEvent>.to<coriander::BoardEvent>(),
+      bind<IParamReqValidator>.to<coriander::ParamReqValidator>());
 }
 
 static inline auto defaultContainer() {

@@ -8,6 +8,9 @@
  *
  */
 #pragma once
+#include <memory>
+#include <utility>
+
 #include "coriander/iboard_event.h"
 #include "coriander/parameters.h"
 

@@ -72,7 +72,7 @@ void EncoderMechAngleEstimator::calibrate() {
 bool EncoderMechAngleEstimator::needCalibrate() { return mNeedCalibrate; }
 
 float EncoderMechAngleEstimator::getMechanicalAngle() noexcept {
-  float t = (float(mEncoder->getEncoderCount()) /
+  float t = (static_cast<float>(mEncoder->getEncoderCount()) /
              mEncoder->getEncoderCountPerRound());
   mRawMechAngle = (t + mEncoder->getOverflowCount()) * 360.0f - mPersistOffset;
   mMechAngle = mRawMechAngle + mMechAngleOffset;

@@ -13,7 +13,8 @@
 
 #include "coriander/motorctl/foc_motor_driver.h"
 #include "coriander/motorctl/ibldc_driver.h"
-#include "mocks.h"
+#include "coriander/motorctl/ielec_angle_estimator.h"
+#include "tests/mocks.h"
 
 namespace {
 
@@ -38,9 +39,13 @@ struct MockFocMotor : public coriander::motorctl::FocMotorDriver {
 };
 
 static auto createInjector() {
+  using boost::di::bind;
+  using coriander::motorctl::FocMotorDriver;
+  using coriander::motorctl::IElecAngleEstimator;
+  using testing::mock::MockElecAngleEstimator;
   return boost::di::make_injector(
-      boost::di::bind<coriander::motorctl::IElecAngleEstimator>.to<testing::mock::MockElecAngleEstimator>(),
-      boost::di::bind<coriander::motorctl::FocMotorDriver>.to<MockFocMotor>());
+      bind<IElecAngleEstimator>.to<MockElecAngleEstimator>(),
+      bind<FocMotorDriver>.to<MockFocMotor>());
 }
 
 }  // namespace

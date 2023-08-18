@@ -20,9 +20,9 @@ struct AppStatus : public IAppStatus {
   AppStatus(AppStatus&&) = delete;
   virtual AppStatus& operator=(const AppStatus&) = delete;
 
-  explicit AppStatus() noexcept;
-  virtual void setStatus(Status status) noexcept override;
-  virtual Status getStatus() const noexcept override;
+  AppStatus() noexcept;
+  void setStatus(Status status) noexcept override;
+  Status getStatus() const noexcept override;
 };
 }  // namespace zephyr
 }  // namespace application

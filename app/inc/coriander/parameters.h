@@ -10,15 +10,17 @@
 #pragma once
 
 #include <memory>
-#include <span>
+#include <span> // NOLINT
 
 #include "coriander/base/property_set.h"
 #include "coriander/base/type.h"
 
 namespace coriander {
 
-using namespace coriander::base;
-
+using coriander::base::operator""_hash;
+using coriander::base::ParamId;
+using coriander::base::Type;
+using coriander::base::TypeId;
 struct ParameterBase : public base::PropertySet {
   template <typename T>
   T getValue(const char* name) const noexcept {

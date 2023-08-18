@@ -1,3 +1,12 @@
+/**
+ * @file board_state_standby_handler.h
+ * @author Savent Gate (savent_gate@outlook.com)
+ * @brief 
+ * @date 2023-08-19
+ * 
+ * Copyright 2023 savent_gate
+ * 
+ */
 #pragma once
 
 #include <memory>
@@ -14,12 +23,12 @@ struct BoardStateStandbyHandler : public IBoardStateStandbyHandler {
                            std::shared_ptr<IProtocolCtl> proto) noexcept
       : mAppStatus(appStatus), mProtocolCtl(proto) {}
 
-  virtual void onEnter() noexcept override {
+  void onEnter() noexcept override {
     mProtocolCtl->enable();
     mAppStatus->setStatus(IAppStatus::Status::Ok);
   }
-  virtual void onExit() noexcept override {}
-  virtual void onLoop() noexcept override { mProtocolCtl->loop(); }
+  void onExit() noexcept override {}
+  void onLoop() noexcept override { mProtocolCtl->loop(); }
 
  private:
   std::shared_ptr<IAppStatus> mAppStatus;

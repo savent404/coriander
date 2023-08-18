@@ -18,7 +18,8 @@ namespace coriander {
 namespace motorctl {
 
 struct FocMotorDriver : public IBldcDriver {
-  FocMotorDriver(std::shared_ptr<IElecAngleEstimator> elecAngleEstimator)
+  explicit FocMotorDriver(
+      std::shared_ptr<IElecAngleEstimator> elecAngleEstimator)
       : mElecAngleEstimator(elecAngleEstimator) {}
 
   /**

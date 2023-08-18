@@ -11,17 +11,39 @@
 
 #include <array>
 
-#include "enum.h"
+#include "enum.h"  // NOLINT
 
 namespace coriander {
 
 namespace base {
-BETTER_ENUM(ParamId, int, MotorCtlMode, PolePair, ElecAngleOffset, PersistRawElecAngle,
-            PersistRawMechAngle, MechAngleOffset, CalibrateVoltage, CalibrateDuration,
-            MotorSupplyVoltage, MechAnglePidP, MechAnglePidI, MechAnglePidD, MechAnglePidOutputRamp,
-            MechAnglePidLimit, TargetPosition, TargetVelocity, VelocityPidP, VelocityPidI,
-            VelocityPidD, VelocityPidOutputRamp, VelocityPidLimit, VelocitySampleWindowSize,
-            VelocitySampleWindowTime, VelocitySampleMinimalDuration, Unknow, MAX_PARAM_ID);
+// clang-format off
+BETTER_ENUM(ParamId, int,
+  MotorCtlMode,
+  PolePair,
+  ElecAngleOffset,
+  PersistRawElecAngle,
+  PersistRawMechAngle,
+  MechAngleOffset,
+  CalibrateVoltage,
+  CalibrateDuration,
+  MotorSupplyVoltage,
+  MechAnglePidP,
+  MechAnglePidI,
+  MechAnglePidD,
+  MechAnglePidOutputRamp,
+  MechAnglePidLimit,
+  TargetPosition,
+  TargetVelocity,
+  VelocityPidP,
+  VelocityPidI,
+  VelocityPidD,
+  VelocityPidOutputRamp,
+  VelocityPidLimit,
+  VelocitySampleWindowSize,
+  VelocitySampleWindowTime,
+  VelocitySampleMinimalDuration,
+  Unknow, MAX_PARAM_ID);
+// clang-format on
 
 struct ParamDescriber {
   static inline constexpr const char *getParamDescription(ParamId id) {
@@ -29,8 +51,10 @@ struct ParamDescriber {
         [ParamId::MotorCtlMode] = "0:dummy, 1:velocity, 2:position",
         [ParamId::PolePair] = "motor pole pair",
         [ParamId::ElecAngleOffset] = "electrical angle offset, unit: degree",
-        [ParamId::PersistRawElecAngle] = "electrical angle, persistent value, unit: degree",
-        [ParamId::PersistRawMechAngle] = "mechanical angle, persistent value. unit: degree",
+        [ParamId::PersistRawElecAngle] = "electrical angle, "
+                                         "persistent value, unit: degree",
+        [ParamId::PersistRawMechAngle] = "mechanical angle, "
+                                         "persistent value. unit: degree",
         [ParamId::MechAngleOffset] = "mechanical angle offset, unit: degree",
         [ParamId::CalibrateVoltage] = "calibrate voltage, unit: volt",
         [ParamId::CalibrateDuration] = "calibrate duration, unit: ms",
@@ -47,7 +71,8 @@ struct ParamDescriber {
         [ParamId::VelocityPidD] = "",
         [ParamId::VelocityPidOutputRamp] = "maxium ramp of output",
         [ParamId::VelocityPidLimit] = "maxium output",
-        [ParamId::VelocitySampleWindowSize] = "window size of velocity estimator, default: 16",
+        [ParamId::VelocitySampleWindowSize] = "window size of velocity "
+                                              "estimator, default: 16",
         [ParamId::VelocitySampleWindowTime] =
             "max window time of velocity estimator, default: 1000ms",
         [ParamId::VelocitySampleMinimalDuration] =

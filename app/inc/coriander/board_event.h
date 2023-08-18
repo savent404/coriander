@@ -10,6 +10,8 @@
 #pragma once
 
 #include <forward_list>
+#include <memory>
+#include <utility>
 
 #include "coriander/base/ilogger.h"
 #include "coriander/base/loggerstream.h"
@@ -33,7 +35,7 @@ struct BoardEvent : public IBoardEvent {
         mLock(std::move(mutex)),
         mThreadInfo(std::move(thread)) {}
 
-  virtual void raiseEvent(Event event) noexcept override {
+  void raiseEvent(Event event) noexcept override {
     base::LoggerStream os(mLogger);
 
     os << "Raise event: " << static_cast<int>(event) << std::endl;
@@ -43,7 +45,7 @@ struct BoardEvent : public IBoardEvent {
     }
   }
 
-  virtual void registerEventCallback(Event event,
+  void registerEventCallback(Event event,
                                      EventCallback callback) noexcept override {
     mEventCallbacks[static_cast<int>(event)].push_front(callback);
   }

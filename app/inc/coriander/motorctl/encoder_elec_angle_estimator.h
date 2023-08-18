@@ -9,6 +9,8 @@
  */
 #pragma once
 
+#include <memory>
+
 #include "coriander/base/const_hash.h"
 #include "coriander/motorctl/ielec_angle_estimator.h"
 #include "coriander/motorctl/iencoder.h"
@@ -17,8 +19,6 @@
 
 namespace coriander {
 namespace motorctl {
-
-using namespace coriander::base;
 
 /**
  * @brief Elecangle estimator based on encoder

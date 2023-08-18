@@ -9,6 +9,8 @@
  */
 #pragma once
 
+#include <memory>
+
 #include "coriander/board_ctl.h"
 #include "coriander/iprotocol_ctl.h"
 

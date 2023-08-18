@@ -15,7 +15,6 @@
 #include "coriander/base/const_hash.h"
 #include "coriander/base/param.h"
 #include "coriander/base/type.h"
-#include "param.h"
 
 namespace coriander {
 namespace base {
@@ -23,7 +22,7 @@ namespace base {
 struct Property {
   using ParamId = coriander::base::ParamId;
   explicit Property(const Type& value, ParamId id) : m_value(value), m_id(id) {}
-  explicit Property() : m_value(Invalid{}), m_id(ParamId::Unknow) {}
+  Property() : m_value(Invalid{}), m_id(ParamId::Unknow) {}
 
   Property(const Property&) = default;
   Property(Property&&) = default;

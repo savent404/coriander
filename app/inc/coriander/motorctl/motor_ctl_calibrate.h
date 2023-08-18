@@ -9,6 +9,8 @@
  */
 #pragma once
 
+#include <memory>
+
 #include "coriander/iboard_event.h"
 #include "coriander/motorctl/ibldc_driver.h"
 #include "coriander/motorctl/ielec_angle_estimator.h"

@@ -19,12 +19,12 @@ namespace os {
 namespace zephyr {
 
 struct Semaphore : public ISemaphore {
-  explicit Semaphore() noexcept { k_sem_init(&mSemaphore, 0, 3); }
-  virtual void wait() noexcept override { k_sem_take(&mSemaphore, K_FOREVER); }
-  virtual bool tryWait() noexcept override {
+  Semaphore() noexcept { k_sem_init(&mSemaphore, 0, 3); }
+  void wait() noexcept override { k_sem_take(&mSemaphore, K_FOREVER); }
+  bool tryWait() noexcept override {
     return k_sem_take(&mSemaphore, K_NO_WAIT) == 0;
   }
-  virtual void post() noexcept override { k_sem_give(&mSemaphore); }
+  void post() noexcept override { k_sem_give(&mSemaphore); }
 
  private:
   struct k_sem mSemaphore;

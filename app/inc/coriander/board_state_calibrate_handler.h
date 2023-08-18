@@ -9,6 +9,8 @@
  */
 #pragma once
 
+#include <memory>
+
 #include "coriander/application/iappstatus.h"
 #include "coriander/iboard_state_calibrate_handler.h"
 #include "coriander/motorctl/motor_ctl_calibrate.h"
@@ -23,17 +25,17 @@ struct BoardStateCalibrateHandler : public IBoardStateCalibrateHandler {
       std::shared_ptr<MotorCtlCalibrate> motorCtlCalibrate) noexcept
       : mAppStatus(appStatus), mMotorCtlCalibrate(motorCtlCalibrate) {}
 
-  virtual void onEnter() noexcept override {
+  void onEnter() noexcept override {
     mAppStatus->setStatus(IAppStatus::Status::Busy);
     mMotorCtlCalibrate->start();
   }
 
-  virtual void onExit() noexcept override {
+  void onExit() noexcept override {
     mMotorCtlCalibrate->stop();
     mAppStatus->setStatus(IAppStatus::Status::Ok);
   }
 
-  virtual void onLoop() noexcept override { mMotorCtlCalibrate->loop(); }
+  void onLoop() noexcept override { mMotorCtlCalibrate->loop(); }
 
  private:
   std::shared_ptr<IAppStatus> mAppStatus;

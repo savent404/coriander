@@ -15,7 +15,8 @@
 #include "coriander/base/ilogger.h"
 #include "coriander/base/loggerstream.h"
 
-using namespace coriander::base;
+using coriander::base::ILogger;
+using coriander::base::LoggerStream;
 
 struct MockLogger : public ILogger {
   MOCK_METHOD(void, log, (const char* msg), (noexcept));

@@ -87,7 +87,7 @@ static float modular_angle(float angle) {
 }
 
 float EncoderElecAngleEstimator::getElectricalAngle() noexcept {
-  float t = float(mEncoder->getEncoderCount()) /
+  float t = static_cast<float>(mEncoder->getEncoderCount()) /
             mEncoder->getEncoderCountPerRound() * 360.0f * mPolePair;
   mRawElecAngle = modular_angle(t - mPersistOffset);
   mElecAngle = modular_angle(mRawElecAngle + mElecAngleOffset);

@@ -20,23 +20,29 @@
 #include "coriander/motorctl/motor_ctl_calibrate.h"
 #include "coriander/os/isystick.h"
 #include "coriander/parameters.h"
-#include "mocks.h"
+#include "tests/mocks.h"
 
 namespace {
-using namespace coriander;
-using namespace coriander::motorctl;
-using namespace coriander::base;
-using namespace coriander::os;
-
 using MockBldcDriver = testing::mock::MockBldcDriver;
 using MockElecAngleEstimator = testing::mock::MockElecAngleEstimator;
 using MockSystick = testing::mock::MockSystick;
 using MockBoardEvent = testing::mock::MockBoardEvent;
 using MockLogger = testing::mock::MockLogger;
+using MotorCtlCalibrate = coriander::motorctl::MotorCtlCalibrate;
+using IMotorCtl = coriander::motorctl::IMotorCtl;
+using IParamReqValidator = coriander::IParamReqValidator;
+using ParameterBase = coriander::ParameterBase;
+using Property = coriander::base::Property;
+using ParamId = coriander::base::ParamId;
+using IBoardEvent = coriander::IBoardEvent;
+using ILogger = coriander::base::ILogger;
+using coriander::motorctl::IBldcDriver;
+using coriander::motorctl::IElecAngleEstimator;
+using coriander::os::ISystick;
 
 }  // namespace
 
-using namespace boost::di;
+using boost::di::bind;
 using ParamId = coriander::base::ParamId;
 
 static auto createInjector() {

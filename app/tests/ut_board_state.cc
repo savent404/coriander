@@ -7,17 +7,16 @@
  * Copyright 2023 savent_gate
  *
  */
-#include <gtest/gtest.h>
-
-#include <boost/di.hpp>
 #include <functional>
 
+#include "boost/di.hpp"
 #include "coriander/board_event.h"
 #include "coriander/board_state.h"
-#include "posix_logger.h"
-#include "posix_semaphore.h"
-#include "posix_thread.h"
-#include "posix_mutex.h"
+#include "gtest/gtest.h"
+#include "posix/posix_logger.h"
+#include "posix/posix_mutex.h"
+#include "posix/posix_semaphore.h"
+#include "posix/posix_thread.h"
 
 namespace coriander {
 struct custom_hook {
@@ -27,17 +26,17 @@ struct custom_hook {
 };
 
 struct dummyInit : public IBoardStateInitHandler, public custom_hook {
-  virtual void onEnter() noexcept override {
+  void onEnter() noexcept override {
     if (custom_enter) {
       custom_enter();
     }
   }
-  virtual void onExit() noexcept override {
+  void onExit() noexcept override {
     if (custom_exit) {
       custom_exit();
     }
   }
-  virtual void onLoop() noexcept override {
+  void onLoop() noexcept override {
     if (custom_loop) {
       custom_loop();
     }
@@ -45,17 +44,17 @@ struct dummyInit : public IBoardStateInitHandler, public custom_hook {
 };
 
 struct dummyStandby : public IBoardStateStandbyHandler, public custom_hook {
-  virtual void onEnter() noexcept override {
+  void onEnter() noexcept override {
     if (custom_enter) {
       custom_enter();
     }
   }
-  virtual void onExit() noexcept override {
+  void onExit() noexcept override {
     if (custom_exit) {
       custom_exit();
     }
   }
-  virtual void onLoop() noexcept override {
+  void onLoop() noexcept override {
     if (custom_loop) {
       custom_loop();
     }
@@ -63,17 +62,17 @@ struct dummyStandby : public IBoardStateStandbyHandler, public custom_hook {
 };
 
 struct dummyRun : public IBoardStateRunHandler, public custom_hook {
-  virtual void onEnter() noexcept override {
+  void onEnter() noexcept override {
     if (custom_enter) {
       custom_enter();
     }
   }
-  virtual void onExit() noexcept override {
+  void onExit() noexcept override {
     if (custom_exit) {
       custom_exit();
     }
   }
-  virtual void onLoop() noexcept override {
+  void onLoop() noexcept override {
     if (custom_loop) {
       custom_loop();
     }
@@ -81,17 +80,17 @@ struct dummyRun : public IBoardStateRunHandler, public custom_hook {
 };
 
 struct dummyError : public IBoardStateErrorHandler, public custom_hook {
-  virtual void onEnter() noexcept override {
+  void onEnter() noexcept override {
     if (custom_enter) {
       custom_enter();
     }
   }
-  virtual void onExit() noexcept override {
+  void onExit() noexcept override {
     if (custom_exit) {
       custom_exit();
     }
   }
-  virtual void onLoop() noexcept override {
+  void onLoop() noexcept override {
     if (custom_loop) {
       custom_loop();
     }
@@ -99,17 +98,17 @@ struct dummyError : public IBoardStateErrorHandler, public custom_hook {
 };
 
 struct dummyCalibrate : public IBoardStateCalibrateHandler, public custom_hook {
-  virtual void onEnter() noexcept override {
+  void onEnter() noexcept override {
     if (custom_enter) {
       custom_enter();
     }
   }
-  virtual void onExit() noexcept override {
+  void onExit() noexcept override {
     if (custom_exit) {
       custom_exit();
     }
   }
-  virtual void onLoop() noexcept override {
+  void onLoop() noexcept override {
     if (custom_loop) {
       custom_loop();
     }
@@ -118,17 +117,17 @@ struct dummyCalibrate : public IBoardStateCalibrateHandler, public custom_hook {
 
 struct dummyFirmwareUpdate : public IBoardStateFirmwareUpdateHandler,
                              public custom_hook {
-  virtual void onEnter() noexcept override {
+  void onEnter() noexcept override {
     if (custom_enter) {
       custom_enter();
     }
   }
-  virtual void onExit() noexcept override {
+  void onExit() noexcept override {
     if (custom_exit) {
       custom_exit();
     }
   }
-  virtual void onLoop() noexcept override {
+  void onLoop() noexcept override {
     if (custom_loop) {
       custom_loop();
     }
@@ -136,17 +135,17 @@ struct dummyFirmwareUpdate : public IBoardStateFirmwareUpdateHandler,
 };
 
 struct dummyReboot : public IBoardStateRebootHandler, public custom_hook {
-  virtual void onEnter() noexcept override {
+  void onEnter() noexcept override {
     if (custom_enter) {
       custom_enter();
     }
   }
-  virtual void onExit() noexcept override {
+  void onExit() noexcept override {
     if (custom_exit) {
       custom_exit();
     }
   }
-  virtual void onLoop() noexcept override {
+  void onLoop() noexcept override {
     if (custom_loop) {
       custom_loop();
     }
@@ -156,19 +155,34 @@ struct dummyReboot : public IBoardStateRebootHandler, public custom_hook {
 }  // namespace coriander
 
 TEST(BoardState, basic) {
+  using boost::di::bind;
+  using coriander::BoardState;
+  using coriander::dummyFirmwareUpdate;
+  using coriander::IBoardEvent;
+  using coriander::IBoardStateCalibrateHandler;
+  using coriander::IBoardStateErrorHandler;
+  using coriander::IBoardStateFirmwareUpdateHandler;
+  using coriander::IBoardStateInitHandler;
+  using coriander::IBoardStateRebootHandler;
+  using coriander::IBoardStateRunHandler;
+  using coriander::IBoardStateStandbyHandler;
+  using coriander::base::ILogger;
+  using coriander::os::IMutex;
+  using coriander::os::ISemaphore;
+  using coriander::os::IThread;
   auto injector = boost::di::make_injector(
-      boost::di::bind<coriander::base::ILogger>.to<coriander::base::posix::Logger>(),
-      boost::di::bind<coriander::IBoardEvent>.to<coriander::BoardEvent>(),
-      boost::di::bind<coriander::IBoardStateInitHandler>.to<coriander::dummyInit>(),
-      boost::di::bind<coriander::IBoardStateStandbyHandler>.to<coriander::dummyStandby>(),
-      boost::di::bind<coriander::IBoardStateRunHandler>.to<coriander::dummyRun>(),
-      boost::di::bind<coriander::IBoardStateErrorHandler>.to<coriander::dummyError>(),
-      boost::di::bind<coriander::IBoardStateCalibrateHandler>.to<coriander::dummyCalibrate>(),
-      boost::di::bind<coriander::IBoardStateFirmwareUpdateHandler>.to<coriander::dummyFirmwareUpdate>(),
-      boost::di::bind<coriander::IBoardStateRebootHandler>.to<coriander::dummyReboot>(),
-      boost::di::bind<coriander::os::IMutex>.to<coriander::os::posix::Mutex>(),
-      boost::di::bind<coriander::os::ISemaphore>.to<coriander::os::posix::Semaphore>(),
-      boost::di::bind<coriander::os::IThread>.to<coriander::os::posix::Thread>());
+      bind<ILogger>.to<coriander::base::posix::Logger>(),
+      bind<IBoardEvent>.to<coriander::BoardEvent>(),
+      bind<IBoardStateInitHandler>.to<coriander::dummyInit>(),
+      bind<IBoardStateStandbyHandler>.to<coriander::dummyStandby>(),
+      bind<IBoardStateRunHandler>.to<coriander::dummyRun>(),
+      bind<IBoardStateErrorHandler>.to<coriander::dummyError>(),
+      bind<IBoardStateCalibrateHandler>.to<coriander::dummyCalibrate>(),
+      bind<IBoardStateFirmwareUpdateHandler>.to<dummyFirmwareUpdate>(),
+      bind<IBoardStateRebootHandler>.to<coriander::dummyReboot>(),
+      bind<IMutex>.to<coriander::os::posix::Mutex>(),
+      bind<ISemaphore>.to<coriander::os::posix::Semaphore>(),
+      bind<IThread>.to<coriander::os::posix::Thread>());
 
   auto event = injector.create<std::shared_ptr<coriander::BoardEvent>>();
   auto initHandler = injector.create<std::shared_ptr<coriander::dummyInit>>();
@@ -191,9 +205,9 @@ TEST(BoardState, basic) {
     event->raiseEvent(coriander::IBoardEvent::Event::BoardInited);
   };
 
-  coriander::BoardState board(
-      initHandler, standbyHandler, runHandler, errorHandler, calibrateHandler,
-      firmwareUpdateHandler, rebootHandler, event);
+  coriander::BoardState board(initHandler, standbyHandler, runHandler,
+                              errorHandler, calibrateHandler,
+                              firmwareUpdateHandler, rebootHandler, event);
   ASSERT_EQ(board.getState(), coriander::BoardState::State::Standby);
 
   // Test MotorStart, MotorStop

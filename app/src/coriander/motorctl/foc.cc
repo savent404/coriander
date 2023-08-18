@@ -60,7 +60,7 @@ static inline void SpaceVectorPwmDetailed(float I, float J, float K, float* S1,
       break;
     default:
       sector = 0;
-      //__ASSERT_NO_MSG(0);
+      // __ASSERT_NO_MSG(0);
   }
 
   // sector condition
@@ -91,7 +91,7 @@ static inline void SpaceVectorPwmDetailed(float I, float J, float K, float* S1,
       break;
     default:
       T1 = T2 = 0;
-      //__ASSERT_NO_MSG(0);
+      // __ASSERT_NO_MSG(0);
       break;
   }
   T0half = .5 * (1 - T1 - T2);
@@ -130,7 +130,7 @@ static inline void SpaceVectorPwmDetailed(float I, float J, float K, float* S1,
       break;
     default:
       I = J = K = 0;
-      //__ASSERT_NO_MSG(0);
+      // __ASSERT_NO_MSG(0);
       break;
   }
   *S1 = I;
@@ -142,13 +142,13 @@ static inline void SpaceVectorPwmDetailed(float I, float J, float K, float* S1,
 namespace coriander {
 namespace motorctl {
 
-void foc::SpaceVectorPwm(float alpha, float beta, float& du, float& dv,
-                         float& dw) {
+void foc::SpaceVectorPwm(float alpha, float beta, float* du, float* dv,
+                         float* dw) {
   constexpr const float sqrt3_2 = 0.86602540378f;
   float i = alpha * sqrt3_2;
   float j = -0.5f * alpha + sqrt3_2 * beta;
   float k = -0.5f * alpha - sqrt3_2 * beta;
-  ::SpaceVectorPwmDetailed(i, j, k, &du, &dv, &dw);
+  ::SpaceVectorPwmDetailed(i, j, k, du, dv, dw);
 }
 
 }  // namespace motorctl

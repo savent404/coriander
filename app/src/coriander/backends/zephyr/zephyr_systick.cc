@@ -7,7 +7,7 @@
  * Copyright 2023 savent_gate
  *
  */
-#include "zephyr_systick.h"
+#include "zephyr/zephyr_systick.h"
 
 #include <zephyr/kernel.h>
 #include <zephyr/sys_clock.h>
