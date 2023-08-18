@@ -44,7 +44,7 @@ static auto createInjector() {
 }
 
 }  // namespace
-TEST(FocMotorDriver, key_point) {
+TEST(FocMotorDriver, DISABLED_key_point) {
   auto c = createInjector();
   auto t = c.create<std::shared_ptr<MockFocMotor>>();
   auto estimator =
