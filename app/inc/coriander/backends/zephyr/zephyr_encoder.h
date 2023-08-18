@@ -14,7 +14,7 @@ namespace coriander {
 namespace motorctl {
 namespace zephyr {
 
-// TODO: need to implement
+// TODO(savent): need to implement
 struct Encoder : public motorctl::IEncoder {
   virtual unsigned getEncoderCount() { return 0; }
   virtual unsigned getEncoderCountPerRound() { return 0; }

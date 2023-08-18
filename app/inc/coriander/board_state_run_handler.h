@@ -1,3 +1,12 @@
+/**
+ * @file board_state_run_handler.h
+ * @author Savent Gate (savent_gate@outlook.com)
+ * @brief 
+ * @date 2023-08-19
+ * 
+ * Copyright 2023 savent_gate
+ * 
+ */
 #pragma once
 
 #include <memory>
@@ -16,7 +25,7 @@ struct BoardStateRunHandler : public IBoardStateRunHandler {
                        std::shared_ptr<IAppStatus> appStatus) noexcept
       : mBoardEvent{boardEvent}, mMotorCtl{motorCtl}, mAppStatus(appStatus) {}
 
-  virtual void onEnter() noexcept override {
+  void onEnter() noexcept override {
     mAppStatus->setStatus(IAppStatus::Status::Ok);
     mMotorCtl->start();
 
@@ -26,8 +35,8 @@ struct BoardStateRunHandler : public IBoardStateRunHandler {
       mBoardEvent->raiseEvent(IBoardEvent::Event::Crap);
     }
   }
-  virtual void onExit() noexcept override { mMotorCtl->stop(); }
-  virtual void onLoop() noexcept override {
+  void onExit() noexcept override { mMotorCtl->stop(); }
+  void onLoop() noexcept override {
     mMotorCtl->loop();
     if (mMotorCtl->fatalError()) {
       mMotorCtl->emergencyStop();

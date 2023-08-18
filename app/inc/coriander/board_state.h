@@ -40,9 +40,9 @@ struct BoardState : public IBoardState {
       std::shared_ptr<IBoardStateRebootHandler> rebootHandler,
       std::shared_ptr<IBoardEvent> event) noexcept;
 
-  virtual void setState(State state) noexcept override;
-  virtual State getState() const noexcept override;
-  virtual void loop() noexcept override;
+  void setState(State state) noexcept override;
+  State getState() const noexcept override;
+  void loop() noexcept override;
 
  private:
   void enterCritical() noexcept;

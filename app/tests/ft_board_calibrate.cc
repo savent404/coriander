@@ -21,8 +21,8 @@
 #include "coriander/motorctl/ibldc_driver.h"
 #include "coriander/motorctl/ielec_angle_estimator.h"
 #include "coriander/os/isystick.h"
-#include "mocks.h"
-#include "posix_mutex.h"
+#include "tests/mocks.h"
+#include "posix/posix_mutex.h"
 
 namespace {
 static inline auto createInjector() {

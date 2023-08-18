@@ -9,8 +9,6 @@
  */
 #pragma once
 
-#include <chrono>
-
 namespace coriander {
 namespace os {
 struct ISemaphore {

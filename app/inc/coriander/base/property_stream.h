@@ -13,6 +13,7 @@
 #include <cstring>
 #include <memory>
 #include <string>
+#include <utility>
 
 #include "coriander/base/property.h"
 
@@ -20,9 +21,8 @@ namespace coriander {
 namespace base {
 
 struct PropertyTextStream : public Property {
-  PropertyTextStream(Property&& p) noexcept : Property{std::move(p)} {}
-  explicit PropertyTextStream() noexcept
-      : Property{Type{Invalid{}}, ParamId::Unknow} {}
+  explicit PropertyTextStream(Property&& p) noexcept : Property{std::move(p)} {}
+  PropertyTextStream() noexcept : Property{Type{Invalid{}}, ParamId::Unknow} {}
 
   ~PropertyTextStream() noexcept = default;
 
@@ -96,9 +96,10 @@ struct PropertyBinaryStreamHeader {
 }  // namespace detail
 
 struct PropertyBinaryStream : public Property {
-  PropertyBinaryStream(Property&& p) noexcept : Property{std::move(p)} {}
-  PropertyBinaryStream(const Property& p) noexcept : Property{p} {}
-  explicit PropertyBinaryStream() noexcept
+  explicit PropertyBinaryStream(Property&& p) noexcept
+      : Property{std::move(p)} {}
+  explicit PropertyBinaryStream(const Property& p) noexcept : Property{p} {}
+  PropertyBinaryStream() noexcept
       : Property{Type{Invalid{}}, ParamId::Unknow} {}
 
   ~PropertyBinaryStream() noexcept = default;
@@ -199,9 +200,10 @@ struct PropertyBinaryStream : public Property {
     auto& value = p.value();
     auto type = TypeHelper::type(value);
     detail::PropertyBinaryStreamHeader header = {
-      .type = static_cast<uint8_t>(value.index()),
-      .id = static_cast<uint8_t>(p.id()._to_index()),
-      .value_size = 0,};
+        .type = static_cast<uint8_t>(value.index()),
+        .id = static_cast<uint8_t>(p.id()._to_index()),
+        .value_size = 0,
+    };
     const char* value_ptr = nullptr;
     uint64_t triple_buf[3] = {0};
     char* triple_buf_ptr = reinterpret_cast<char*>(triple_buf);
@@ -278,7 +280,7 @@ struct PropertyBinaryStream : public Property {
   }
 
   bool operator==(const PropertyBinaryStream& other) const noexcept {
-    return Property::operator==(*(Property*)&other);
+    return Property::operator==(*reinterpret_cast<const Property*>(&other));
   }
 
  private:

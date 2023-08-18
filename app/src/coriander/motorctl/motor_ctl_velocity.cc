@@ -57,7 +57,7 @@ void MotorCtlVelocity::loop() {
   torqueTargetIq = mVelocityPid(velocityError, durationMs * 1.0e-3f);
   torqueTargetId = 0.0f;
 
-  // TODO: add a current feed back closed loop
+  // TODO(savent): add a current feed back closed loop
   torqueTargetUq = torqueTargetIq;
   torqueTargetUd = torqueTargetId;
   mFocMotorDriver->setVoltage(torqueTargetUd, torqueTargetUq);

@@ -14,27 +14,27 @@
 namespace coriander {
 namespace motorctl {
 namespace foc {
-static inline void clarke(float a, float b, float c, float &alpha,
-                          float &beta) {
-  alpha = a;
-  beta = (0.57735026919f * a + 1.15470053838f * b);
+static inline void clarke(float a, float b, float c, float *alpha,
+                          float *beta) {
+  *alpha = a;
+  *beta = (0.57735026919f * a + 1.15470053838f * b);
 }
 
-static inline void invClarke(float alpha, float beta, float &a, float &b) {
-  a = alpha;
-  b = -0.5f * alpha + 0.86602540378f * beta;
+static inline void invClarke(float alpha, float beta, float *a, float *b) {
+  *a = alpha;
+  *b = -0.5f * alpha + 0.86602540378f * beta;
 }
 
 static inline void park(float alpha, float beta, float sinTheta, float cosTheta,
-                        float &d, float &q) {
-  d = alpha * cosTheta + beta * sinTheta;
-  q = -alpha * sinTheta + beta * cosTheta;
+                        float *d, float *q) {
+  *d = alpha * cosTheta + beta * sinTheta;
+  *q = -alpha * sinTheta + beta * cosTheta;
 }
 
 static inline void invPark(float d, float q, float sinTheta, float cosTheta,
-                           float &alpha, float &beta) {
-  alpha = d * cosTheta - q * sinTheta;
-  beta = d * sinTheta + q * cosTheta;
+                           float *alpha, float *beta) {
+  *alpha = d * cosTheta - q * sinTheta;
+  *beta = d * sinTheta + q * cosTheta;
 }
 
 /**
@@ -46,7 +46,7 @@ static inline void invPark(float d, float q, float sinTheta, float cosTheta,
  * @param dv    duty cycle of phase v
  * @param dw    duty cycle of phase w
  */
-void SpaceVectorPwm(float alpha, float beta, float &du, float &dv, float &dw);
+void SpaceVectorPwm(float alpha, float beta, float *du, float *dv, float *dw);
 
 };  // namespace foc
 }  // namespace motorctl

@@ -21,15 +21,15 @@ struct MotorCtlDummy : public IMotorCtl {
                 std::shared_ptr<IBoardEvent> boardEvent)
       : mLogger(logger), mBoardEvent(boardEvent) {}
 
-  virtual void start() override { mLogger->log("MotorCtlDummy::start()"); }
-  virtual void stop() override { mLogger->log("MotorCtlDummy::stop()"); }
-  virtual void loop() override {
+  void start() override { mLogger->log("MotorCtlDummy::start()"); }
+  void stop() override { mLogger->log("MotorCtlDummy::stop()"); }
+  void loop() override {
     mLogger->log("MotorCtlDummy::loop(): try to stop");
     mBoardEvent->raiseEvent(IBoardEvent::Event::MotorStop);
   }
 
-  virtual void emergencyStop() override { stop(); }
-  virtual bool fatalError() override { return false; }
+  void emergencyStop() override { stop(); }
+  bool fatalError() override { return false; }
 
  private:
   std::shared_ptr<base::ILogger> mLogger;

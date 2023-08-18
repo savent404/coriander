@@ -10,6 +10,7 @@
 #pragma once
 
 #include <list>
+#include <memory>
 
 #include "coriander/motorctl/imech_angle_estimator.h"
 #include "coriander/motorctl/ivelocity_estimator.h"

@@ -12,12 +12,14 @@
 #include "coriander/motorctl/encoder_mech_angle_estimator.h"
 #include "coriander/motorctl/iencoder.h"
 #include "coriander/parameters.h"
-#include "mocks.h"
+#include "tests/mocks.h"
 
-using namespace coriander;
-using namespace coriander::base;
-using namespace coriander::motorctl;
 using ParamId = coriander::base::ParamId;
+using coriander::ParameterBase;
+using coriander::base::Property;
+using coriander::motorctl::EncoderMechAngleEstimator;
+using coriander::motorctl::IEncoder;
+using coriander::motorctl::IMechAngleEstimator;
 
 namespace {
 struct dummyEncoder : public IEncoder {

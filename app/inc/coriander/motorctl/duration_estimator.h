@@ -46,7 +46,7 @@ inline uint32_t getSystick<DurationEstimatorUnit::US>(
 
 template <DurationEstimatorType T, DurationEstimatorUnit U>
 struct DurationEstimator {
-  DurationEstimator(std::shared_ptr<os::ISystick> systick)
+  explicit DurationEstimator(std::shared_ptr<os::ISystick> systick)
       : mSystick(systick) {}
   void recordStart();
   void recordStop();
@@ -60,7 +60,7 @@ struct DurationEstimator {
 
 template <DurationEstimatorUnit U>
 struct DurationEstimator<DurationEstimatorType::OneShot, U> {
-  DurationEstimator(std::shared_ptr<os::ISystick> systick)
+  explicit DurationEstimator(std::shared_ptr<os::ISystick> systick)
       : mSystick(systick), mStart(0), mStop(0) {}
 
   void recordStart() { mStart = detail::getSystick<U>(mSystick); }
@@ -79,59 +79,59 @@ struct DurationEstimator<DurationEstimatorType::OneShot, U> {
 
 template <DurationEstimatorUnit U>
 struct DurationEstimator<DurationEstimatorType::Max, U> {
-  DurationEstimator(std::shared_ptr<os::ISystick> systick)
-      : mSystick(systick), mStart(0), mStop(0), max(0) {}
+  explicit DurationEstimator(std::shared_ptr<os::ISystick> systick)
+      : mSystick(systick), mStart(0), mStop(0), mMax(0) {}
   void recordStart() { mStart = detail::getSystick<U>(mSystick); }
   void recordStop() {
     mStop = detail::getSystick<U>(mSystick);
     uint32_t duration = mStop - mStart;
-    if (duration > max) {
-      max = duration;
+    if (duration > mMax) {
+      mMax = duration;
     }
   }
   void reset() {
-    max = 0;
+    mMax = 0;
     mStart = 0;
     mStop = 0;
   }
-  uint32_t getDuration() const noexcept { return max; }
+  uint32_t getDuration() const noexcept { return mMax; }
 
  private:
   std::shared_ptr<os::ISystick> mSystick;
   uint32_t mStart;
   uint32_t mStop;
-  uint32_t max;
+  uint32_t mMax;
 };
 
 template <DurationEstimatorUnit U>
 struct DurationEstimator<DurationEstimatorType::Min, U> {
-  DurationEstimator(std::shared_ptr<os::ISystick> systick)
-      : mSystick(systick), mStart(0), mStop(0), min(-1) {}
+  explicit DurationEstimator(std::shared_ptr<os::ISystick> systick)
+      : mSystick(systick), mStart(0), mStop(0), mMin(-1) {}
   void recordStart() { mStart = detail::getSystick<U>(mSystick); }
   void recordStop() {
     mStop = detail::getSystick<U>(mSystick);
     uint32_t duration = mStop - mStart;
-    if (duration < min) {
-      min = duration;
+    if (duration < mMin) {
+      mMin = duration;
     }
   }
   void reset() {
-    min = -1;
+    mMin = -1;
     mStart = 0;
     mStop = 0;
   }
-  uint32_t getDuration() const noexcept { return min; }
+  uint32_t getDuration() const noexcept { return mMin; }
 
  private:
   std::shared_ptr<os::ISystick> mSystick;
   uint32_t mStart;
   uint32_t mStop;
-  uint32_t min;
+  uint32_t mMin;
 };
 
 template <DurationEstimatorUnit U>
 struct DurationEstimator<DurationEstimatorType::Average, U> {
-  DurationEstimator(std::shared_ptr<os::ISystick> systick)
+  explicit DurationEstimator(std::shared_ptr<os::ISystick> systick)
       : mSystick(systick), mStart(0), mStop(0), sum(0), count(0) {}
 
   void recordStart() { mStart = detail::getSystick<U>(mSystick); }

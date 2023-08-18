@@ -8,7 +8,7 @@
  *
  */
 
-#include "zephyr_logger.h"
+#include "zephyr/zephyr_logger.h"
 
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>

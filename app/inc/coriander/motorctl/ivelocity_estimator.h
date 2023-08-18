@@ -14,13 +14,12 @@
 
 namespace coriander {
 namespace motorctl {
-  
 struct IVelocityEstimator : public ISensor {
   virtual ~IVelocityEstimator() = default;
 
   /**
    * @brief Get the Velocity object
-   * 
+   *
    * @return float RPM(Revolutions Per Minute)
    */
   virtual float getVelocity() = 0;

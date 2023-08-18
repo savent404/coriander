@@ -13,6 +13,7 @@
 #include <cstdint>
 #include <memory>
 #include <string>
+#include <utility>
 
 #include "coriander/base/property.h"
 #include "coriander/base/type.h"
@@ -25,7 +26,7 @@ struct IPropertyVisitor {
 };
 
 struct PropertyVisitorWrapper : IPropertyVisitor {
-  PropertyVisitorWrapper(std::function<void(const Property&)> func)
+  explicit PropertyVisitorWrapper(std::function<void(const Property&)> func)
       : func(func) {}
   virtual void visit(const Property& property) noexcept { func(property); }
 
@@ -98,10 +99,10 @@ struct PropertyStaticMap {
     m_map[property.id()._to_index()] = std::make_unique<Property>(property);
   }
 
-  void accept(IPropertyVisitor& visitor) const {
+  void accept(IPropertyVisitor* visitor) const {
     for (auto& p : m_map) {
       if (p) {
-        visitor.visit(*p);
+        visitor->visit(*p);
       }
     }
   }

@@ -17,8 +17,11 @@
 #include "coriander/base/property_stream.h"
 
 namespace {
-using namespace coriander;
-using namespace coriander::base;
+
+using coriander::base::IPropertyVisitor;
+using coriander::base::Property;
+using coriander::base::PropertyBinaryStream;
+using coriander::base::string_hash;
 
 struct HeaderItem {
   uint16_t block_size;
@@ -35,7 +38,7 @@ struct Header {
 };
 
 struct HeaderItemVisitor : IPropertyVisitor {
-  virtual void visit(const Property& property) noexcept override {
+  void visit(const Property& property) noexcept override {
     PropertyBinaryStream stream{property};
     std::ostringstream ss{std::ios::binary};
     HeaderItem item;
@@ -69,7 +72,7 @@ std::span<uint8_t> ParameterMemoryMapper::map(
   }
 
   HeaderItemVisitor visitor;
-  param->accept(visitor);
+  param->accept(&visitor);
 
   Header header;
   header.magic = "PARAM"_hash;

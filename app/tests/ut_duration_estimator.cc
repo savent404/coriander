@@ -11,7 +11,7 @@
 
 #include "coriander/motorctl/duration_estimator.h"
 #include "coriander/os/isystick.h"
-#include "mocks.h"
+#include "tests/mocks.h"
 
 TEST(DurationEstimator, OneShot) {
   using coriander::motorctl::DurationEstimator;
@@ -113,7 +113,6 @@ TEST(DurationEstimator, Min) {
   duration_estimator2.recordStop();
   EXPECT_EQ(duration_estimator2.getDuration(), 1000);
 }
-
 
 TEST(DurationEstimator, Average) {
   using coriander::motorctl::DurationEstimator;

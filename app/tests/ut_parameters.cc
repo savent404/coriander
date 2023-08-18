@@ -12,13 +12,13 @@
 #include "coriander/parameter_requirements.h"
 #include "coriander/parameter_requirements_validator.h"
 #include "coriander/parameters.h"
-#include "posix_logger.h"
+#include "posix/posix_logger.h"
 
+using ParamId = coriander::base::ParamId;
+using ParameterBase = coriander::ParameterBase;
+using ParameterMemoryMapper = coriander::ParameterMemoryMapper;
+using Property = coriander::base::Property;
 TEST(Parameter, basic) {
-  using namespace coriander;
-  using namespace coriander::base;
-  using ParamId = coriander::base::ParamId;
-
   ParameterBase param;
 
   ASSERT_EQ(param.has("Unknow"), false);
@@ -36,14 +36,10 @@ TEST(Parameter, basic) {
 }
 
 TEST(Parameter, basic_map) {
-  using namespace coriander;
-  using namespace coriander::base;
-  using ParamId = coriander::base::ParamId;
-
   ParameterBase param;
   ParameterMemoryMapper mapper;
 
-  for (int i =0; i < ParamId::MAX_PARAM_ID; i++) {
+  for (int i = 0; i < ParamId::MAX_PARAM_ID; i++) {
     param.add(Property{i, ParamId::_from_index_nothrow(i).value()});
   }
 
@@ -62,13 +58,18 @@ TEST(Parameter, basic_map) {
   ASSERT_TRUE(mirror_param.has("CalibrateDuration"));
   ASSERT_TRUE(mirror_param.has("CalibrateVoltage"));
   ASSERT_FALSE(mirror_param.has("t3"));
-  ASSERT_EQ(get<int>(mirror_param.get("CalibrateDuration").value()), ParamId::CalibrateDuration);
-  ASSERT_EQ(get<int>(mirror_param.get("CalibrateVoltage").value()), ParamId::CalibrateVoltage);
-  ASSERT_EQ(mirror_param.getValue<int>("CalibrateDuration"), ParamId::CalibrateDuration);
-  ASSERT_EQ(mirror_param.getValue<int>("CalibrateVoltage"), ParamId::CalibrateVoltage);
+  ASSERT_EQ(get<int>(mirror_param.get("CalibrateDuration").value()),
+            ParamId::CalibrateDuration);
+  ASSERT_EQ(get<int>(mirror_param.get("CalibrateVoltage").value()),
+            ParamId::CalibrateVoltage);
+  ASSERT_EQ(mirror_param.getValue<int>("CalibrateDuration"),
+            ParamId::CalibrateDuration);
+  ASSERT_EQ(mirror_param.getValue<int>("CalibrateVoltage"),
+            ParamId::CalibrateVoltage);
 
-  for (int i =0; i < ParamId::MAX_PARAM_ID; i++) {
-    ASSERT_EQ(mirror_param.getValue<int>(ParamId::_from_index_nothrow(i).value()), i);
+  for (int i = 0; i < ParamId::MAX_PARAM_ID; i++) {
+    auto id = ParamId::_from_index_nothrow(i).value();
+    ASSERT_EQ(mirror_param.getValue<int>(id), i);
   }
 }
 
@@ -88,8 +89,6 @@ struct Foo : public coriander::IParamReq {
 }  // namespace
 
 TEST(Parameter, requirements) {
-  using Property = coriander::Property;
-  using ParamId = coriander::base::ParamId;
   auto param = std::make_shared<coriander::ParameterBase>();
   auto validator = std::make_shared<coriander::ParamReqValidator>(
       std::make_shared<coriander::base::posix::Logger>(), param);

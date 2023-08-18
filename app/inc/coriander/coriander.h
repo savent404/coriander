@@ -9,6 +9,7 @@
  */
 #pragma once
 
+#include <memory>
 #include <utility>
 
 #include "coriander/container.h"

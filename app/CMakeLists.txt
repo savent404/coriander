@@ -35,10 +35,10 @@ endif (UNIT_TEST)
 # coriander backend
 ###############
 if (UNIT_TEST)
-    set(backend_inc inc/coriander/backends/posix)
+    set(backend_inc inc/coriander/backends)
     file(GLOB_RECURSE backend_src src/coriander/backends/posix/*.cc)
 else (UNIT_TEST)
-    set(backend_inc inc/coriander/backends/zephyr)
+    set(backend_inc inc/coriander/backends)
     file(GLOB_RECURSE backend_src src/coriander/backends/zephyr/*.cc)
 endif (UNIT_TEST)
 
@@ -63,7 +63,7 @@ if (UNIT_TEST)
     add_executable(ut ${ut_src})
     add_llvm_cov(ut)
     target_link_libraries(ut PRIVATE gtest_main gmock coriander)
-    target_include_directories(ut PRIVATE ${ut_src} ${coriander_inc})
+    target_include_directories(ut PRIVATE . ${coriander_inc})
 else ()
     target_sources(app PRIVATE src/main.cc ${coriander_src} ${backend_src})
     target_include_directories(app PRIVATE

@@ -7,7 +7,7 @@
  * Copyright 2023 savent_gate
  *
  */
-#include "zephyr_nvs.h"
+#include "zephyr/zephyr_nvs.h"
 
 #include <zephyr/drivers/flash.h>
 #include <zephyr/fs/nvs.h>
@@ -66,7 +66,7 @@ bool nvs::read(int id, void* data, size_t len) {
   int rc;
   struct nvs_fs* fs = &::fs;
   rc = nvs_read(fs, id, data, len);
-  if (rc != int(len)) {
+  if (rc != static_cast<int>(len)) {
     LOG_ERR("Unable to read nvs id: %d", id);
     return false;
   }
@@ -77,7 +77,7 @@ bool nvs::write(int id, void* data, size_t len) {
   int rc;
   struct nvs_fs* fs = &::fs;
   rc = nvs_write(fs, id, data, len);
-  if (rc != int(len)) {
+  if (rc != static_cast<int>(len)) {
     LOG_ERR("Unable to write nvs id: %d", id);
     return false;
   }

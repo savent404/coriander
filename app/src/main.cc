@@ -10,24 +10,25 @@
 
 #include <boost/di.hpp>
 
-#include "app_version.h"
+#include "app_version.h"  // NOLINT, this is a generated header in build dir
 #include "coriander/application/diagnosis.h"
 #include "coriander/base/loggerstream.h"
 #include "coriander/base/param.h"
 #include "coriander/coriander.h"
 
 // backends
-#include "zephyr_appstatus.h"
-#include "zephyr_diagnosis.h"
-#include "zephyr_encoder.h"
-#include "zephyr_logger.h"
-#include "zephyr_motor.h"
-#include "zephyr_mutex.h"
-#include "zephyr_nvs.h"
-#include "zephyr_semaphore.h"
-#include "zephyr_shell_protocol.h"
-#include "zephyr_systick.h"
-#include "zephyr_thread.h"
+#include "coriander/iprotocol_ctl.h"
+#include "zephyr/zephyr_appstatus.h"
+#include "zephyr/zephyr_diagnosis.h"
+#include "zephyr/zephyr_encoder.h"
+#include "zephyr/zephyr_logger.h"
+#include "zephyr/zephyr_motor.h"
+#include "zephyr/zephyr_mutex.h"
+#include "zephyr/zephyr_nvs.h"
+#include "zephyr/zephyr_semaphore.h"
+#include "zephyr/zephyr_shell_protocol.h"
+#include "zephyr/zephyr_systick.h"
+#include "zephyr/zephyr_thread.h"
 
 LOG_MODULE_REGISTER(main);
 
@@ -35,19 +36,30 @@ namespace {
 
 static void loop_hook() { k_sleep(K_MSEC(1)); }
 
-using namespace boost;
 static auto zephyr_backends_bindings() {
-  return di::make_injector(
-      di::bind<coriander::base::ILogger>.to<coriander::base::zephyr::Logger>(),
-      di::bind<coriander::application::IAppStatus>.to<coriander::application::zephyr::AppStatus>(),
-      di::bind<coriander::motorctl::FocMotorDriver>.to<coriander::motorctl::zephyr::MotorDriver>(),
-      di::bind<coriander::motorctl::IBldcDriver>.to<coriander::motorctl::zephyr::MotorDriver>(),
-      di::bind<coriander::motorctl::IEncoder>.to<coriander::motorctl::zephyr::Encoder>(),
-      di::bind<coriander::os::ISystick>.to<coriander::os::zephyr::Systick>(),
-      di::bind<coriander::os::ISemaphore>.to<coriander::os::zephyr::Semaphore>(),
-      di::bind<coriander::os::IThread>.to<coriander::os::zephyr::Thread>(),
-      di::bind<coriander::os::IMutex>.to<coriander::os::zephyr::Mutex>(),
-      di::bind<coriander::IProtocolCtl>.to<coriander::zephyr::ShellProtocol>());
+  using ILogger = coriander::base::ILogger;
+  using IAppStatus = coriander::application::IAppStatus;
+  using FocMotorDriver = coriander::motorctl::FocMotorDriver;
+  using IBldcDriver = coriander::motorctl::IBldcDriver;
+  using IEncoder = coriander::motorctl::IEncoder;
+  using ISystick = coriander::os::ISystick;
+  using ISemaphore = coriander::os::ISemaphore;
+  using IThread = coriander::os::IThread;
+  using IMutex = coriander::os::IMutex;
+  using IProtocolCtl = coriander::IProtocolCtl;
+  using BackendAppStatus = coriander::application::zephyr::AppStatus;
+  using BackendMotorDriver = coriander::motorctl::zephyr::MotorDriver;
+  return boost::di::make_injector(
+      boost::di::bind<ILogger>.to<coriander::base::zephyr::Logger>(),
+      boost::di::bind<IAppStatus>.to<BackendAppStatus>(),
+      boost::di::bind<FocMotorDriver>.to<BackendMotorDriver>(),
+      boost::di::bind<IBldcDriver>.to<BackendMotorDriver>(),
+      boost::di::bind<IEncoder>.to<coriander::motorctl::zephyr::Encoder>(),
+      boost::di::bind<ISystick>.to<coriander::os::zephyr::Systick>(),
+      boost::di::bind<ISemaphore>.to<coriander::os::zephyr::Semaphore>(),
+      boost::di::bind<IThread>.to<coriander::os::zephyr::Thread>(),
+      boost::di::bind<IMutex>.to<coriander::os::zephyr::Mutex>(),
+      boost::di::bind<IProtocolCtl>.to<coriander::zephyr::ShellProtocol>());
 }
 
 static int get_reboot_times() {
@@ -77,7 +89,7 @@ static void parameter_default_value_setup(
   using ID = coriander::base::ParamId;
   using P = Property;
 
-  const static Property properties[] = {
+  static const Property properties[] = {
       P{0, ID::MotorCtlMode},
       P{1, ID::PolePair},
       P{0.0f, ID::ElecAngleOffset},
@@ -109,21 +121,21 @@ static void parameter_default_value_setup(
 }
 
 template <typename T>
-static void zephyr_backend_setup(T& injector) {
+static void zephyr_backend_setup(T* injector) {
   auto os = coriander::base::LoggerStream(
-      injector.template create<std::shared_ptr<coriander::base::ILogger>>());
+      injector->template create<std::shared_ptr<coriander::base::ILogger>>());
   os << "Coriander version " << APP_VERSION_STRING << std::endl;
   os << "Reboot times: " << get_reboot_times() << std::endl;
 
   auto param =
-      injector.template create<std::shared_ptr<coriander::ParameterBase>>();
+      injector->template create<std::shared_ptr<coriander::ParameterBase>>();
   parameter_default_value_setup(param);
 
   auto diag_regsiter =
       coriander::application::zephyr::DiagnosisRegister::getInstance();
-  auto diag = injector.template create<
+  auto diag = injector->template create<
       std::shared_ptr<coriander::application::Diagnosis>>();
-  diag_regsiter->applyAll(*diag);
+  diag_regsiter->applyAll(diag.get());
 }
 
 }  // namespace
@@ -132,7 +144,7 @@ int main(void) {
   auto injector =
       coriander::coriander_create_injector(zephyr_backends_bindings());
 
-  zephyr_backend_setup(injector);
+  zephyr_backend_setup(&injector);
 
   coriander::coriander_loop(loop_hook, std::move(injector));
   return 0;

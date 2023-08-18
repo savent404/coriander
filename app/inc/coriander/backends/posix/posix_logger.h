@@ -17,7 +17,7 @@ namespace coriander {
 namespace base {
 namespace posix {
 struct Logger : public ILogger {
-  virtual void log(const char *msg) noexcept override {
+  void log(const char *msg) noexcept override {
     std::printf("%s\n", msg);
   }
 };

@@ -7,6 +7,7 @@
  * Copyright 2023 savent_gate
  *
  */
+#pragma once
 #include <boost/di.hpp>
 
 #include "coriander/base/const_hash.h"

@@ -1,3 +1,12 @@
+/**
+ * @file board_state_init_handler.h
+ * @author Savent Gate (savent_gate@outlook.com)
+ * @brief 
+ * @date 2023-08-19
+ * 
+ * Copyright 2023 savent_gate
+ * 
+ */
 #pragma once
 
 #include <memory>
@@ -43,7 +52,7 @@ struct BoardStateInitHandler : public IBoardStateInitHandler {
       mLogger->log("BoardStateInitHandler: diagnosis is null");
     }
   }
-  virtual void onEnter() noexcept override {
+  void onEnter() noexcept override {
     mAppStatus->setStatus(IAppStatus::Status::Busy);
 
     // do parma check, if any error, goto error state
@@ -55,11 +64,11 @@ struct BoardStateInitHandler : public IBoardStateInitHandler {
     // do diagnosis, if any error, goto error state
     mDiagnosis->inspect();
   }
-  virtual void onExit() noexcept override {
+  void onExit() noexcept override {
     initDone = true;
     mAppStatus->setStatus(IAppStatus::Status::Ok);
   }
-  virtual void onLoop() noexcept override {
+  void onLoop() noexcept override {
     // no need to do anything, go to next state
     mEvent->raiseEvent(IBoardEvent::Event::BoardInited);
   }

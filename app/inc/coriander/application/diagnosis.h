@@ -38,7 +38,7 @@ struct Diagnosis {
   using DiagDevFunc = std::function<DeviceStatus()>;
   using DiagInspectorFunc = std::function<void(DiagDevId, DeviceStatus)>;
 
-  explicit Diagnosis() noexcept;
+  Diagnosis() noexcept;
   void setDiagDev(DiagDevId id, DiagDevFunc func) noexcept;
   void addDiagInspector(DiagInspectorFunc func) noexcept;
   void inspect() noexcept;
