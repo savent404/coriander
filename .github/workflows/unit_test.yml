@@ -6,32 +6,37 @@ on:
 
 jobs:
   test:
-  runs-on: ubuntu-latest
-  env:
-    CC: ${{ env.LLVM_PATH }}/bin/clang
-    CXX: ${{ env.LLVM_PATH }}/bin/clang++
-  steps:
-    - name: Cache LLVM and Clang
-      id: cache-llvm
-      uses: actions/cache@v3
-      with:
-        path:  ${{ env.LLVM_PATH }}
-        key: llvm
-    - name: Install LLVM and Clang
-      uses: KyleMayes/install-llvm-action@v1
-      with:
-        version: "14.0"
-        cached: ${{ steps.cache-llvm.outputs.cache-hit }}
-    - name: Symlink libclang.so (Linux)
-      run: sudo ln -s libclang-14.so.1 /lib/x86_64-linux-gnu/libclang.so
-      working-directory: ${{ env.LLVM_PATH }}/lib
-    - name: setup build essential
-      run: |
-        sudo apt update && sudo apt install python3-pip wget curl
-        pip3 install cmake ninja
-    - name: unit-test
-      run:
-        cmake -Bbuild .
-        ninja -C build
-        ./build/ut
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Cache LLVM and Clang
+        id: cache-llvm
+        uses: actions/cache@v3
+        with:
+          path: ./llvm
+          key: llvm-14
+      - name: Install LLVM and Clang
+        uses: KyleMayes/install-llvm-action@v1.8.3
+        with:
+          version: "14.0"
+          cached: ${{ steps.cache-llvm.outputs.cache-hit }}
+      
+      - name: Symlink libclang.so (Linux)
+        run: sudo ln -s libclang-14.so.1 /lib/x86_64-linux-gnu/libclang.so
+        working-directory: ${{ env.LLVM_PATH }}/lib
+      - name: setup python
+        uses: actions/setup-python@v1
+      - name: setup build essential
+        run: |
+          sudo apt update && sudo apt install wget curl
+          pip3 install cmake ninja
+      - name: generate ninja project
+        run: |
+          CC=${{ env.LLVM_PATH }}/bin/clang CXX=${{ env.LLVM_PATH }}/bin/clang++
+          cmake -Bbuild app -G Ninja -DUNIT_TEST=ON
+      - name: build unit test
+        run: ninja -C build
+      - name: run unit test
+        run: ./build/ut
       
