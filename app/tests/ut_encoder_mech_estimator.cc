@@ -66,7 +66,7 @@ TEST(ISensor, CalibrateEncoderMechAngleEstimator) {
 
   EncoderMechAngleEstimator estimator(encoder, param, paramReqValidator);
 
-  param->add(Property{0.0f, ParamId::MechAngleOffset});
+  param->add(Property{0.0f, ParamId::MotorCtl_Calibrate_CaliMechAngleOffset});
 
   encoder->mOverflow = 1;
 
@@ -87,8 +87,8 @@ TEST(ISensor, PersistEncoderMechAngleEstimator) {
 
   EncoderMechAngleEstimator estimator(encoder, param, paramReqValidator);
 
-  param->add(Property{0.0f, ParamId::MechAngleOffset});
-  param->add(Property{0.0f, ParamId::PersistRawMechAngle});
+  param->add(Property{0.0f, ParamId::MotorCtl_Calibrate_CaliMechAngleOffset});
+  param->add(Property{0.0f, ParamId::MotorCtl_MotorDriver_PersistRawMechAngle});
 
   encoder->mOverflow = 1;
 

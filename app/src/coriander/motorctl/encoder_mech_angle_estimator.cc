@@ -25,8 +25,9 @@ EncoderMechAngleEstimator::EncoderMechAngleEstimator(
 }
 
 void EncoderMechAngleEstimator::enable() {
-  if (mParam->has(ParamId::MechAngleOffset)) {
-    mMechAngleOffset = mParam->getValue<float>(ParamId::MechAngleOffset);
+  if (mParam->has(ParamId::MotorCtl_Calibrate_CaliMechAngleOffset)) {
+    mMechAngleOffset = mParam->getValue<float>(
+        ParamId::MotorCtl_Calibrate_CaliMechAngleOffset);
     mNeedCalibrate = false;
   }
 
@@ -34,13 +35,14 @@ void EncoderMechAngleEstimator::enable() {
     mEncoder->enable();
   }
 
-  if (mParam->has(ParamId::PersistRawMechAngle)) {
+  if (mParam->has(ParamId::MotorCtl_MotorDriver_PersistRawMechAngle)) {
     // force sync encoder and initialize mRawMechAngle
     mEncoder->sync();
     mPersistOffset = 0;
     getMechanicalAngle();
     mPersistOffset =
-        mRawMechAngle - mParam->getValue<float>(ParamId::PersistRawMechAngle);
+        mRawMechAngle - mParam->getValue<float>(
+                            ParamId::MotorCtl_MotorDriver_PersistRawMechAngle);
   }
 }
 
@@ -48,8 +50,9 @@ void EncoderMechAngleEstimator::disable() {
   if (mEncoder->enabled()) {
     mEncoder->disable();
   }
-  if (mParam->has(ParamId::PersistRawMechAngle)) {
-    mParam->setValue(ParamId::PersistRawMechAngle, mRawMechAngle);
+  if (mParam->has(ParamId::MotorCtl_MotorDriver_PersistRawMechAngle)) {
+    mParam->setValue(ParamId::MotorCtl_MotorDriver_PersistRawMechAngle,
+                     mRawMechAngle);
   }
 }
 
@@ -64,8 +67,9 @@ void EncoderMechAngleEstimator::sync() {
 void EncoderMechAngleEstimator::calibrate() {
   mNeedCalibrate = true;
   mMechAngleOffset = -mRawMechAngle;
-  if (mParam->has(ParamId::MechAngleOffset)) {
-    mParam->setValue(ParamId::MechAngleOffset, mMechAngleOffset);
+  if (mParam->has(ParamId::MotorCtl_Calibrate_CaliMechAngleOffset)) {
+    mParam->setValue(ParamId::MotorCtl_Calibrate_CaliMechAngleOffset,
+                     mMechAngleOffset);
   }
 }
 

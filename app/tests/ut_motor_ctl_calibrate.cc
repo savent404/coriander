@@ -68,9 +68,9 @@ TEST(MotorCtl, calibrate) {
   auto systick = c.create<std::shared_ptr<MockSystick>>();
   auto boardEvent = c.create<std::shared_ptr<MockBoardEvent>>();
 
-  param->add(Property{5.0f, ParamId::CalibrateVoltage});
-  param->add(Property{3000, ParamId::CalibrateDuration});
-  param->add(Property{16.0f, ParamId::MotorSupplyVoltage});
+  param->add(Property{5.0f, ParamId::MotorCtl_Calibrate_CaliVoltage});
+  param->add(Property{3000, ParamId::MotorCtl_Calibrate_CaliDuration});
+  param->add(Property{16.0f, ParamId::MotorCtl_MotorDriver_SupplyVoltage});
 
   auto mc = c.create<std::shared_ptr<IMotorCtl>>();
 

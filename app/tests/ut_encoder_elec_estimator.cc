@@ -44,8 +44,8 @@ TEST(ISensor, CalibrateEncoderElecAngleEstimator) {
 
   EncoderElecAngleEstimator estimator(encoder, param, paramReqValidator);
 
-  param->add(Property{4, ParamId::PolePair});
-  ASSERT_TRUE(param->has("PolePair"));
+  param->add(Property{4, ParamId::MotorCtl_MotorDriver_PolePair});
+  ASSERT_TRUE(param->has("MotorCtl_MotorDriver_PolePair"));
 
   encoder->mCC = 1024;
   estimator.enable();
@@ -68,8 +68,8 @@ TEST(ISensor, CalibrateEncoderElecAngleEstimatorWithPersist) {
 
   EncoderElecAngleEstimator estimator(encoder, param, paramReqValidator);
 
-  param->add(Property{4, ParamId::PolePair});
-  param->add(Property{0.0f, ParamId::PersistRawElecAngle});
+  param->add(Property{4, ParamId::MotorCtl_MotorDriver_PolePair});
+  param->add(Property{0.0f, ParamId::MotorCtl_MotorDriver_PersistRawElecAngle});
 
   encoder->mCC = 1024;
   estimator.enable();
@@ -97,8 +97,8 @@ TEST(ISensor, CalibratedEncoderElecAngleEstimator) {
 
   EncoderElecAngleEstimator estimator(encoder, param, paramReqValidator);
 
-  param->add(Property{4, ParamId::PolePair});
-  param->add(Property{0.0f, ParamId::ElecAngleOffset});
+  param->add(Property{4, ParamId::MotorCtl_MotorDriver_PolePair});
+  param->add(Property{0.0f, ParamId::MotorCtl_Calibrate_CaliElecAngleOffset});
 
   encoder->mCC = 512;
   estimator.enable();
@@ -119,9 +119,10 @@ TEST(ISensor, CalibratedEncoderElecAngleEstimatorWithPersist) {
 
   EncoderElecAngleEstimator estimator(encoder, param, paramReqValidator);
 
-  param->add(Property{4, ParamId::PolePair});
-  param->add(Property{10.0f, ParamId::ElecAngleOffset});
-  param->add(Property{180.0f, ParamId::PersistRawElecAngle});
+  param->add(Property{4, ParamId::MotorCtl_MotorDriver_PolePair});
+  param->add(Property{10.0f, ParamId::MotorCtl_Calibrate_CaliElecAngleOffset});
+  param->add(
+      Property{180.0f, ParamId::MotorCtl_MotorDriver_PersistRawElecAngle});
 
   encoder->mCC = 512;
   estimator.enable();
@@ -147,9 +148,9 @@ TEST(ISensor, EncoderElecAngleEstimatorRecoveryAfterPowerOn) {
 
   EncoderElecAngleEstimator estimator(encoder, param, paramReqValidator);
 
-  param->add(Property{4, ParamId::PolePair});
-  param->add(Property{0.0f, ParamId::ElecAngleOffset});
-  param->add(Property{0.0f, ParamId::PersistRawElecAngle});
+  param->add(Property{4, ParamId::MotorCtl_MotorDriver_PolePair});
+  param->add(Property{0.0f, ParamId::MotorCtl_Calibrate_CaliElecAngleOffset});
+  param->add(Property{0.0f, ParamId::MotorCtl_MotorDriver_PersistRawElecAngle});
 
   encoder->mCC = 0;
   estimator.enable();

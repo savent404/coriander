@@ -51,9 +51,9 @@ struct VelocityEstimator : public IVelocityEstimator, public IParamReq {
     using coriander::base::operator""_hash;
     using Type = coriander::base::TypeId;
     static const ParameterRequireItem requiredParam[] = {
-        {"VelocitySampleWindowSize", Type::Int32},
-        {"VelocitySampleWindowTime", Type::Int32},
-        {"VelocitySampleMinimalDuration", Type::Int32},
+        {"MotorCtl_SpeedEstimator_WindowSize", Type::Int32},
+        {"MotorCtl_SpeedEstimator_MinDuration", Type::Int32},
+        {"MotorCtl_SpeedEstimator_SampleInterval", Type::Int32},
         PARAMETER_REQ_EOF};
     return requiredParam;
   }

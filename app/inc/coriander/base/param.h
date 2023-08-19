@@ -16,66 +16,103 @@
 namespace coriander {
 
 namespace base {
+
+/**
+ * @brief Naming code of parameters
+ *
+ * @details
+ *  Name format:
+ *  <module> module name of function
+ *  <submodule> sub-module name of module
+ *  <param_name> parameter name
+ *
+ *  prefix meaning:
+ *  RT: runtime parameter
+ *  NC: parameter not configurable in runtime, need a reboot to take effect
+ *
+ *  for runtime parameters:
+ *   <module>_<submodule>_<param_name>_RT
+ *
+ *  for persistent parameters(sync to flash):
+ *   <module>_<submodule>_<param_name>
+ * @note the order of enum and description array are relaxed, and also can be changed
+ * @warning we don't specific the type of parameter here, be careful when using a parameter
+ *          which is not a float(the default type of parameter)
+ */
+
 // clang-format off
 BETTER_ENUM(ParamId, int,
-  MotorCtlMode,
-  PolePair,
-  ElecAngleOffset,
-  PersistRawElecAngle,
-  PersistRawMechAngle,
-  MechAngleOffset,
-  CalibrateVoltage,
-  CalibrateDuration,
-  MotorSupplyVoltage,
-  MechAnglePidP,
-  MechAnglePidI,
-  MechAnglePidD,
-  MechAnglePidOutputRamp,
-  MechAnglePidLimit,
-  TargetPosition,
-  TargetVelocity,
-  VelocityPidP,
-  VelocityPidI,
-  VelocityPidD,
-  VelocityPidOutputRamp,
-  VelocityPidLimit,
-  VelocitySampleWindowSize,
-  VelocitySampleWindowTime,
-  VelocitySampleMinimalDuration,
+  MotorCtl_General_Mode_RT,
+  MotorCtl_General_TargetPosition_RT,
+  MotorCtl_General_TargetVelocity_RT,
+  MotorCtl_MotorDriver_PolePair,
+  MotorCtl_MotorDriver_PersistRawElecAngle,
+  MotorCtl_MotorDriver_PersistRawMechAngle,
+  MotorCtl_MotorDriver_SupplyVoltage,
+  MotorCtl_Calibrate_CaliElecAngleOffset,
+  MotorCtl_Calibrate_CaliMechAngleOffset,
+  MotorCtl_Calibrate_CaliVoltage,
+  MotorCtl_Calibrate_CaliDuration,
+  MotorCtl_PosCtl_PidP,
+  MotorCtl_PosCtl_PidI,
+  MotorCtl_PosCtl_PidD,
+  MotorCtl_PosCtl_PidOutputRamp,
+  MotorCtl_PosCtl_PidLimit,
+  MotorCtl_SpeedCtl_PidP,
+  MotorCtl_SpeedCtl_PidI,
+  MotorCtl_SpeedCtl_PidD,
+  MotorCtl_SpeedCtl_PidOutputRamp,
+  MotorCtl_SpeedCtl_PidLimit,
+  MotorCtl_SpeedEstimator_WindowSize,
+  MotorCtl_SpeedEstimator_MinDuration,
+  MotorCtl_SpeedEstimator_SampleInterval,
   Unknow, MAX_PARAM_ID);
 // clang-format on
 
 struct ParamDescriber {
   static inline constexpr const char *getParamDescription(ParamId id) {
     const char *desc[] = {
-        [ParamId::MotorCtlMode] = "0:dummy, 1:velocity, 2:position",
-        [ParamId::PolePair] = "motor pole pair",
-        [ParamId::ElecAngleOffset] = "electrical angle offset, unit: degree",
-        [ParamId::PersistRawElecAngle] = "electrical angle, "
-                                         "persistent value, unit: degree",
-        [ParamId::PersistRawMechAngle] = "mechanical angle, "
-                                         "persistent value. unit: degree",
-        [ParamId::MechAngleOffset] = "mechanical angle offset, unit: degree",
-        [ParamId::CalibrateVoltage] = "calibrate voltage, unit: volt",
-        [ParamId::CalibrateDuration] = "calibrate duration, unit: ms",
-        [ParamId::MotorSupplyVoltage] = "motor supply voltage, unit: volt",
-        [ParamId::MechAnglePidP] = "",
-        [ParamId::MechAnglePidI] = "",
-        [ParamId::MechAnglePidD] = "",
-        [ParamId::MechAnglePidOutputRamp] = "maxium ramp of output",
-        [ParamId::MechAnglePidLimit] = "maxium output",
-        [ParamId::TargetPosition] = "target position, unit: degree",
-        [ParamId::TargetVelocity] = "target velocity, unit: RPM",
-        [ParamId::VelocityPidP] = "",
-        [ParamId::VelocityPidI] = "",
-        [ParamId::VelocityPidD] = "",
-        [ParamId::VelocityPidOutputRamp] = "maxium ramp of output",
-        [ParamId::VelocityPidLimit] = "maxium output",
-        [ParamId::VelocitySampleWindowSize] = "window size of velocity "
-                                              "estimator, default: 16",
-        [ParamId::VelocitySampleWindowTime] =
+        [ParamId::MotorCtl_General_Mode_RT] = "0:dummy, 1:velocity, 2:position",
+        [ParamId::MotorCtl_General_TargetPosition_RT] =
+            "target position, works in mode:2, unit: degree",
+        [ParamId::MotorCtl_General_TargetVelocity_RT] =
+            "target velocity, works in mode:1 unit: RPM",
+        [ParamId::MotorCtl_MotorDriver_PolePair] = "motor pole pair",
+        [ParamId::MotorCtl_MotorDriver_PersistRawElecAngle] =
+            "electrical angle, persistent value, unit: degree",
+        [ParamId::MotorCtl_MotorDriver_PersistRawMechAngle] =
+            "mechanical angle, persistent value. unit: degree",
+        [ParamId::MotorCtl_MotorDriver_SupplyVoltage] =
+            "motor supply voltage, "
+            "used when not exists voltage sensors. unit: volt",
+        [ParamId::MotorCtl_Calibrate_CaliElecAngleOffset] =
+            "calibrated electrical offset. "
+            "need calibrate again if using "
+            "relative sensor to estimate electrical angle, unit: "
+            "degree",
+        [ParamId::MotorCtl_Calibrate_CaliMechAngleOffset] =
+            "calibrated mechanical angle offset. "
+            "need calibrate again if using "
+            "relative sensor to estimate mechanical angle, unit: degree",
+        [ParamId::MotorCtl_Calibrate_CaliVoltage] =
+            "motor output voltage when calibrating, unit: volt",
+        [ParamId::MotorCtl_Calibrate_CaliDuration] =
+            "duration of motor enabling when calibrating, unit: ms",
+        [ParamId::MotorCtl_PosCtl_PidP] = "",
+        [ParamId::MotorCtl_PosCtl_PidI] = "",
+        [ParamId::MotorCtl_PosCtl_PidD] = "",
+        [ParamId::MotorCtl_PosCtl_PidOutputRamp] = "maxium ramp of output",
+        [ParamId::MotorCtl_PosCtl_PidLimit] = "maxium output",
+        [ParamId::MotorCtl_SpeedCtl_PidP] = "",
+        [ParamId::MotorCtl_SpeedCtl_PidI] = "",
+        [ParamId::MotorCtl_SpeedCtl_PidD] = "",
+        [ParamId::MotorCtl_SpeedCtl_PidOutputRamp] = "maxium ramp of output",
+        [ParamId::MotorCtl_SpeedCtl_PidLimit] = "maxium output",
+        [ParamId::MotorCtl_SpeedEstimator_WindowSize] =
+            "window size of velocity estimator, default: 16",
+        [ParamId::MotorCtl_SpeedEstimator_MinDuration] =
             "max window time of velocity estimator, default: 1000ms",
-        [ParamId::VelocitySampleMinimalDuration] =
+        [ParamId::MotorCtl_SpeedEstimator_SampleInterval] =
             "minimal duration of velocity estimator, default: 10ms",
     };
 

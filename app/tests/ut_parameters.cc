@@ -55,17 +55,19 @@ TEST(Parameter, basic_map) {
   ASSERT_TRUE(mapper.recovery(std::span<uint8_t>{mirror.get(), map.size()},
                               &mirror_param));
 
-  ASSERT_TRUE(mirror_param.has("CalibrateDuration"));
-  ASSERT_TRUE(mirror_param.has("CalibrateVoltage"));
+  ASSERT_TRUE(mirror_param.has("MotorCtl_Calibrate_CaliDuration"));
+  ASSERT_TRUE(mirror_param.has("MotorCtl_Calibrate_CaliVoltage"));
   ASSERT_FALSE(mirror_param.has("t3"));
-  ASSERT_EQ(get<int>(mirror_param.get("CalibrateDuration").value()),
-            ParamId::CalibrateDuration);
-  ASSERT_EQ(get<int>(mirror_param.get("CalibrateVoltage").value()),
-            ParamId::CalibrateVoltage);
-  ASSERT_EQ(mirror_param.getValue<int>("CalibrateDuration"),
-            ParamId::CalibrateDuration);
-  ASSERT_EQ(mirror_param.getValue<int>("CalibrateVoltage"),
-            ParamId::CalibrateVoltage);
+  ASSERT_EQ(
+      get<int>(mirror_param.get("MotorCtl_Calibrate_CaliDuration").value()),
+      ParamId::MotorCtl_Calibrate_CaliDuration);
+  ASSERT_EQ(
+      get<int>(mirror_param.get("MotorCtl_Calibrate_CaliVoltage").value()),
+      ParamId::MotorCtl_Calibrate_CaliVoltage);
+  ASSERT_EQ(mirror_param.getValue<int>("MotorCtl_Calibrate_CaliDuration"),
+            ParamId::MotorCtl_Calibrate_CaliDuration);
+  ASSERT_EQ(mirror_param.getValue<int>("MotorCtl_Calibrate_CaliVoltage"),
+            ParamId::MotorCtl_Calibrate_CaliVoltage);
 
   for (int i = 0; i < ParamId::MAX_PARAM_ID; i++) {
     auto id = ParamId::_from_index_nothrow(i).value();
@@ -79,8 +81,8 @@ struct Foo : public coriander::IParamReq {
   virtual const coriander::ParameterRequireItem* requiredParameters() const {
     constexpr static const coriander::ParameterRequireItem items[] = {
         {"Unknow", coriander::TypeId::Int32},
-        {"CalibrateDuration", coriander::TypeId::Float},
-        {"CalibrateVoltage", coriander::TypeId::String},
+        {"MotorCtl_Calibrate_CaliDuration", coriander::TypeId::Float},
+        {"MotorCtl_Calibrate_CaliVoltage", coriander::TypeId::String},
         {nullptr, coriander::TypeId::Invalid}};
 
     return &items[0];
@@ -98,7 +100,7 @@ TEST(Parameter, requirements) {
   ASSERT_FALSE(validator->validate());
 
   param->add(Property{0, ParamId::Unknow});
-  param->add(Property{1.0f, ParamId::CalibrateDuration});
-  param->add(Property{"foo", ParamId::CalibrateVoltage});
+  param->add(Property{1.0f, ParamId::MotorCtl_Calibrate_CaliDuration});
+  param->add(Property{"foo", ParamId::MotorCtl_Calibrate_CaliVoltage});
   ASSERT_EQ(validator->validate(), true);
 }

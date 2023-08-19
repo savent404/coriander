@@ -61,21 +61,21 @@ TEST(BoardStateRun, basic) {
   auto c = coriander::coriander_create_injector(createInjector());
 
   auto param = c.create<std::shared_ptr<coriander::ParameterBase>>();
-  param->add(Property{1, ParamId::MotorCtlMode});
-  param->add(Property{1.0f, ParamId::VelocityPidP});
-  param->add(Property{0.0f, ParamId::VelocityPidI});
-  param->add(Property{0.0f, ParamId::VelocityPidD});
-  param->add(Property{99999.0f, ParamId::VelocityPidOutputRamp});
-  param->add(Property{99999.0f, ParamId::VelocityPidLimit});
-  param->add(Property{600.0f, ParamId::TargetVelocity});
-  param->add(Property{16.0f, ParamId::MotorSupplyVoltage});
-  param->add(Property(16, ParamId::VelocitySampleWindowSize));
-  param->add(Property{3500, ParamId::VelocitySampleWindowTime});
-  param->add(Property{50, ParamId::VelocitySampleMinimalDuration});
-  param->add(Property{4, ParamId::PolePair});
+  param->add(Property{1, ParamId::MotorCtl_General_Mode_RT});
+  param->add(Property{1.0f, ParamId::MotorCtl_SpeedCtl_PidP});
+  param->add(Property{0.0f, ParamId::MotorCtl_SpeedCtl_PidI});
+  param->add(Property{0.0f, ParamId::MotorCtl_SpeedCtl_PidD});
+  param->add(Property{99999.0f, ParamId::MotorCtl_SpeedCtl_PidOutputRamp});
+  param->add(Property{99999.0f, ParamId::MotorCtl_SpeedCtl_PidLimit});
+  param->add(Property{600.0f, ParamId::MotorCtl_General_TargetVelocity_RT});
+  param->add(Property{16.0f, ParamId::MotorCtl_MotorDriver_SupplyVoltage});
+  param->add(Property(16, ParamId::MotorCtl_SpeedEstimator_WindowSize));
+  param->add(Property{3500, ParamId::MotorCtl_SpeedEstimator_MinDuration});
+  param->add(Property{50, ParamId::MotorCtl_SpeedEstimator_SampleInterval});
+  param->add(Property{4, ParamId::MotorCtl_MotorDriver_PolePair});
   param->add(Property{
       static_cast<int>(coriander::motorctl::DynamicMotorCtl::Mode::Velocity),
-      ParamId::MotorCtlMode});
+      ParamId::MotorCtl_General_Mode_RT});
 
   auto encoder = c.create<std::shared_ptr<testing::mock::MockEncoder>>();
 
