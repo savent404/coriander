@@ -20,7 +20,7 @@ namespace coriander {
 using application::IAppStatus;
 struct BoardStateStandbyHandler : public IBoardStateStandbyHandler {
   BoardStateStandbyHandler(std::shared_ptr<IAppStatus> appStatus,
-                           std::shared_ptr<IProtocolCtl> proto) noexcept
+                           std::shared_ptr<IShellCtl> proto) noexcept
       : mAppStatus(appStatus), mProtocolCtl(proto) {}
 
   void onEnter() noexcept override {
@@ -32,6 +32,6 @@ struct BoardStateStandbyHandler : public IBoardStateStandbyHandler {
 
  private:
   std::shared_ptr<IAppStatus> mAppStatus;
-  std::shared_ptr<IProtocolCtl> mProtocolCtl;
+  std::shared_ptr<IShellCtl> mProtocolCtl;
 };
 }  // namespace coriander
