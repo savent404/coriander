@@ -41,8 +41,8 @@ struct EncoderMechAngleEstimator : public IMechAngleEstimator,
     using coriander::base::operator""_hash;
     using Type = coriander::base::TypeId;
     static const ParameterRequireItem requiredParam[] = {
-        {"MechAngleOffset", Type::Float},
-        {"PersistRawMechAngle", Type::Float},
+        {"MotorCtl_Calibrate_CaliMechAngleOffset", Type::Float},
+        {"MotorCtl_MotorDriver_PersistRawMechAngle", Type::Float},
         PARAMETER_REQ_EOF};
     return requiredParam;
   }

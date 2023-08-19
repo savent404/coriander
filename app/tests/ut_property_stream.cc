@@ -19,7 +19,7 @@ using PropertyBinaryStream = coriander::base::PropertyBinaryStream;
 using ParamId = coriander::base::ParamId;
 
 TEST(PropertyStream, textStream) {
-  Property p{0, ParamId::MotorCtlMode};
+  Property p{0, ParamId::MotorCtl_General_Mode_RT};
   PropertyTextStream serializer(std::move(p));
   std::stringstream ss;
 
@@ -30,7 +30,7 @@ TEST(PropertyStream, textStream) {
 }
 
 TEST(PropertyStream, binaryStream) {
-  Property p{0, ParamId::MotorCtlMode};
+  Property p{0, ParamId::MotorCtl_General_Mode_RT};
   Property p1 = p;
   PropertyBinaryStream serializer(std::move(p));
   PropertyBinaryStream serializer1(Property{});

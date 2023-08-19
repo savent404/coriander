@@ -47,9 +47,9 @@ struct MotorCtlCalibrate : public IMotorCtl, public IParamReq {
   virtual const ParameterRequireItem* requiredParameters() const {
     using Type = coriander::base::TypeId;
     static const ParameterRequireItem items[] = {
-        {"CalibrateVoltage", Type::Float},
-        {"CalibrateDuration", Type::Int32},
-        {"MotorSupplyVoltage", Type::Float},
+        {"MotorCtl_Calibrate_CaliVoltage", Type::Float},
+        {"MotorCtl_Calibrate_CaliDuration", Type::Int32},
+        {"MotorCtl_MotorDriver_SupplyVoltage", Type::Float},
         PARAMETER_REQ_EOF};
     return items;
   }

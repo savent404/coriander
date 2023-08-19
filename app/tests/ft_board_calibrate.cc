@@ -80,9 +80,9 @@ TEST(BoardStateCalibrateHandler, Calibrate) {
 
   // init required parameters
   using ParamId = coriander::base::ParamId;
-  param->add(Property{5.0f, ParamId::CalibrateVoltage});
-  param->add(Property{3000, ParamId::CalibrateDuration});
-  param->add(Property{10.0f, ParamId::MotorSupplyVoltage});
+  param->add(Property{5.0f, ParamId::MotorCtl_Calibrate_CaliVoltage});
+  param->add(Property{3000, ParamId::MotorCtl_Calibrate_CaliDuration});
+  param->add(Property{10.0f, ParamId::MotorCtl_MotorDriver_SupplyVoltage});
 
   auto board = c.create<std::shared_ptr<coriander::IBoardState>>();
   event->raiseEvent(coriander::IBoardEvent::Event::BoardInited);

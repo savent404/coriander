@@ -14,18 +14,23 @@ namespace motorctl {
 
 void MotorCtlVelocity::start() {
   // reset pid
-  mVelocityPid.P = mParameters->getValue<float>(ParamId::VelocityPidP);
-  mVelocityPid.I = mParameters->getValue<float>(ParamId::VelocityPidI);
-  mVelocityPid.D = mParameters->getValue<float>(ParamId::VelocityPidD);
+  mVelocityPid.P =
+      mParameters->getValue<float>(ParamId::MotorCtl_SpeedCtl_PidP);
+  mVelocityPid.I =
+      mParameters->getValue<float>(ParamId::MotorCtl_SpeedCtl_PidI);
+  mVelocityPid.D =
+      mParameters->getValue<float>(ParamId::MotorCtl_SpeedCtl_PidD);
   mVelocityPid.output_ramp =
-      mParameters->getValue<float>(ParamId::VelocityPidOutputRamp);
-  mVelocityPid.limit = mParameters->getValue<float>(ParamId::VelocityPidLimit);
+      mParameters->getValue<float>(ParamId::MotorCtl_SpeedCtl_PidOutputRamp);
+  mVelocityPid.limit =
+      mParameters->getValue<float>(ParamId::MotorCtl_SpeedCtl_PidLimit);
   mVelocityPid.reset();
 
   // read parameters
-  mTargetVelocity = mParameters->getValue<float>(ParamId::TargetVelocity);
+  mTargetVelocity =
+      mParameters->getValue<float>(ParamId::MotorCtl_General_TargetVelocity_RT);
   mMotorSupplyVoltage =
-      mParameters->getValue<float>(ParamId::MotorSupplyVoltage);
+      mParameters->getValue<float>(ParamId::MotorCtl_MotorDriver_SupplyVoltage);
 
   // enable sensors, motor
   mSensorHandler.enable();

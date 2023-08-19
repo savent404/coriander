@@ -30,9 +30,10 @@ EncoderElecAngleEstimator::EncoderElecAngleEstimator(
 
 void EncoderElecAngleEstimator::enable() {
   // try to get parameter from parameter server
-  mPolePair = mParam->getValue<int32_t>(ParamId::PolePair);
-  if (mParam->has(ParamId::ElecAngleOffset)) {
-    mElecAngleOffset = mParam->getValue<float>(ParamId::ElecAngleOffset);
+  mPolePair = mParam->getValue<int32_t>(ParamId::MotorCtl_MotorDriver_PolePair);
+  if (mParam->has(ParamId::MotorCtl_Calibrate_CaliElecAngleOffset)) {
+    mElecAngleOffset = mParam->getValue<float>(
+        ParamId::MotorCtl_Calibrate_CaliElecAngleOffset);
     mNeedCalibrate = false;
   }
 
@@ -40,14 +41,15 @@ void EncoderElecAngleEstimator::enable() {
     mEncoder->enable();
   }
 
-  if (mParam->has(ParamId::PersistRawElecAngle)) {
+  if (mParam->has(ParamId::MotorCtl_MotorDriver_PersistRawElecAngle)) {
     // force sync encoder and initialize mRawElecAngle
     mEncoder->sync();
     mPersistOffset = 0;
     getElectricalAngle();
 
     mPersistOffset =
-        mRawElecAngle - mParam->getValue<float>(ParamId::PersistRawElecAngle);
+        mRawElecAngle - mParam->getValue<float>(
+                            ParamId::MotorCtl_MotorDriver_PersistRawElecAngle);
   }
 }
 
@@ -55,8 +57,9 @@ void EncoderElecAngleEstimator::disable() {
   if (mEncoder->enabled()) {
     mEncoder->disable();
   }
-  if (mParam->has(ParamId::PersistRawElecAngle)) {
-    mParam->setValue(ParamId::PersistRawElecAngle, mRawElecAngle);
+  if (mParam->has(ParamId::MotorCtl_MotorDriver_PersistRawElecAngle)) {
+    mParam->setValue(ParamId::MotorCtl_MotorDriver_PersistRawElecAngle,
+                     mRawElecAngle);
   }
 }
 
@@ -71,8 +74,9 @@ bool EncoderElecAngleEstimator::enabled() { return mEncoder->enabled(); }
 void EncoderElecAngleEstimator::calibrate() {
   mNeedCalibrate = false;
   mElecAngleOffset = -mRawElecAngle;
-  if (mParam->has(ParamId::ElecAngleOffset)) {
-    mParam->setValue(ParamId::ElecAngleOffset, mElecAngleOffset);
+  if (mParam->has(ParamId::MotorCtl_Calibrate_CaliElecAngleOffset)) {
+    mParam->setValue(ParamId::MotorCtl_Calibrate_CaliElecAngleOffset,
+                     mElecAngleOffset);
   }
 }
 

@@ -47,9 +47,9 @@ TEST(ISensor, BasicVelocityEstimator) {
   auto paramReqValidator =
       std::make_shared<testing::mock::MockParamReqValidator>();
 
-  param->add(Property{16, ParamId::VelocitySampleWindowSize});
-  param->add(Property{500, ParamId::VelocitySampleWindowTime});
-  param->add(Property{30, ParamId::VelocitySampleMinimalDuration});
+  param->add(Property{16, ParamId::MotorCtl_SpeedEstimator_WindowSize});
+  param->add(Property{500, ParamId::MotorCtl_SpeedEstimator_MinDuration});
+  param->add(Property{30, ParamId::MotorCtl_SpeedEstimator_SampleInterval});
 
   auto velocityEstimator =
       std::make_shared<coriander::motorctl::VelocityEstimator>(

@@ -49,12 +49,12 @@ struct MotorCtlPosition : public IMotorCtl, public IParamReq {
   virtual const ParameterRequireItem* requiredParameters() const {
     using Type = coriander::base::TypeId;
     static const ParameterRequireItem items[] = {
-        {"MechAnglePidP", Type::Float},
-        {"MechAnglePidI", Type::Float},
-        {"MechAnglePidD", Type::Float},
-        {"MechAnglePidOutputRamp", Type::Float},
-        {"MechAnglePidLimit", Type::Float},
-        {"TargetPosition", Type::Float},
+        {"MotorCtl_PosCtl_PidP", Type::Float},
+        {"MotorCtl_PosCtl_PidI", Type::Float},
+        {"MotorCtl_PosCtl_PidD", Type::Float},
+        {"MotorCtl_PosCtl_PidOutputRamp", Type::Float},
+        {"MotorCtl_PosCtl_PidLimit", Type::Float},
+        {"MotorCtl_General_TargetPosition_RT", Type::Float},
         PARAMETER_REQ_EOF};
     return items;
   }
