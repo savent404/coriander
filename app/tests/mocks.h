@@ -15,6 +15,7 @@
 
 #include "coriander/application/iappstatus.h"
 #include "coriander/base/ilogger.h"
+#include "coriander/base/itty.h"
 #include "coriander/iboard_event.h"
 #include "coriander/iboard_state.h"
 #include "coriander/iboard_state_calibrate_handler.h"
@@ -194,6 +195,11 @@ using coriander::IParamReq;
 struct MockParamReqValidator : public coriander::IParamReqValidator {
   MOCK_METHOD(void, addParamReq, (IParamReq*));
   MOCK_METHOD(bool, validate, ());
+};
+
+struct MockTty : public coriander::base::ITty {
+  MOCK_METHOD(ssize_t, read, (uint8_t*, size_t), (override));
+  MOCK_METHOD(ssize_t, write, (uint8_t*, size_t), (override));
 };
 
 }  // namespace mock
