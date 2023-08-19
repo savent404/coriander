@@ -184,6 +184,12 @@ struct MockProtoCtl : public coriander::IProtocolCtl {
   MOCK_METHOD(void, loop, (), (noexcept));
 };
 
+struct MockShellCtl : public coriander::IShellCtl {
+  MOCK_METHOD(void, enable, (), (noexcept));
+  MOCK_METHOD(void, disable, (), (noexcept));
+  MOCK_METHOD(void, loop, (), (noexcept));
+};
+
 using coriander::IParamReq;
 struct MockParamReqValidator : public coriander::IParamReqValidator {
   MOCK_METHOD(void, addParamReq, (IParamReq*));

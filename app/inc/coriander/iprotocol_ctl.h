@@ -21,4 +21,7 @@ struct IProtocolCtl {
   virtual void loop() noexcept = 0;
 };
 
+// alternative interface for debug purpose
+struct IShellCtl : IProtocolCtl {};
+
 }  // namespace coriander

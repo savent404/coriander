@@ -46,7 +46,7 @@ static auto zephyr_backends_bindings() {
   using ISemaphore = coriander::os::ISemaphore;
   using IThread = coriander::os::IThread;
   using IMutex = coriander::os::IMutex;
-  using IProtocolCtl = coriander::IProtocolCtl;
+  using IShellCtl = coriander::IShellCtl;
   using BackendAppStatus = coriander::application::zephyr::AppStatus;
   using BackendMotorDriver = coriander::motorctl::zephyr::MotorDriver;
   return boost::di::make_injector(
@@ -59,7 +59,7 @@ static auto zephyr_backends_bindings() {
       boost::di::bind<ISemaphore>.to<coriander::os::zephyr::Semaphore>(),
       boost::di::bind<IThread>.to<coriander::os::zephyr::Thread>(),
       boost::di::bind<IMutex>.to<coriander::os::zephyr::Mutex>(),
-      boost::di::bind<IProtocolCtl>.to<coriander::zephyr::ShellProtocol>());
+      boost::di::bind<IShellCtl>.to<coriander::zephyr::ShellProtocol>());
 }
 
 static int get_reboot_times() {

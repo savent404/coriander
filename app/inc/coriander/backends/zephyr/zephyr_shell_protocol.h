@@ -16,7 +16,7 @@
 
 namespace coriander {
 namespace zephyr {
-struct ShellProtocol : public IProtocolCtl {
+struct ShellProtocol : public IShellCtl {
   using BoardCtl = coriander::BoardCtl;
 
   ShellProtocol(std::shared_ptr<BoardCtl> boardCtl,

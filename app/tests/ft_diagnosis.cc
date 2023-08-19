@@ -32,7 +32,7 @@ TEST(Coriander, DiagError) {
       bind<coriander::os::ISemaphore>.to<testing::mock::MockSemaphore>(),
       bind<coriander::os::IThread>.to<testing::mock::MockThread>(),
       bind<coriander::os::IMutex>.to<coriander::os::posix::Mutex>(),
-      bind<coriander::IProtocolCtl>.to<testing::mock::MockProtoCtl>()));
+      bind<coriander::IShellCtl>.to<testing::mock::MockShellCtl>()));
 
   auto dignosis = injector.template create<
       std::shared_ptr<coriander::application::Diagnosis>>();
