@@ -14,6 +14,7 @@
 #include <span>
 
 #include "boost/circular_buffer.hpp"
+#include "coriander/application/diagnosis.h"
 #include "coriander/base/ilogger.h"
 #include "coriander/base/itty.h"
 #include "coriander/base/loggerstream.h"
@@ -186,7 +187,7 @@ struct TxFrameBuilder {
   void setStateMotorRedundantState(RedundantState state);
   void setStateRvdtState(bool abnormal);
   void setStateDspState(bool abnormal);
-  void setStateHalState(bool abnormal);
+  void setStateHallState(bool abnormal);
   void setStateUnderVoltage(bool abnormal);
   void setStateInternalPowerSupply(bool abnormal);
   void setStateAdcState(bool abnormal);
@@ -216,9 +217,11 @@ struct ProtoTd2kw : public IProtocolCtl {
   using Systick = coriander::os::ISystick;
   using Logger = coriander::base::ILogger;
   using LoggerStream = coriander::base::LoggerStream;
+  using Diagnosis = coriander::application::Diagnosis;
   ProtoTd2kw(std::shared_ptr<ITty> tty, std::shared_ptr<IBoardEvent> boardEvent,
              std::shared_ptr<Param> params, std::shared_ptr<Systick> systick,
-             std::shared_ptr<Logger> logger);
+             std::shared_ptr<Logger> logger,
+             std::shared_ptr<Diagnosis> diagnosis);
 
   void enable() noexcept override;
   void disable() noexcept override;
@@ -237,6 +240,7 @@ struct ProtoTd2kw : public IProtocolCtl {
   std::shared_ptr<Param> mParams;
   std::shared_ptr<Systick> mSystick;
   std::shared_ptr<Logger> mLogger;
+  std::shared_ptr<Diagnosis> mDiagnosis;
 
   LoggerStream mLoggerStream;
   td2kw_detail::RxFrameParser mRxFrameParser;
@@ -249,6 +253,7 @@ struct ProtoTd2kw : public IProtocolCtl {
   uint32_t mRecvDeadline = 0;
   bool mRecvDeadlineWarned = false;
   int16_t mRxCyclicCounter = -1;
+  uint8_t mTxCyclicCounter = 0;
 };
 
 }  // namespace proto

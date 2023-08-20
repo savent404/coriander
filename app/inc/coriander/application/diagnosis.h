@@ -22,6 +22,7 @@ struct Diagnosis {
     Normal,
     Warning,
     Error,
+    Lost,
     Unknown,
   };
   enum class DiagDevId : std::uint8_t {
@@ -32,7 +33,16 @@ struct Diagnosis {
     CtrlBoardUpperCommunication,
     CtrlBoardP2pCommunication,
     CtrlBoardLowerCommunication,
+    DrvBoardPsVoltage,
+    DrvBoardPsVoltage_UnderCheck,  // child of DrvBoardPsVoltage
+    DrvBoardPsVoltage_OverCheck,   // child of DrvBoardPsVoltage
+    DrvBoardPsCurrent,
+    DrvBoardPsPower,
+    DrvBoardPsTemp,
     DrvBoardTemp,
+    MotorBlocked,
+    MotorInnerPosSensor,  // indicate inner position sensor valid
+    MotorOuterPosSensor,  // indicate outer position sensor valid
     MAX_ID,
   };
   using DiagDevFunc = std::function<DeviceStatus()>;
