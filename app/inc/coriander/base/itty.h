@@ -9,12 +9,15 @@
  */
 #pragma once
 
-#include <cstddef>
+#include <unistd.h>
+
+#include <cstdint>
 
 namespace coriander {
 namespace base {
 
 struct ITty {
+  virtual ~ITty() = default;
   virtual ssize_t read(uint8_t* buf, size_t size) = 0;
   virtual ssize_t write(uint8_t* buf, size_t size) = 0;
 };

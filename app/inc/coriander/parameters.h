@@ -10,7 +10,7 @@
 #pragma once
 
 #include <memory>
-#include <span> // NOLINT
+#include <span>  // NOLINT
 
 #include "coriander/base/property_set.h"
 #include "coriander/base/type.h"
