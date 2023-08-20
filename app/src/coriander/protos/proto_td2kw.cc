@@ -24,11 +24,15 @@ ProtoTd2kw::ProtoTd2kw(std::shared_ptr<ITty> tty,
       mLogger(logger),
       mLoggerStream(logger) {}
 
-void ProtoTd2kw::enable() noexcept { updateReportDeadline(); }
+void ProtoTd2kw::enable() noexcept {
+  updateReportDeadline();
+  updateRecvDeadline();
+}
 void ProtoTd2kw::disable() noexcept {}
 
 void ProtoTd2kw::loop() noexcept {
   rxRoutine();
+
   if (reportDeadlineExpired()) {
     txRoutine();
     updateReportDeadline();
@@ -59,6 +63,15 @@ void ProtoTd2kw::rxRoutine() noexcept {
                   << mRxCyclicCounter
                   << ", got counter: " << mRxFrameParser.getCounter()
                   << std::endl;
+  }
+
+  if (recvDeadlineExpired() && !mRecvDeadlineWarned) {
+    mLoggerStream << "proto_td2kw: recv timeout" << std::endl;
+    mTxFrameBuilder.setStateMotorCommuteState(true);
+    mRecvDeadlineWarned = true;
+  } else {
+    mTxFrameBuilder.setStateMotorCommuteState(false);
+    mRecvDeadlineWarned = false;
   }
 
   newTargetPos = mRxFrameParser.getTargetPosition();
@@ -97,6 +110,13 @@ void ProtoTd2kw::updateReportDeadline() noexcept {
 
 bool ProtoTd2kw::reportDeadlineExpired() const noexcept {
   return mSystick->systick_ms() >= mReportDeadline;
+}
+
+void ProtoTd2kw::updateRecvDeadline() noexcept {
+  mRecvDeadline = mSystick->systick_ms() + mRecvTimeout;
+}
+bool ProtoTd2kw::recvDeadlineExpired() const noexcept {
+  return mSystick->systick_ms() >= mRecvDeadline;
 }
 
 }  // namespace proto

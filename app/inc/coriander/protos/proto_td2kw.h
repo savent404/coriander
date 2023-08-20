@@ -229,6 +229,8 @@ struct ProtoTd2kw : public IProtocolCtl {
   void rxRoutine() noexcept;
   void updateReportDeadline() noexcept;
   bool reportDeadlineExpired() const noexcept;
+  void updateRecvDeadline() noexcept;
+  bool recvDeadlineExpired() const noexcept;
 
   std::shared_ptr<ITty> mTty;
   std::shared_ptr<IBoardEvent> mBoardEvent;
@@ -238,10 +240,14 @@ struct ProtoTd2kw : public IProtocolCtl {
 
   LoggerStream mLoggerStream;
   td2kw_detail::RxFrameParser mRxFrameParser;
+  td2kw_detail::TxFrameBuilder mTxFrameBuilder;
   bool mEnable = false;
   float mCurrTargetPos = -1;
   const uint32_t mReportInterval = 20;
+  const uint32_t mRecvTimeout = 60;
   uint32_t mReportDeadline = 0;
+  uint32_t mRecvDeadline = 0;
+  bool mRecvDeadlineWarned = false;
   int16_t mRxCyclicCounter = -1;
 };
 
