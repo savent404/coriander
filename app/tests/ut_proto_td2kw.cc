@@ -10,7 +10,7 @@
 #include <gtest/gtest.h>
 
 #include "coriander/protos/proto_td2kw.h"
-#include "mocks.h"
+#include "tests/mocks.h"
 
 using coriander::proto::td2kw_detail::RxFrameParser;
 

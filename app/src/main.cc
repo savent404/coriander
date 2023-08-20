@@ -114,6 +114,11 @@ static void parameter_default_value_setup(
       P{16, ID::MotorCtl_SpeedEstimator_WindowSize},
       P{1000, ID::MotorCtl_SpeedEstimator_MinDuration},
       P{10, ID::MotorCtl_SpeedEstimator_SampleInterval},
+      P{0, ID::Sensor_Mech_Position_RT},
+      P{0, ID::Sensor_Mech_Velocity_RT},
+      P{0, ID::Sensor_Motor_Current_RT},
+      P{0, ID::Sensor_Motor_Temp_RT},
+      P{0, ID::Sensor_Motor_Voltage_RT},
   };
   for (auto& p : properties) {
     param->add(p);

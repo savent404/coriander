@@ -75,8 +75,18 @@ BETTER_ENUM(ParamId, int,
 // clang-format on
 
 struct ParamDescriber {
-  static inline constexpr const char *getParamDescription(ParamId id) {
+  static constexpr const char *getParamDescription(ParamId id) {
     const char *desc[] = {
+        [ParamId::Sensor_Mech_Position_RT] = "current mechanical "
+                                             "position, unit: degree",
+        [ParamId::Sensor_Mech_Velocity_RT] = "current mechanical "
+                                             "velocity, unit: RPM",
+        [ParamId::Sensor_Motor_Voltage_RT] = "current motor "
+                                             "voltage, unit V",
+        [ParamId::Sensor_Motor_Current_RT] = "current motor "
+                                             "current, uint A",
+        [ParamId::Sensor_Motor_Temp_RT] = "current motor "
+                                          "temp, unit degree",
         [ParamId::MotorCtl_General_Mode_RT] = "0:dummy, 1:velocity, 2:position",
         [ParamId::MotorCtl_General_TargetPosition_RT] =
             "target position, works in mode:2, unit: degree",
