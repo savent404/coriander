@@ -36,6 +36,8 @@ struct RxFrameParser {
 
   bool parse(std::span<uint8_t> buf);
 
+  size_t requiredBytesSize() const;
+
   /**
    * @brief cyclic redundancy check
    *

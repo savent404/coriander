@@ -137,11 +137,17 @@ void ProtoTd2kw::txRoutine() noexcept {
 
 void ProtoTd2kw::rxRoutine() noexcept {
   uint8_t buf[16];
+  size_t readSize = sizeof(buf);
   ssize_t n;
   float newTargetPos;
   bool parseRes, targetPosChanged, enableTriggered, disableTriggered;
 
-  n = mTty->read(buf, sizeof(buf));
+  // limit read size
+  if (readSize > mRxFrameParser.requiredBytesSize()) {
+    readSize = mRxFrameParser.requiredBytesSize();
+  }
+
+  n = mTty->read(buf, readSize);
   if (n < 0) {
     return;
   }
