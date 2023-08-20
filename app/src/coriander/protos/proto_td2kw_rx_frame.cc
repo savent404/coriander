@@ -80,6 +80,8 @@ uint8_t RxFrameParser::getChecksum() const {
   return checksum;
 }
 
+size_t RxFrameParser::requiredBytesSize() const { return 13 - mBuf.size(); }
+
 uint8_t RxFrameParser::getCounter() const { return mBuf.at(2); }
 
 bool RxFrameParser::getEnable() const {
