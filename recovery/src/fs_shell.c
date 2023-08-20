@@ -19,9 +19,8 @@
 
 static int shell_fs_format(const struct shell* shell, size_t argc,
                            char** argv) {
-  int ret;
-
 #if CONFIG_FILE_SYSTEM_MKFS
+  int ret;
   if (argc != 2) {
     shell_print(shell, "Usage: format <fs_type>");
     return -EINVAL;

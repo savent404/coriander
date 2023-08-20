@@ -9,9 +9,11 @@
  */
 #pragma once
 
-#include <boost/circular_buffer.hpp>
-#include <cstdint>
+#include <stdint.h>
+
 #include <span>
+
+#include "boost/circular_buffer.hpp"
 
 namespace coriander {
 namespace proto {

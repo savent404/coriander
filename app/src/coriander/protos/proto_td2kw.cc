@@ -130,7 +130,7 @@ void ProtoTd2kw::txRoutine() noexcept {
   auto msg = b.build();
 
   auto n = mTty->write(msg.data(), msg.size());
-  if (n != msg.size()) {
+  if (static_cast<size_t>(n) != msg.size()) {
     mLoggerStream << "td2kw: send message failed" << std::endl;
   }
 }
