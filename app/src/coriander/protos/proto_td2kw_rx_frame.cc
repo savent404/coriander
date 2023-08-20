@@ -57,8 +57,11 @@ bool RxFrameParser::parseOneByte(uint8_t byte) {
      *               and it just waste time to discard again, but
      *               it's not a big deal cause no data loss.
      */
-    while (mBuf.size() && mBuf[0] != 0xEB) {
+    while (mBuf.size()) {
       mBuf.pop_front();
+      if (mBuf[0] != 0xEB) {
+        continue;
+      }
     }
   } else {
     mBuf.push_back(byte);
