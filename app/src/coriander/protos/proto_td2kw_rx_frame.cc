@@ -45,11 +45,16 @@ bool RxFrameParser::parseOneByte(uint8_t byte) {
     case 12:
       if (byte == getChecksum()) {
         accept = true;
+      } else {
+        // drop current frame
+        mBuf.pop_front();
       }
       break;
     default:
       break;
   }
+
+  mBuf.push_back(byte);
 
   if (!accept) {
     /** discard all bytes until header1(0xEB)
@@ -57,14 +62,9 @@ bool RxFrameParser::parseOneByte(uint8_t byte) {
      *               and it just waste time to discard again, but
      *               it's not a big deal cause no data loss.
      */
-    while (mBuf.size()) {
+    while (mBuf.size() && mBuf[0] != 0xEB) {
       mBuf.pop_front();
-      if (mBuf[0] != 0xEB) {
-        continue;
-      }
     }
-  } else {
-    mBuf.push_back(byte);
   }
 
   // byte accepted and frame is complete
