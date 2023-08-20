@@ -113,7 +113,7 @@ void TxFrameBuilder::setStateDspState(bool abnormal) {
   p &= ~(1 << 1);
   p |= v << 1;
 }
-void TxFrameBuilder::setStateHalState(bool abnormal) {
+void TxFrameBuilder::setStateHallState(bool abnormal) {
   uint8_t& p = mBuf[6];
   uint8_t v = abnormal ? 1 : 0;
   p &= ~(1 << 2);

@@ -42,6 +42,11 @@ namespace base {
 
 // clang-format off
 BETTER_ENUM(ParamId, int,
+  Sensor_Mech_Position_RT,
+  Sensor_Mech_Velocity_RT,
+  Sensor_Motor_Voltage_RT,
+  Sensor_Motor_Current_RT,
+  Sensor_Motor_Temp_RT,
   MotorCtl_General_Mode_RT,
   MotorCtl_General_TargetPosition_RT,
   MotorCtl_General_TargetVelocity_RT,
