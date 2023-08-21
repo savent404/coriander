@@ -28,7 +28,7 @@ struct FocMotorDriver : public IBldcDriver {
    * @param d duty cycle of d-axis, pointing to the north pole of the magnet
    * @param q duty cycle of q-axis, ahead of d-axis by 90 degree
    */
-  void setVoltage(float d, float q);
+  virtual void setVoltage(float d, float q);
 
  private:
   std::shared_ptr<IElecAngleEstimator> mElecAngleEstimator;

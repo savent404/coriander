@@ -32,6 +32,8 @@
 #include "coriander/motorctl/ielec_angle_estimator.h"
 #include "coriander/motorctl/iencoder.h"
 #include "coriander/motorctl/imech_angle_estimator.h"
+#include "coriander/motorctl/iphase_current_estimator.h"
+#include "coriander/motorctl/motor_ctl_current.h"
 #include "coriander/os/isemaphore.h"
 #include "coriander/os/isystick.h"
 #include "coriander/os/ithread.h"
@@ -166,6 +168,7 @@ struct MockFocMotorDriver : public coriander::motorctl::FocMotorDriver {
   MOCK_METHOD0(fatalError, bool());
   MOCK_METHOD(void, setPhaseDutyCycle, (uint16_t, uint16_t, uint16_t),
               (override));
+  MOCK_METHOD(void, setVoltage, (float, float), (override));
   // void setPhaseDutyCycle(uint16_t u, uint16_t v, uint16_t w) override {}
 };
 
@@ -200,6 +203,17 @@ struct MockParamReqValidator : public coriander::IParamReqValidator {
 struct MockTty : public coriander::base::ITty {
   MOCK_METHOD(ssize_t, read, (uint8_t*, size_t), (override));
   MOCK_METHOD(ssize_t, write, (uint8_t*, size_t), (override));
+};
+
+struct MockPhaseCurrentEstimator
+    : public coriander::motorctl::IPhaseCurrentEstimator {
+  MOCK_METHOD(void, getPhaseCurrent, (float*, float*), (override));
+  MOCK_METHOD(void, enable, (), (override));
+  MOCK_METHOD(void, disable, (), (override));
+  MOCK_METHOD(bool, enabled, (), (override));
+  MOCK_METHOD(void, sync, (), (override));
+  MOCK_METHOD(void, calibrate, (), (override));
+  MOCK_METHOD(bool, needCalibrate, (), (override));
 };
 
 }  // namespace mock

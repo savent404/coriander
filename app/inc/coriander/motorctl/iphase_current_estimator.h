@@ -27,6 +27,4 @@ struct IPhaseCurrentEstimator : public ISensor {
 };
 
 }  // namespace motorctl
-
-}
-}
+}  // namespace coriander
