@@ -42,6 +42,7 @@ static auto createInjector() {
   using boost::di::bind;
   using testing::mock::MockAppStatus;
   using testing::mock::MockFocMotorDriver;
+  using testing::mock::MockPhaseCurrentEstimator;
   return boost::di::make_injector(
       bind<coriander::application::IAppStatus>.to<MockAppStatus>(),
       bind<coriander::base::ILogger>.to<testing::mock::MockLogger>(),
@@ -50,6 +51,7 @@ static auto createInjector() {
       bind<coriander::os::IMutex>.to<coriander::os::posix::Mutex>(),
       bind<coriander::os::ISemaphore>.to<coriander::os::posix::Semaphore>(),
       bind<coriander::motorctl::IEncoder>.to<testing::mock::MockEncoder>(),
+      bind<coriander::motorctl::IPhaseCurrentEstimator>.to<testing::mock::MockPhaseCurrentEstimator>(),
       bind<coriander::motorctl::FocMotorDriver>.to<MockFocMotorDriver>());
 }
 }  // namespace
@@ -77,13 +79,20 @@ TEST(BoardStateRun, basic) {
   param->add(Property{
       static_cast<int>(coriander::motorctl::DynamicMotorCtl::Mode::Velocity),
       ParamId::MotorCtl_General_Mode_RT});
+  param->add(Property{1.0f, ParamId::MotorCtl_CurrCtl_PidP});
+  param->add(Property{1000.0f, ParamId::MotorCtl_CurrCtl_PidI});
+  param->add(Property{0.0f, ParamId::MotorCtl_CurrCtl_PidD});
+  param->add(Property{0.0f, ParamId::MotorCtl_CurrCtl_PidOutputRamp});
+  param->add(Property{10.0f, ParamId::MotorCtl_CurrCtl_PidLimit});
+  param->add(Property{1000u, ParamId::MotorCtl_CurrCtl_Freq});
+  param->add(Property{1.0f, ParamId::MotorCtl_General_TargetCurrentD_RT});
+  param->add(Property{1.0f, ParamId::MotorCtl_General_TargetCurrentQ_RT});
 
   auto encoder = c.create<std::shared_ptr<testing::mock::MockEncoder>>();
 
   auto runHandler =
       c.create<std::shared_ptr<coriander::IBoardStateRunHandler>>();
 
-  EXPECT_CALL(*encoder, sync()).Times(1);
   runHandler->onEnter();
   runHandler->onLoop();
 }

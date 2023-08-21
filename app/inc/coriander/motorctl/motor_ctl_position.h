@@ -31,14 +31,12 @@ struct MotorCtlPosition : public IMotorCtl, public IParamReq {
                    std::unique_ptr<Duration> durationEstimator,
                    std::unique_ptr<DurationTimeout> durationTimeout,
                    std::shared_ptr<ParameterBase> parameters,
-                   std::shared_ptr<base::ILogger> logger,
                    std::shared_ptr<IParamReqValidator> paramReqValidator)
       : mMotorCtlVelocity{motorCtlVelocity},
         mMechAngleEstimator{mechAngleEstimator},
         mParameters{parameters},
         mDurationEstimator{std::move(durationEstimator)},
         mDurationTimeout{std::move(durationTimeout)},
-        mLogger{logger},
         mSensorHandler{mMechAngleEstimator},
         mMechAnglePid(0.0f, 0.0f, 0.0f, 0.0f, 0.0f) {
     paramReqValidator->addParamReq(this);
@@ -71,7 +69,6 @@ struct MotorCtlPosition : public IMotorCtl, public IParamReq {
   std::shared_ptr<ParameterBase> mParameters;
   std::unique_ptr<Duration> mDurationEstimator;
   std::unique_ptr<DurationTimeout> mDurationTimeout;
-  std::shared_ptr<base::ILogger> mLogger;
 
   // parameters
   float mTargetPosition;

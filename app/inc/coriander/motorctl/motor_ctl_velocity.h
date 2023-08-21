@@ -12,15 +12,12 @@
 #include <memory>
 #include <utility>
 
-#include "coriander/base/ilogger.h"
 #include "coriander/motorctl/duration_estimator.h"
-#include "coriander/motorctl/foc_motor_driver.h"
-#include "coriander/motorctl/ielec_angle_estimator.h"
 #include "coriander/motorctl/imotorctl.h"
 #include "coriander/motorctl/ivelocity_estimator.h"
+#include "coriander/motorctl/motor_ctl_current.h"
 #include "coriander/motorctl/pid.h"
 #include "coriander/motorctl/sensor_handler.h"
-#include "coriander/os/isystick.h"
 #include "coriander/parameter_requirements.h"
 #include "coriander/parameters.h"
 
@@ -37,24 +34,18 @@ struct MotorCtlVelocity : public IMotorCtl, public IParamReq {
                                 detail::DurationEstimatorUnit::US>;
   using DurationTimeout =
       detail::DurationExpired<detail::DurationEstimatorUnit::US>;
-  using ISystick = os::ISystick;
-  using ILogger = base::ILogger;
-  MotorCtlVelocity(std::shared_ptr<IElecAngleEstimator> elecAngleEstimator,
-                   std::shared_ptr<IVelocityEstimator> velocityEstimator,
+  MotorCtlVelocity(std::shared_ptr<IVelocityEstimator> velocityEstimator,
                    std::shared_ptr<ParameterBase> parameters,
-                   std::shared_ptr<FocMotorDriver> focMotorDriver,
                    std::unique_ptr<DurationEstimator> durationEstimator,
                    std::unique_ptr<DurationTimeout> durationTimeout,
-                   std::shared_ptr<base::ILogger> logger,
+                   std::shared_ptr<MotorCtlCurrent> motorCtlCurrent,
                    std::shared_ptr<IParamReqValidator> paramReqValidator)
-      : mElecAngleEstimator{elecAngleEstimator},
-        mVelocityEstimator{velocityEstimator},
+      : mVelocityEstimator{velocityEstimator},
         mParameters{parameters},
-        mFocMotorDriver{focMotorDriver},
         mDurationEstimator{std::move(durationEstimator)},
         mDurationTimeout{std::move(durationTimeout)},
-        mLogger{logger},
-        mSensorHandler{mElecAngleEstimator, mVelocityEstimator},
+        mMotorCtlCurrent{motorCtlCurrent},
+        mSensorHandler{mVelocityEstimator},
         mVelocityPid{0.0f, 0.0f, 0.0f, 0.0f, 0.0f} {
     paramReqValidator->addParamReq(this);
   }
@@ -85,13 +76,11 @@ struct MotorCtlVelocity : public IMotorCtl, public IParamReq {
 
  private:
   // dependencies
-  std::shared_ptr<IElecAngleEstimator> mElecAngleEstimator;
+  std::shared_ptr<MotorCtlCurrent> mMotorCtlCurrent;
   std::shared_ptr<IVelocityEstimator> mVelocityEstimator;
   std::shared_ptr<ParameterBase> mParameters;
-  std::shared_ptr<FocMotorDriver> mFocMotorDriver;
   std::unique_ptr<DurationEstimator> mDurationEstimator;
   std::unique_ptr<DurationTimeout> mDurationTimeout;
-  std::shared_ptr<ILogger> mLogger;
 
   // parameter
   float mTargetVelocity;
