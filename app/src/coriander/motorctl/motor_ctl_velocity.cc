@@ -88,6 +88,8 @@ bool MotorCtlVelocity::fatalError() { return false; }
 
 void MotorCtlVelocity::setTargetVelocity(float velocityInRpm) {
   mTargetVelocity = velocityInRpm;
+  mParameters->setValue(ParamId::MotorCtl_General_TargetVelocity_RT,
+                        mTargetVelocity);
 }
 
 }  // namespace motorctl
