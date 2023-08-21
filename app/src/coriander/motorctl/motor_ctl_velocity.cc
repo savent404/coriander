@@ -37,12 +37,16 @@ void MotorCtlVelocity::start() {
 
   // enable sensors, motor
   mSensorHandler.enable();
-  mFocMotorDriver->enable();
+
+  // next level start
+  mMotorCtlCurrent->start();
 }
 
 void MotorCtlVelocity::stop() {
   mSensorHandler.disable();
-  mFocMotorDriver->disable();
+
+  // next level stop
+  mMotorCtlCurrent->stop();
 }
 
 void MotorCtlVelocity::loop() {
@@ -70,18 +74,17 @@ void MotorCtlVelocity::loop() {
     torqueTargetIq = mVelocityPid(velocityError, durationUs * 1.0e-6f);
     torqueTargetId = 0.0f;
 
-    // TODO(savent): add a current feed back closed loop
-    torqueTargetUq = torqueTargetIq;
-    torqueTargetUd = torqueTargetId;
-    mFocMotorDriver->setVoltage(torqueTargetUd, torqueTargetUq);
+    mMotorCtlCurrent->setTargetCurrent(torqueTargetId, torqueTargetIq);
 
     mDurationEstimator->recordStart();
+
+    // next level loop
+    mMotorCtlCurrent->loop();
   }
 }
 
 void MotorCtlVelocity::emergencyStop() {
   this->stop();
-  mLogger->log("MotorCtlVelocity emergencyStop");
 }
 
 bool MotorCtlVelocity::fatalError() { return false; }
