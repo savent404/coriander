@@ -23,9 +23,13 @@ namespace coriander {
 namespace motorctl {
 
 struct MotorCtlPosition : public IMotorCtl, public IParamReq {
+  using DurationTimeout = DurationExpired<DurationEstimatorUnit::US>;
+  using Duration = DurationEstimator<DurationEstimatorType::OneShot,
+                                     DurationEstimatorUnit::US>;
   MotorCtlPosition(std::shared_ptr<MotorCtlVelocity> motorCtlVelocity,
                    std::shared_ptr<IMechAngleEstimator> mechAngleEstimator,
-                   std::unique_ptr<DurationEstimatorDefault> durationEstimator,
+                   std::unique_ptr<Duration> durationEstimator,
+                   std::unique_ptr<DurationTimeout> durationTimeout,
                    std::shared_ptr<ParameterBase> parameters,
                    std::shared_ptr<base::ILogger> logger,
                    std::shared_ptr<IParamReqValidator> paramReqValidator)
@@ -33,6 +37,7 @@ struct MotorCtlPosition : public IMotorCtl, public IParamReq {
         mMechAngleEstimator{mechAngleEstimator},
         mParameters{parameters},
         mDurationEstimator{std::move(durationEstimator)},
+        mDurationTimeout{std::move(durationTimeout)},
         mLogger{logger},
         mSensorHandler{mMechAngleEstimator},
         mMechAnglePid(0.0f, 0.0f, 0.0f, 0.0f, 0.0f) {
@@ -54,6 +59,7 @@ struct MotorCtlPosition : public IMotorCtl, public IParamReq {
         {"MotorCtl_PosCtl_PidD", Type::Float},
         {"MotorCtl_PosCtl_PidOutputRamp", Type::Float},
         {"MotorCtl_PosCtl_PidLimit", Type::Float},
+        {"MotorCtl_PosCtl_Freq", Type::UInt32},
         {"MotorCtl_General_TargetPosition_RT", Type::Float},
         PARAMETER_REQ_EOF};
     return items;
@@ -63,7 +69,8 @@ struct MotorCtlPosition : public IMotorCtl, public IParamReq {
   std::shared_ptr<MotorCtlVelocity> mMotorCtlVelocity;
   std::shared_ptr<IMechAngleEstimator> mMechAngleEstimator;
   std::shared_ptr<ParameterBase> mParameters;
-  std::unique_ptr<DurationEstimatorDefault> mDurationEstimator;
+  std::unique_ptr<Duration> mDurationEstimator;
+  std::unique_ptr<DurationTimeout> mDurationTimeout;
   std::shared_ptr<base::ILogger> mLogger;
 
   // parameters

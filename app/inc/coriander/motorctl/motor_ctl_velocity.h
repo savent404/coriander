@@ -35,6 +35,8 @@ struct MotorCtlVelocity : public IMotorCtl, public IParamReq {
   using DurationEstimator =
       detail::DurationEstimator<detail::DurationEstimatorType::OneShot,
                                 detail::DurationEstimatorUnit::US>;
+  using DurationTimeout =
+      detail::DurationExpired<detail::DurationEstimatorUnit::US>;
   using ISystick = os::ISystick;
   using ILogger = base::ILogger;
   MotorCtlVelocity(std::shared_ptr<IElecAngleEstimator> elecAngleEstimator,
@@ -42,6 +44,7 @@ struct MotorCtlVelocity : public IMotorCtl, public IParamReq {
                    std::shared_ptr<ParameterBase> parameters,
                    std::shared_ptr<FocMotorDriver> focMotorDriver,
                    std::unique_ptr<DurationEstimator> durationEstimator,
+                   std::unique_ptr<DurationTimeout> durationTimeout,
                    std::shared_ptr<base::ILogger> logger,
                    std::shared_ptr<IParamReqValidator> paramReqValidator)
       : mElecAngleEstimator{elecAngleEstimator},
@@ -49,6 +52,7 @@ struct MotorCtlVelocity : public IMotorCtl, public IParamReq {
         mParameters{parameters},
         mFocMotorDriver{focMotorDriver},
         mDurationEstimator{std::move(durationEstimator)},
+        mDurationTimeout{std::move(durationTimeout)},
         mLogger{logger},
         mSensorHandler{mElecAngleEstimator, mVelocityEstimator},
         mVelocityPid{0.0f, 0.0f, 0.0f, 0.0f, 0.0f} {
@@ -74,6 +78,7 @@ struct MotorCtlVelocity : public IMotorCtl, public IParamReq {
         {"MotorCtl_SpeedCtl_PidD", Type::Float},
         {"MotorCtl_SpeedCtl_PidOutputRamp", Type::Float},
         {"MotorCtl_SpeedCtl_PidLimit", Type::Float},
+        {"MotorCtl_SpeedCtl_Freq", Type::UInt32},
         PARAMETER_REQ_EOF};
     return items;
   }
@@ -85,6 +90,7 @@ struct MotorCtlVelocity : public IMotorCtl, public IParamReq {
   std::shared_ptr<ParameterBase> mParameters;
   std::shared_ptr<FocMotorDriver> mFocMotorDriver;
   std::unique_ptr<DurationEstimator> mDurationEstimator;
+  std::unique_ptr<DurationTimeout> mDurationTimeout;
   std::shared_ptr<ILogger> mLogger;
 
   // parameter

@@ -32,6 +32,9 @@ void MotorCtlVelocity::start() {
   mMotorSupplyVoltage =
       mParameters->getValue<float>(ParamId::MotorCtl_MotorDriver_SupplyVoltage);
 
+  mDurationTimeout->setDuration(static_cast<uint32_t>(
+      1e6 / mParameters->getValue<uint32_t>(ParamId::MotorCtl_SpeedCtl_Freq)));
+
   // enable sensors, motor
   mSensorHandler.enable();
   mFocMotorDriver->enable();
@@ -43,31 +46,37 @@ void MotorCtlVelocity::stop() {
 }
 
 void MotorCtlVelocity::loop() {
-  const uint32_t maxDurationMs = 20;
-  uint32_t durationMs;
+  const uint32_t maxDurationUs = 20'000;
+  uint32_t durationUs;
   float velocityError;
   float torqueTargetIq, torqueTargetId;
   float torqueTargetUq, torqueTargetUd;
 
   mSensorHandler.sync();
-  mDurationEstimator->recordStop();
 
-  // limit durationMs
-  durationMs = mDurationEstimator->getDuration();
-  if (durationMs > maxDurationMs) {
-    durationMs = maxDurationMs;
+  // limit calculation frequency
+  if (mDurationTimeout->expired()) {
+    mDurationTimeout->reset();
+
+    mDurationEstimator->recordStop();
+
+    // limit durationMs
+    durationUs = mDurationEstimator->getDuration();
+    if (durationUs > maxDurationUs) {
+      durationUs = maxDurationUs;
+    }
+
+    velocityError = mTargetVelocity - mVelocityEstimator->getVelocity();
+    torqueTargetIq = mVelocityPid(velocityError, durationUs * 1.0e-6f);
+    torqueTargetId = 0.0f;
+
+    // TODO(savent): add a current feed back closed loop
+    torqueTargetUq = torqueTargetIq;
+    torqueTargetUd = torqueTargetId;
+    mFocMotorDriver->setVoltage(torqueTargetUd, torqueTargetUq);
+
+    mDurationEstimator->recordStart();
   }
-
-  velocityError = mTargetVelocity - mVelocityEstimator->getVelocity();
-  torqueTargetIq = mVelocityPid(velocityError, durationMs * 1.0e-3f);
-  torqueTargetId = 0.0f;
-
-  // TODO(savent): add a current feed back closed loop
-  torqueTargetUq = torqueTargetIq;
-  torqueTargetUd = torqueTargetId;
-  mFocMotorDriver->setVoltage(torqueTargetUd, torqueTargetUq);
-
-  mDurationEstimator->recordStart();
 }
 
 void MotorCtlVelocity::emergencyStop() {
