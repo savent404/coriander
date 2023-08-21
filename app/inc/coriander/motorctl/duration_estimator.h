@@ -157,15 +157,47 @@ struct DurationEstimator<DurationEstimatorType::Average, U> {
   uint64_t sum;
   uint32_t count;
 };
+
+template <DurationEstimatorUnit U>
+struct DurationExpired {
+  explicit DurationExpired(std::shared_ptr<os::ISystick> systick)
+      : mSystick(systick), mDuration(UINT32_MAX), mStart(0) {
+    reset();
+  }
+
+  explicit DurationExpired(std::shared_ptr<os::ISystick> systick,
+                           uint32_t duration)
+      : mSystick(systick), mDuration(duration), mStart(0) {
+    reset();
+  }
+
+  void reset() { mStart = detail::getSystick<U>(mSystick); }
+
+  void setDuration(uint32_t duration) { mDuration = duration; }
+
+  uint32_t getDuration() const noexcept { return mDuration; }
+
+  bool expired() const noexcept {
+    return detail::getSystick<U>(mSystick) - mStart > mDuration;
+  }
+
+ private:
+  std::shared_ptr<os::ISystick> mSystick;
+  uint32_t mDuration;
+  uint32_t mStart;
+};
+
 }  // namespace detail
 
 using detail::DurationEstimator;
 using detail::DurationEstimatorType;
 using detail::DurationEstimatorUnit;
+using detail::DurationExpired;
 
 using DurationEstimatorDefault =
     DurationEstimator<DurationEstimatorType::OneShot,
                       DurationEstimatorUnit::MS>;
+using DurationExpiredDefault = DurationExpired<DurationEstimatorUnit::MS>;
 
 }  // namespace motorctl
 }  // namespace coriander

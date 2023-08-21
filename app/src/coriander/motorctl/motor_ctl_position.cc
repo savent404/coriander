@@ -24,35 +24,50 @@ void MotorCtlPosition::start() {
 
   mTargetPosition =
       mParameters->getValue<float>(ParamId::MotorCtl_General_TargetPosition_RT);
+  mDurationTimeout->setDuration(static_cast<uint32_t>(
+      1e6 / mParameters->getValue<uint32_t>(ParamId::MotorCtl_PosCtl_Freq)));
 
+  mDurationEstimator->reset();
   mSensorHandler.enable();
+
+  // next level start
   mMotorCtlVelocity->start();
 }
 
 void MotorCtlPosition::stop() {
   mSensorHandler.disable();
+
+  // next level stop
   mMotorCtlVelocity->stop();
 }
 
 void MotorCtlPosition::loop() {
-  const uint32_t maxDurationMs = 20;
-  uint32_t durationMs;
+  const uint32_t maxDurationUs = 20'000;
+  uint32_t durationUs;
   float mechAngleError;
   float targetVelocity;
 
   mSensorHandler.sync();
-  mDurationEstimator->recordStop();
 
-  // limit durationMs
-  durationMs = mDurationEstimator->getDuration();
-  if (durationMs > maxDurationMs) {
-    durationMs = maxDurationMs;
+  // limit calculation frequency
+  if (mDurationTimeout->expired()) {
+    mDurationTimeout->reset();
+
+    mDurationEstimator->recordStop();
+
+    // limit durationMs
+    durationUs = mDurationEstimator->getDuration();
+    if (durationUs > maxDurationUs) {
+      durationUs = maxDurationUs;
+    }
+
+    mechAngleError =
+        mTargetPosition - mMechAngleEstimator->getMechanicalAngle();
+    targetVelocity = mMechAnglePid(mechAngleError, durationUs * 1.0e-6f);
+    mMotorCtlVelocity->setTargetVelocity(targetVelocity);
+
+    mDurationEstimator->recordStart();
   }
-
-  mechAngleError = mTargetPosition - mMechAngleEstimator->getMechanicalAngle();
-  targetVelocity = mMechAnglePid(mechAngleError, durationMs * 1.0e-3f);
-  mMotorCtlVelocity->setTargetVelocity(targetVelocity);
-
   // next level loop
   mMotorCtlVelocity->loop();
 }
