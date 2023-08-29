@@ -42,7 +42,7 @@ namespace base {
 
 // clang-format off
 BETTER_ENUM(ParamId, int,
-  Sensor_Mech_Position_RT,
+  Sensor_Mech_Position_RT = 0,
   Sensor_Mech_Velocity_RT,
   Sensor_Motor_Voltage_RT,
   Sensor_Motor_Current_RT,
@@ -84,6 +84,9 @@ BETTER_ENUM(ParamId, int,
   Unknow, MAX_PARAM_ID);
 // clang-format on
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpragmas"
+#pragma GCC diagnostic ignored "-Wc99-designator"
 struct ParamDescriber {
   static constexpr const char *getParamDescription(ParamId id) {
     const char *desc[] = {
@@ -154,6 +157,7 @@ struct ParamDescriber {
     return desc[id];
   }
 };
+#pragma GCC diagnostic pop
 
 }  // namespace base
 }  // namespace coriander
