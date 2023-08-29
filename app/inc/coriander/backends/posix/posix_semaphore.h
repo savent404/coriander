@@ -10,8 +10,7 @@
 #pragma once
 
 #include <pthread.h>
-
-#include "coriander/os/isemaphore.h"
+#include <semaphore.h>
 
 namespace coriander {
 namespace os {
@@ -19,25 +18,20 @@ namespace posix {
 
 struct Semaphore : public ISemaphore {
   Semaphore() noexcept {
-    pthread_mutex_init(&mMutex, nullptr);
-    pthread_cond_init(&mCond, nullptr);
+    sem_init(&mSem, 0, 0);
   }
   void wait() noexcept override {
-    pthread_mutex_lock(&mMutex);
-    pthread_cond_wait(&mCond, &mMutex);
-    pthread_mutex_unlock(&mMutex);
+    sem_wait(&mSem);
   }
   bool tryWait() noexcept override {
-    pthread_mutex_lock(&mMutex);
-    int ret = pthread_cond_timedwait(&mCond, &mMutex, nullptr);
-    pthread_mutex_unlock(&mMutex);
-    return ret == 0;
+    return sem_trywait(&mSem) == 0;
   }
-  void post() noexcept override { pthread_cond_signal(&mCond); }
+  void post() noexcept override {
+    sem_post(&mSem);
+  }
 
  private:
-  pthread_mutex_t mMutex;
-  pthread_cond_t mCond;
+  sem_t mSem;
 };
 
 }  // namespace posix
