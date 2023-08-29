@@ -39,7 +39,7 @@ struct PropertyStaticMap {
 
   bool has(const char* name) const noexcept {
     auto t = ParamId::_from_string_nothrow(name);
-    if (t) {
+    if (t && t->_to_index() < m_map.size()) {
       return has(*t);
     }
     return false;
@@ -56,7 +56,7 @@ struct PropertyStaticMap {
   const Property& get(const char* name) const noexcept {
     static const Property empty;
     auto t = ParamId::_from_string_nothrow(name);
-    if (t) {
+    if (t && t->_to_index() < m_map.size()) {
       return get(*t);
     }
     return empty;
@@ -81,14 +81,14 @@ struct PropertyStaticMap {
 
   void remove(const char* name) noexcept {
     auto t = ParamId::_from_string_nothrow(name);
-    if (t) {
+    if (t && t->_to_index() < m_map.size()) {
       remove(*t);
     }
   }
   void remove(ParamId id) noexcept { m_map[id._to_index()] = nullptr; }
 
   virtual void remove(const Property& property) noexcept {
-    remove(property.name());
+    remove(property.id());
   }
 
   void replace(const Property& property) noexcept {
