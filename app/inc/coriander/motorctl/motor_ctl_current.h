@@ -48,7 +48,7 @@ struct MotorCtlCurrent : public IMotorCtl, public IParamReq {
   virtual void emergencyStop();
   virtual bool fatalError();
 
-  void setTargetCurrent(float Iq, float Id);
+  virtual void setTargetCurrent(float Iq, float Id);
 
   virtual const ParameterRequireItem* requiredParameters() const {
     using Type = coriander::base::TypeId;
