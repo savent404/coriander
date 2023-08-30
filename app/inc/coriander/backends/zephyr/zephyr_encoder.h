@@ -14,21 +14,20 @@ namespace coriander {
 namespace motorctl {
 namespace zephyr {
 
-// TODO(savent): need to implement
 struct Encoder : public motorctl::IEncoder {
-  virtual unsigned getEncoderCount() { return 0; }
-  virtual unsigned getEncoderCountPerRound() { return 0; }
-  virtual int getOverflowCount() { return 0; }
-  virtual void enable() {}
-  virtual void disable() {}
-  virtual bool enabled() { return false; }
-  virtual void sync() {}
+  virtual unsigned getEncoderCount();
+  virtual unsigned getEncoderCountPerRound();
+  virtual int getOverflowCount();
+  virtual void enable();
+  virtual void disable();
+  virtual bool enabled();
+  virtual void sync();
 
   /**
    * @brief set the sensor to zero, calibrate offset
    */
-  virtual void calibrate() {}
-  virtual bool needCalibrate() { return false; }
+  virtual void calibrate();
+  virtual bool needCalibrate();
 };
 }  // namespace zephyr
 }  // namespace motorctl

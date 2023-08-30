@@ -23,7 +23,9 @@
 		zephyr,code-partition = &slot0_partition;
 		usr,led = &leds;
 		usr,dbg = &uart5;
+		usr,encoder = &qdec;
     };
+
 
 	leds: leds{
 		compatible = "gpio-leds";
@@ -170,6 +172,16 @@
 		zephyr,reference = "ADC_REF_INTERNAL";
 		zephyr,acquisition-time = <ADC_ACQ_TIME(ADC_ACQ_TIME_TICKS, 56)>;
 		zephyr,resolution = <8>;
+	};
+};
+
+&timers3 {
+	status = "okay";
+
+	encoder_pwm: capture {
+		stauts = "okay";
+		pinctrl-0 = <&tim3_ch2_pb5>;
+		pinctrl-names = "default";
 	};
 };
 
