@@ -12,7 +12,7 @@
 #include "boost/di.hpp"
 #include "coriander/motorctl/iphase_current_estimator.h"
 #include "coriander/motorctl/motor_ctl_current.h"
-#include "mocks.h"
+#include "test/mocks.h"
 
 namespace {
 auto& createInjector() {
@@ -21,12 +21,15 @@ auto& createInjector() {
   using testing::mock::MockParamReqValidator;
   using testing::mock::MockPhaseCurrentEstimator;
   using testing::mock::MockSystick;
+  using Mfmd = testing::mock::MockFocMotorDriver;
+  using Mpce = testing::mock::MockPhaseCurrentEstimator;
+  using Meae = testing::mock::MockElecAngleEstimator;
   static auto injector = boost::di::make_injector(
       bind<coriander::IParamReqValidator>.to<MockParamReqValidator>(),
       bind<coriander::os::ISystick>.to<MockSystick>(),
-      bind<coriander::motorctl::FocMotorDriver>.to<testing::mock::MockFocMotorDriver>(),
-      bind<coriander::motorctl::IPhaseCurrentEstimator>.to<MockPhaseCurrentEstimator>(),
-      bind<coriander::motorctl::IElecAngleEstimator>.to<MockElecAngleEstimator>());
+      bind<coriander::motorctl::FocMotorDriver>.to<Mfmd>(),
+      bind<coriander::motorctl::IPhaseCurrentEstimator>.to<Mpce>(),
+      bind<coriander::motorctl::IElecAngleEstimator>.to<Meae>());
   return injector;
 }
 }  // namespace
@@ -68,7 +71,6 @@ TEST(MotorCtlCurrent, targetMode) {
   EXPECT_CALL(*systick, systick_us()).WillRepeatedly(testing::Return(2000));
   EXPECT_CALL(*motor, setVoltage(1.5f, 1.5f)).Times(1);
   motorCtl->loop();
-
 
   EXPECT_CALL(*currentSensor, disable()).Times(1);
   EXPECT_CALL(*motor, disable()).Times(1);

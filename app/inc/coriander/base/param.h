@@ -35,9 +35,10 @@ namespace base {
  *
  *  for persistent parameters(sync to flash):
  *   <module>_<submodule>_<param_name>
- * @note the order of enum and description array are relaxed, and also can be changed
- * @warning we don't specific the type of parameter here, be careful when using a parameter
- *          which is not a float(the default type of parameter)
+ * @note the order of enum and description array are relaxed, and also can be
+ * changed
+ * @warning we don't specific the type of parameter here, be careful when using
+ * a parameter which is not a float(the default type of parameter)
  */
 
 // clang-format off
@@ -90,23 +91,23 @@ BETTER_ENUM(ParamId, int,
 struct ParamDescriber {
   static constexpr const char *getParamDescription(ParamId id) {
     const char *desc[] = {
-        [ParamId::Sensor_Mech_Position_RT] = "current mechanical "
-                                             "position, unit: degree",
-        [ParamId::Sensor_Mech_Velocity_RT] = "current mechanical "
-                                             "velocity, unit: RPM",
-        [ParamId::Sensor_Motor_Voltage_RT] = "current motor "
-                                             "voltage, unit V",
-        [ParamId::Sensor_Motor_Current_RT] = "current motor "
-                                             "current, uint A",
-        [ParamId::Sensor_Motor_Temp_RT] = "current motor "
-                                          "temp, unit degree",
-        [ParamId::MotorCtl_General_Mode_RT] = "0:dummy, 1: torque, 2:velocity, 3:position",
+        [ParamId::Sensor_Mech_Position_RT] =
+            "current mechanical position, unit: degree",
+        [ParamId::Sensor_Mech_Velocity_RT] =
+            "current mechanical velocity, unit: RPM",
+        [ParamId::Sensor_Motor_Voltage_RT] = "current motor voltage, unit V",
+        [ParamId::Sensor_Motor_Current_RT] = "current motor current, uint A",
+        [ParamId::Sensor_Motor_Temp_RT] = "current motor temp, unit degree",
+        [ParamId::MotorCtl_General_Mode_RT] =
+            "0:dummy, 1: torque, 2:velocity, 3:position",
         [ParamId::MotorCtl_General_TargetPosition_RT] =
             "target position, works in mode:3, unit: degree",
         [ParamId::MotorCtl_General_TargetVelocity_RT] =
             "target velocity, works in mode:2 unit: RPM",
-        [ParamId::MotorCtl_General_TargetCurrentD_RT] = "target current D, works in mode:1 unit: A",
-        [ParamId::MotorCtl_General_TargetCurrentQ_RT] = "target current Q, works in mode:1 unit: A",
+        [ParamId::MotorCtl_General_TargetCurrentD_RT] =
+            "target current D, works in mode:1 unit: A",
+        [ParamId::MotorCtl_General_TargetCurrentQ_RT] =
+            "target current Q, works in mode:1 unit: A",
         [ParamId::MotorCtl_MotorDriver_PolePair] = "motor pole pair",
         [ParamId::MotorCtl_MotorDriver_PersistRawElecAngle] =
             "electrical angle, persistent value, unit: degree",
@@ -133,19 +134,22 @@ struct ParamDescriber {
         [ParamId::MotorCtl_PosCtl_PidD] = "",
         [ParamId::MotorCtl_PosCtl_PidOutputRamp] = "maxium ramp of output",
         [ParamId::MotorCtl_PosCtl_PidLimit] = "maxium output",
-        [ParamId::MotorCtl_PosCtl_Freq] = "frequency of position control, unit: Hz",
+        [ParamId::MotorCtl_PosCtl_Freq] =
+            "frequency of position control, unit: Hz",
         [ParamId::MotorCtl_SpeedCtl_PidP] = "",
         [ParamId::MotorCtl_SpeedCtl_PidI] = "",
         [ParamId::MotorCtl_SpeedCtl_PidD] = "",
         [ParamId::MotorCtl_SpeedCtl_PidOutputRamp] = "maxium ramp of output",
         [ParamId::MotorCtl_SpeedCtl_PidLimit] = "maxium output",
-        [ParamId::MotorCtl_SpeedCtl_Freq] = "frequency of speed control, unit: Hz",
+        [ParamId::MotorCtl_SpeedCtl_Freq] =
+            "frequency of speed control, unit: Hz",
         [ParamId::MotorCtl_CurrCtl_PidP] = "",
         [ParamId::MotorCtl_CurrCtl_PidI] = "",
         [ParamId::MotorCtl_CurrCtl_PidD] = "",
         [ParamId::MotorCtl_CurrCtl_PidOutputRamp] = "maxium ramp of output",
         [ParamId::MotorCtl_CurrCtl_PidLimit] = "maxium output",
-        [ParamId::MotorCtl_CurrCtl_Freq] = "frequency of current control, unit: Hz",
+        [ParamId::MotorCtl_CurrCtl_Freq] =
+            "frequency of current control, unit: Hz",
         [ParamId::MotorCtl_SpeedEstimator_WindowSize] =
             "window size of velocity estimator, default: 16",
         [ParamId::MotorCtl_SpeedEstimator_MinDuration] =
