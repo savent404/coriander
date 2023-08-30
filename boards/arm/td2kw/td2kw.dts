@@ -173,6 +173,18 @@
 	};
 };
 
+&timers4 {
+	status = "okay";
+
+	qdec: qdec {
+		status = "okay";
+		pinctrl-0 = <&tim4_ch1_pb6 &tim4_ch2_pb7>;
+		pinctrl-names = "default";
+		st,input-filter-level = <3>;
+		st,counts-per-revolution = <0x8000>;
+	};
+};
+
 &clk_lsi {
     status = "okay";
 };
