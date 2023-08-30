@@ -43,6 +43,7 @@ static auto createInjector() {
   using testing::mock::MockAppStatus;
   using testing::mock::MockFocMotorDriver;
   using testing::mock::MockPhaseCurrentEstimator;
+  using Mpce = testing::mock::MockPhaseCurrentEstimator;
   return boost::di::make_injector(
       bind<coriander::application::IAppStatus>.to<MockAppStatus>(),
       bind<coriander::base::ILogger>.to<testing::mock::MockLogger>(),
@@ -51,7 +52,7 @@ static auto createInjector() {
       bind<coriander::os::IMutex>.to<coriander::os::posix::Mutex>(),
       bind<coriander::os::ISemaphore>.to<coriander::os::posix::Semaphore>(),
       bind<coriander::motorctl::IEncoder>.to<testing::mock::MockEncoder>(),
-      bind<coriander::motorctl::IPhaseCurrentEstimator>.to<testing::mock::MockPhaseCurrentEstimator>(),
+      bind<coriander::motorctl::IPhaseCurrentEstimator>.to<Mpce>(),
       bind<coriander::motorctl::FocMotorDriver>.to<MockFocMotorDriver>());
 }
 }  // namespace

@@ -21,7 +21,7 @@ TEST(Coriander, DiagError) {
   using boost::di::bind;
   using testing::mock::MockBldcDriver;
   using testing::mock::MockFocMotorDriver;
-  using testing::mock::MockPhaseCurrentEstimator;
+  using Mpce = testing::mock::MockPhaseCurrentEstimator;
   using BackendAppStatus = coriander::application::posix::AppStatus;
   auto injector = coriander::coriander_create_injector(boost::di::make_injector(
       bind<coriander::base::ILogger>.to<coriander::base::posix::Logger>(),
@@ -33,7 +33,7 @@ TEST(Coriander, DiagError) {
       bind<coriander::os::ISemaphore>.to<testing::mock::MockSemaphore>(),
       bind<coriander::os::IThread>.to<testing::mock::MockThread>(),
       bind<coriander::os::IMutex>.to<coriander::os::posix::Mutex>(),
-      bind<coriander::motorctl::IPhaseCurrentEstimator>.to<MockPhaseCurrentEstimator>(),
+      bind<coriander::motorctl::IPhaseCurrentEstimator>.to<Mpce>(),
       bind<coriander::IShellCtl>.to<testing::mock::MockShellCtl>()));
 
   auto dignosis = injector.template create<

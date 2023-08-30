@@ -31,9 +31,11 @@ void MotorCtlCurrent::start() {
 
   mDurationTimeout->setDuration(static_cast<uint32_t>(
       1e6 / mParams->getValue<uint32_t>(ParamId::MotorCtl_CurrCtl_Freq)));
-  
-  mTargetId = mParams->getValue<float>(ParamId::MotorCtl_General_TargetCurrentD_RT);
-  mTargetIq = mParams->getValue<float>(ParamId::MotorCtl_General_TargetCurrentQ_RT);
+
+  mTargetId =
+      mParams->getValue<float>(ParamId::MotorCtl_General_TargetCurrentD_RT);
+  mTargetIq =
+      mParams->getValue<float>(ParamId::MotorCtl_General_TargetCurrentQ_RT);
 
   // enable sensors, motor
   mPhaseCurrentEstimator->enable();

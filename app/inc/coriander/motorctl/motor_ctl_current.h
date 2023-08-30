@@ -9,6 +9,9 @@
  */
 #pragma once
 
+#include <memory>
+#include <utility>
+
 #include "coriander/motorctl/duration_estimator.h"
 #include "coriander/motorctl/foc_motor_driver.h"
 #include "coriander/motorctl/imotorctl.h"
