@@ -13,7 +13,8 @@
     compatible = "st,stm32f405Xg";
 
 	zephyr,user {
-		io-channels = <&adc1 1>, <&adc1 3>, <&adc1 15>, <&adc1 8>;
+		io-channels =  <&adc1 1>, <&adc1 3>, <&adc1 15>, <&adc1 8>,
+		/* For phase current */ <&adc2 11>, <&adc2 12>, <&adc2 13>;
 	};
 	
     chosen {
@@ -138,6 +139,37 @@
 		zephyr,reference = "ADC_REF_INTERNAL";
 		zephyr,acquisition-time = <ADC_ACQ_TIME(ADC_ACQ_TIME_TICKS, 56)>;
 		zephyr,resolution = <12>;
+	};
+};
+
+&adc2 {
+	status = "okay";
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	pinctrl-0 = <&adc2_in11_pc1 &adc2_in12_pc2 &adc2_in13_pc3>;
+	pinctrl-names = "default";
+
+	channel@11 {
+		reg = <11>;
+		zephyr,gain = "ADC_GAIN_1";
+		zephyr,reference = "ADC_REF_INTERNAL";
+		zephyr,acquisition-time = <ADC_ACQ_TIME(ADC_ACQ_TIME_TICKS, 56)>;
+		zephyr,resolution = <8>;
+	};
+	channel@12 {
+		reg = <12>;
+		zephyr,gain = "ADC_GAIN_1";
+		zephyr,reference = "ADC_REF_INTERNAL";
+		zephyr,acquisition-time = <ADC_ACQ_TIME(ADC_ACQ_TIME_TICKS, 56)>;
+		zephyr,resolution = <8>;
+	};
+	channel@13 {
+		reg = <13>;
+		zephyr,gain = "ADC_GAIN_1";
+		zephyr,reference = "ADC_REF_INTERNAL";
+		zephyr,acquisition-time = <ADC_ACQ_TIME(ADC_ACQ_TIME_TICKS, 56)>;
+		zephyr,resolution = <8>;
 	};
 };
 

@@ -29,6 +29,7 @@
 #include "zephyr/zephyr_shell_protocol.h"
 #include "zephyr/zephyr_systick.h"
 #include "zephyr/zephyr_thread.h"
+#include "zephyr/zephyr_phase_current_estimator.h"
 
 LOG_MODULE_REGISTER(main);
 
@@ -49,6 +50,10 @@ static auto zephyr_backends_bindings() {
   using IShellCtl = coriander::IShellCtl;
   using BackendAppStatus = coriander::application::zephyr::AppStatus;
   using BackendMotorDriver = coriander::motorctl::zephyr::MotorDriver;
+  using IPhaseCurrentEstimator =
+      coriander::motorctl::IPhaseCurrentEstimator;
+  using PhaseCurrentEstimator =
+      coriander::motorctl::zephyr::PhaseCurrentEstimator;
   return boost::di::make_injector(
       boost::di::bind<ILogger>.to<coriander::base::zephyr::Logger>(),
       boost::di::bind<IAppStatus>.to<BackendAppStatus>(),
@@ -59,6 +64,7 @@ static auto zephyr_backends_bindings() {
       boost::di::bind<ISemaphore>.to<coriander::os::zephyr::Semaphore>(),
       boost::di::bind<IThread>.to<coriander::os::zephyr::Thread>(),
       boost::di::bind<IMutex>.to<coriander::os::zephyr::Mutex>(),
+      boost::di::bind<IPhaseCurrentEstimator>.to<PhaseCurrentEstimator>(),
       boost::di::bind<IShellCtl>.to<coriander::zephyr::ShellProtocol>());
 }
 
