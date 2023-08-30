@@ -1,0 +1,31 @@
+compatible: "coriander,bldc"
+description: |
+  a custom bldc driver for coriander
+
+include: base.yaml
+
+properties:
+  pwms:
+    type: phandle-array
+    required: true
+
+  enable-pin:
+    type: phandle-array
+    specifier-space: gpio
+    description: foo
+  
+  break-pins:
+    type: phandle-array
+    description: foo
+  
+  pwm-names:
+    type: string-array
+    required: false
+  
+  max_pulse:
+    type: int
+    required: true
+
+  min_pulse:
+    type: int
+    required: true

@@ -50,6 +50,17 @@
 			automount;
 		};
 	};
+
+	servo: servo {
+		compatible = "coriander,bldc";
+		pwms = <&pwm 1 PWM_USEC(500) PWM_POLARITY_NORMAL>,
+			<&pwm 2 PWM_USEC(500) PWM_POLARITY_NORMAL>,
+			<&pwm 3 PWM_USEC(500) PWM_POLARITY_NORMAL>;
+		pwm-names = "motor-u", "motor-v", "motor-w";
+		enable-pin = <&gpioc 7 GPIO_ACTIVE_LOW>;
+		max_pulse = <PWM_USEC(490)>;
+		min_pulse = <PWM_USEC(10)>;
+	};
 };
 
 // spi flash
@@ -172,6 +183,16 @@
 		zephyr,reference = "ADC_REF_INTERNAL";
 		zephyr,acquisition-time = <ADC_ACQ_TIME(ADC_ACQ_TIME_TICKS, 56)>;
 		zephyr,resolution = <8>;
+	};
+};
+
+&timers1 {
+	status = "okay";
+
+	pwm: pwm {
+		status = "okay";
+		pinctrl-0 = <&tim1_ch1_pa8 &tim1_ch2_pa9 &tim1_ch3_pa10>;
+		pinctrl-names = "default";
 	};
 };
 

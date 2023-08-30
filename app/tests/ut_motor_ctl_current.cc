@@ -12,7 +12,7 @@
 #include "boost/di.hpp"
 #include "coriander/motorctl/iphase_current_estimator.h"
 #include "coriander/motorctl/motor_ctl_current.h"
-#include "test/mocks.h"
+#include "tests/mocks.h"
 
 namespace {
 auto& createInjector() {
