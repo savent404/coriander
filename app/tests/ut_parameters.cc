@@ -13,13 +13,15 @@
 #include "coriander/parameter_requirements_validator.h"
 #include "coriander/parameters.h"
 #include "posix/posix_logger.h"
+#include "posix/posix_persistent_parameter.h"
 
 using ParamId = coriander::base::ParamId;
-using Parameter = coriander::Parameter;
+using ParameterBase = coriander::ParameterBase;
 using ParameterMemoryMapper = coriander::ParameterMemoryMapper;
 using Property = coriander::base::Property;
+using PersistentParameter = coriander::posix::PersistentParameter;
 TEST(Parameter, basic) {
-  Parameter param;
+  ParameterBase param;
 
   ASSERT_EQ(param.has("Unknow"), false);
   param.add(Property{0, ParamId::Unknow});
@@ -36,7 +38,7 @@ TEST(Parameter, basic) {
 }
 
 TEST(Parameter, basic_map) {
-  Parameter param;
+  ParameterBase param;
   ParameterMemoryMapper mapper;
 
   for (int i = 0; i < ParamId::MAX_PARAM_ID; i++) {
@@ -51,9 +53,40 @@ TEST(Parameter, basic_map) {
 
   mapper.unmap();
 
-  Parameter mirror_param;
+  ParameterBase mirror_param;
   ASSERT_TRUE(mapper.recovery(std::span<uint8_t>{mirror.get(), map.size()},
                               &mirror_param));
+
+  ASSERT_TRUE(mirror_param.has("MotorCtl_Calibrate_CaliDuration"));
+  ASSERT_TRUE(mirror_param.has("MotorCtl_Calibrate_CaliVoltage"));
+  ASSERT_FALSE(mirror_param.has("t3"));
+  ASSERT_EQ(
+      get<int>(mirror_param.get("MotorCtl_Calibrate_CaliDuration").value()),
+      ParamId::MotorCtl_Calibrate_CaliDuration);
+  ASSERT_EQ(
+      get<int>(mirror_param.get("MotorCtl_Calibrate_CaliVoltage").value()),
+      ParamId::MotorCtl_Calibrate_CaliVoltage);
+  ASSERT_EQ(mirror_param.getValue<int>("MotorCtl_Calibrate_CaliDuration"),
+            ParamId::MotorCtl_Calibrate_CaliDuration);
+  ASSERT_EQ(mirror_param.getValue<int>("MotorCtl_Calibrate_CaliVoltage"),
+            ParamId::MotorCtl_Calibrate_CaliVoltage);
+
+  for (int i = 0; i < ParamId::MAX_PARAM_ID; i++) {
+    auto id = ParamId::_from_index_nothrow(i).value();
+    ASSERT_EQ(mirror_param.getValue<int>(id), i);
+  }
+}
+
+TEST(Parameter, persistent_map) {
+  PersistentParameter param, mirror_param;
+
+  for (int i = 0; i < ParamId::MAX_PARAM_ID; i++) {
+    param.add(Property{i, ParamId::_from_index_nothrow(i).value()});
+  }
+
+  ASSERT_TRUE(param.save());
+
+  ASSERT_TRUE(mirror_param.load());
 
   ASSERT_TRUE(mirror_param.has("MotorCtl_Calibrate_CaliDuration"));
   ASSERT_TRUE(mirror_param.has("MotorCtl_Calibrate_CaliVoltage"));
