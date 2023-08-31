@@ -33,7 +33,7 @@ struct MotorCtlCalibrate : public IMotorCtl, public IParamReq {
   using ISystick = os::ISystick;
   MotorCtlCalibrate(std::shared_ptr<IBldcDriver> motor,
                     std::shared_ptr<IElecAngleEstimator> elecAngleEstimator,
-                    std::shared_ptr<ParameterBase> param,
+                    std::shared_ptr<Parameter> param,
                     std::shared_ptr<IBoardEvent> boardEvent,
                     std::shared_ptr<ISystick> systick,
                     std::shared_ptr<IParamReqValidator> paramReqValidator);
@@ -57,7 +57,7 @@ struct MotorCtlCalibrate : public IMotorCtl, public IParamReq {
  private:
   std::shared_ptr<IBldcDriver> mMotor;
   std::shared_ptr<IElecAngleEstimator> mElecAngleEstimator;
-  std::shared_ptr<ParameterBase> mParam;
+  std::shared_ptr<Parameter> mParam;
   std::shared_ptr<IBoardEvent> mBoardEvent;
   std::shared_ptr<ISystick> mSystick;
 

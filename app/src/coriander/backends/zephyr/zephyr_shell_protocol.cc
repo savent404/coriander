@@ -21,7 +21,7 @@
 
 namespace {
 static std::shared_ptr<coriander::BoardCtl> ctl = nullptr;
-static std::shared_ptr<coriander::ParameterBase> param = nullptr;
+static std::shared_ptr<coriander::Parameter> param = nullptr;
 }  // namespace
 
 namespace coriander {

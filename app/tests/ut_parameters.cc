@@ -15,11 +15,11 @@
 #include "posix/posix_logger.h"
 
 using ParamId = coriander::base::ParamId;
-using ParameterBase = coriander::ParameterBase;
+using Parameter = coriander::Parameter;
 using ParameterMemoryMapper = coriander::ParameterMemoryMapper;
 using Property = coriander::base::Property;
 TEST(Parameter, basic) {
-  ParameterBase param;
+  Parameter param;
 
   ASSERT_EQ(param.has("Unknow"), false);
   param.add(Property{0, ParamId::Unknow});
@@ -36,7 +36,7 @@ TEST(Parameter, basic) {
 }
 
 TEST(Parameter, basic_map) {
-  ParameterBase param;
+  Parameter param;
   ParameterMemoryMapper mapper;
 
   for (int i = 0; i < ParamId::MAX_PARAM_ID; i++) {
@@ -51,7 +51,7 @@ TEST(Parameter, basic_map) {
 
   mapper.unmap();
 
-  ParameterBase mirror_param;
+  Parameter mirror_param;
   ASSERT_TRUE(mapper.recovery(std::span<uint8_t>{mirror.get(), map.size()},
                               &mirror_param));
 
@@ -91,7 +91,7 @@ struct Foo : public coriander::IParamReq {
 }  // namespace
 
 TEST(Parameter, requirements) {
-  auto param = std::make_shared<coriander::ParameterBase>();
+  auto param = std::make_shared<coriander::Parameter>();
   auto validator = std::make_shared<coriander::ParamReqValidator>(
       std::make_shared<coriander::base::posix::Logger>(), param);
   auto foo = std::make_shared<Foo>();

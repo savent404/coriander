@@ -39,7 +39,7 @@ TEST(MotorCtlCurrent, targetMode) {
   using coriander::base::Property;
   using testing::_;
   auto& injector = createInjector();
-  auto param = injector.create<std::shared_ptr<coriander::ParameterBase>>();
+  auto param = injector.create<std::shared_ptr<coriander::Parameter>>();
   auto systick = injector.create<std::shared_ptr<testing::mock::MockSystick>>();
   auto motor =
       injector.create<std::shared_ptr<testing::mock::MockFocMotorDriver>>();

@@ -23,7 +23,7 @@ namespace motorctl {
 struct DynamicMotorCtl : public IMotorCtl, public IParamReq {
   enum class Mode : int { Dummy = 0, Velocity, Position, MODE_MAX };
 
-  DynamicMotorCtl(std::shared_ptr<ParameterBase> param,
+  DynamicMotorCtl(std::shared_ptr<Parameter> param,
                   std::shared_ptr<MotorCtlDummy> dummyMc,
                   std::shared_ptr<MotorCtlVelocity> velocityMc,
                   std::shared_ptr<MotorCtlPosition> positionMc,
@@ -68,7 +68,7 @@ struct DynamicMotorCtl : public IMotorCtl, public IParamReq {
   }
 
  private:
-  std::shared_ptr<ParameterBase> mParam;
+  std::shared_ptr<Parameter> mParam;
   std::shared_ptr<IMotorCtl> mMotorCtl[static_cast<int>(Mode::MODE_MAX)];
   std::shared_ptr<IMotorCtl> mCurrentMc;
 };

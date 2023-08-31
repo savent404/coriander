@@ -31,7 +31,7 @@ struct MotorCtlCurrent : public IMotorCtl, public IParamReq {
 
   explicit MotorCtlCurrent(
       std::shared_ptr<IPhaseCurrentEstimator> phaseCurrentEstimator,
-      std::shared_ptr<ParameterBase> parameters,
+      std::shared_ptr<Parameter> parameters,
       std::shared_ptr<FocMotorDriver> focMotorDriver,
       std::unique_ptr<DurationEstimator> durationEstimator,
       std::unique_ptr<DurationTimeout> durationTimeout,
@@ -70,7 +70,7 @@ struct MotorCtlCurrent : public IMotorCtl, public IParamReq {
 
  private:
   std::shared_ptr<IPhaseCurrentEstimator> mPhaseCurrentEstimator;
-  std::shared_ptr<ParameterBase> mParams;
+  std::shared_ptr<Parameter> mParams;
   std::shared_ptr<FocMotorDriver> mFocMotorDriver;
   std::shared_ptr<DurationEstimator> mDurationEstimator;
   std::shared_ptr<DurationTimeout> mDurationTimeout;
