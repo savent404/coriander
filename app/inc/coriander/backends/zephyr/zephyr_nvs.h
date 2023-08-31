@@ -17,7 +17,7 @@ struct nvs {
   nvs(const nvs&) = delete;
   nvs& operator=(const nvs&) = delete;
 
-  bool read(int id, void* data, size_t len);
+  int read(int id, void* data, size_t len);
   bool write(int id, void* data, size_t len);
 
   static nvs* getInstance();
