@@ -78,6 +78,10 @@ struct ParameterMemoryMapper {
   size_t mMappedSize = 0;
 };
 
+struct IPersistentParameter : public ParameterBase {
+  virtual bool save() = 0;
+  virtual bool load() = 0;
+};
 
 using Parameter = ParameterBase;
 }  // namespace coriander
