@@ -12,7 +12,6 @@
 #include <memory>
 
 #include "coriander/parameters.h"
-#include "zephyr/zephyr_nvs.h"
 
 namespace coriander {
 namespace zephyr {
