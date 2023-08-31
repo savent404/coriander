@@ -20,7 +20,10 @@ struct LowPassFilter {
   explicit LowPassFilter(float Tf);
   ~LowPassFilter() = default;
 
-  float operator()(float x, float Ts);
+  float operator() (float x, float Ts);
+
+  void clear();
+
   float Tf;  //!< Low pass filter time constant
 
  protected:

@@ -35,6 +35,10 @@ void MotorCtlVelocity::start() {
   mDurationTimeout->setDuration(static_cast<uint32_t>(
       1e6 / mParameters->getValue<uint32_t>(ParamId::MotorCtl_SpeedCtl_Freq)));
 
+  mVelocityLpf.Tf =
+      mParameters->getValue<float>(ParamId::MotorCtl_SpeedCtl_Lpf_TimeConstant);
+  mVelocityLpf.clear();
+
   // enable sensors, motor
   mSensorHandler.enable();
 
@@ -70,7 +74,9 @@ void MotorCtlVelocity::loop() {
       durationUs = maxDurationUs;
     }
 
-    velocityError = mTargetVelocity - mVelocityEstimator->getVelocity();
+    velocityError =
+        mTargetVelocity -
+        mVelocityLpf(mVelocityEstimator->getVelocity(), durationUs * 1.0e-6f);
     torqueTargetIq = mVelocityPid(velocityError, durationUs * 1.0e-6f);
     torqueTargetId = 0.0f;
 
@@ -83,9 +89,7 @@ void MotorCtlVelocity::loop() {
   }
 }
 
-void MotorCtlVelocity::emergencyStop() {
-  this->stop();
-}
+void MotorCtlVelocity::emergencyStop() { this->stop(); }
 
 bool MotorCtlVelocity::fatalError() { return false; }
 

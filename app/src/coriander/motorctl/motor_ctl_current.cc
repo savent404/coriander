@@ -37,6 +37,14 @@ void MotorCtlCurrent::start() {
   mTargetIq =
       mParams->getValue<float>(ParamId::MotorCtl_General_TargetCurrentQ_RT);
 
+  mIdLpf.Tf =
+      mParams->getValue<float>(ParamId::MotorCtl_CurrCtl_Lpf_TimeConstant);
+  mIdLpf.clear();
+
+  mIqLpf.Tf =
+      mParams->getValue<float>(ParamId::MotorCtl_CurrCtl_Lpf_TimeConstant);
+  mIqLpf.clear();
+
   // enable sensors, motor
   mPhaseCurrentEstimator->enable();
   mDurationEstimator->recordStart();

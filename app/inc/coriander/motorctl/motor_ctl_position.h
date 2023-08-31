@@ -15,6 +15,7 @@
 
 #include "coriander/motorctl/duration_estimator.h"
 #include "coriander/motorctl/imech_angle_estimator.h"
+#include "coriander/motorctl/low_pass_filter.h"
 #include "coriander/motorctl/motor_ctl_velocity.h"
 #include "coriander/motorctl/sensor_handler.h"
 #include "coriander/parameter_requirements.h"
@@ -38,7 +39,8 @@ struct MotorCtlPosition : public IMotorCtl, public IParamReq {
         mDurationEstimator{std::move(durationEstimator)},
         mDurationTimeout{std::move(durationTimeout)},
         mSensorHandler{mMechAngleEstimator},
-        mMechAnglePid(0.0f, 0.0f, 0.0f, 0.0f, 0.0f) {
+        mMechAnglePid(0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+        mMechLpf(0.0f) {
     paramReqValidator->addParamReq(this);
   }
 
@@ -59,6 +61,7 @@ struct MotorCtlPosition : public IMotorCtl, public IParamReq {
         {"MotorCtl_PosCtl_PidLimit", Type::Float},
         {"MotorCtl_PosCtl_Freq", Type::UInt32},
         {"MotorCtl_General_TargetPosition_RT", Type::Float},
+        {"MotorCtl_PosCtl_Lpf_TimeConstant", Type::Float},
         PARAMETER_REQ_EOF};
     return items;
   }
@@ -76,6 +79,7 @@ struct MotorCtlPosition : public IMotorCtl, public IParamReq {
   // runtime vars
   SensorHandler mSensorHandler;
   Pid mMechAnglePid;
+  LowPassFilter mMechLpf;
 };
 
 }  // namespace motorctl

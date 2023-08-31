@@ -27,6 +27,10 @@ void MotorCtlPosition::start() {
   mDurationTimeout->setDuration(static_cast<uint32_t>(
       1e6 / mParameters->getValue<uint32_t>(ParamId::MotorCtl_PosCtl_Freq)));
 
+  mMechLpf.Tf =
+      mParameters->getValue<float>(ParamId::MotorCtl_PosCtl_Lpf_TimeConstant);
+  mMechLpf.clear();
+
   mDurationEstimator->reset();
   mSensorHandler.enable();
 
@@ -62,7 +66,8 @@ void MotorCtlPosition::loop() {
     }
 
     mechAngleError =
-        mTargetPosition - mMechAngleEstimator->getMechanicalAngle();
+        mTargetPosition - mMechLpf(mMechAngleEstimator->getMechanicalAngle(),
+                                   durationUs * 1.0e-6f);
     targetVelocity = mMechAnglePid(mechAngleError, durationUs * 1.0e-6f);
     mMotorCtlVelocity->setTargetVelocity(targetVelocity);
 

@@ -25,11 +25,11 @@
 #include "zephyr/zephyr_motor.h"
 #include "zephyr/zephyr_mutex.h"
 #include "zephyr/zephyr_nvs.h"
+#include "zephyr/zephyr_phase_current_estimator.h"
 #include "zephyr/zephyr_semaphore.h"
 #include "zephyr/zephyr_shell_protocol.h"
 #include "zephyr/zephyr_systick.h"
 #include "zephyr/zephyr_thread.h"
-#include "zephyr/zephyr_phase_current_estimator.h"
 
 LOG_MODULE_REGISTER(main);
 
@@ -50,8 +50,7 @@ static auto zephyr_backends_bindings() {
   using IShellCtl = coriander::IShellCtl;
   using BackendAppStatus = coriander::application::zephyr::AppStatus;
   using BackendMotorDriver = coriander::motorctl::zephyr::MotorDriver;
-  using IPhaseCurrentEstimator =
-      coriander::motorctl::IPhaseCurrentEstimator;
+  using IPhaseCurrentEstimator = coriander::motorctl::IPhaseCurrentEstimator;
   using PhaseCurrentEstimator =
       coriander::motorctl::zephyr::PhaseCurrentEstimator;
   return boost::di::make_injector(
@@ -127,6 +126,9 @@ static void parameter_default_value_setup(
       P{0, ID::Sensor_Motor_Current_RT},
       P{0, ID::Sensor_Motor_Temp_RT},
       P{0, ID::Sensor_Motor_Voltage_RT},
+      P{1e-3f, ID::MotorCtl_CurrCtl_Lpf_TimeConstant},    // 1KHz
+      P{10e-3f, ID::MotorCtl_SpeedCtl_Lpf_TimeConstant},  // 100KHz
+      P{100e-3f, ID::MotorCtl_PosCtl_Lpf_TimeConstant},   // 10Hz
   };
   for (auto& p : properties) {
     param->add(p);
