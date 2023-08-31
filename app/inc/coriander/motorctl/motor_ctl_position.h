@@ -59,7 +59,7 @@ struct MotorCtlPosition : public IMotorCtl, public IParamReq {
         {"MotorCtl_PosCtl_PidD", Type::Float},
         {"MotorCtl_PosCtl_PidOutputRamp", Type::Float},
         {"MotorCtl_PosCtl_PidLimit", Type::Float},
-        {"MotorCtl_PosCtl_Freq", Type::UInt32},
+        {"MotorCtl_PosCtl_Freq", Type::Int32},
         {"MotorCtl_General_TargetPosition_RT", Type::Float},
         {"MotorCtl_PosCtl_Lpf_TimeConstant", Type::Float},
         PARAMETER_REQ_EOF};
