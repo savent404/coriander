@@ -82,10 +82,12 @@ std::span<uint8_t> ParameterMemoryMapper::map(
   for (auto& item : visitor.items) {
     header.checksum += item.block_checksum;
   }
-
+  auto aligneTo4Bytes = [](uint32_t size) {
+    return (size + 3) & (~0x3);
+  };
   auto headerSize = sizeof(Header) + sizeof(HeaderItem) * header.block_count;
   auto payloadSize = visitor.offset;
-  auto totalSize = headerSize + payloadSize;
+  auto totalSize = aligneTo4Bytes(headerSize + payloadSize);
 
   auto mapped = std::make_unique<uint8_t[]>(totalSize);
   std::memcpy(mapped.get(), &header, sizeof(Header));
@@ -146,7 +148,9 @@ bool ParameterMemoryMapper::isValid(std::span<uint8_t> data) const noexcept {
     offset += item.block_size;
   }
 
-  if (offset + sizeof(Header) + sizeof(HeaderItem) * header->block_count !=
+  // NOTE(savent): mapped data size is aligned, so we need to check the
+  //               payload size have to be less than the mapped data size
+  if (offset + sizeof(Header) + sizeof(HeaderItem) * header->block_count >
       data.size()) {
     return false;
   }
