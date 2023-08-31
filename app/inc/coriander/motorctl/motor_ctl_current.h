@@ -63,7 +63,7 @@ struct MotorCtlCurrent : public IMotorCtl, public IParamReq {
         {"MotorCtl_CurrCtl_PidD", Type::Float},
         {"MotorCtl_CurrCtl_PidOutputRamp", Type::Float},
         {"MotorCtl_CurrCtl_PidLimit", Type::Float},
-        {"MotorCtl_CurrCtl_Freq", Type::UInt32},
+        {"MotorCtl_CurrCtl_Freq", Type::Int32},
     };
     return items;
   }

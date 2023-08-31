@@ -71,7 +71,7 @@ struct MotorCtlVelocity : public IMotorCtl, public IParamReq {
         {"MotorCtl_SpeedCtl_PidD", Type::Float},
         {"MotorCtl_SpeedCtl_PidOutputRamp", Type::Float},
         {"MotorCtl_SpeedCtl_PidLimit", Type::Float},
-        {"MotorCtl_SpeedCtl_Freq", Type::UInt32},
+        {"MotorCtl_SpeedCtl_Freq", Type::Int32},
         {"MotorCtl_SpeedCtl_Lpf_TimeConstant", Type::Float},
         PARAMETER_REQ_EOF};
     return items;
