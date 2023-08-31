@@ -20,7 +20,7 @@ struct ShellProtocol : public IShellCtl {
   using BoardCtl = coriander::BoardCtl;
 
   ShellProtocol(std::shared_ptr<BoardCtl> boardCtl,
-                std::shared_ptr<ParameterBase> param)
+                std::shared_ptr<Parameter> param)
       : mBoardCtl(boardCtl), mParam(param) {}
   virtual void enable() noexcept;
   virtual void disable() noexcept;
@@ -28,7 +28,7 @@ struct ShellProtocol : public IShellCtl {
 
  private:
   std::shared_ptr<BoardCtl> mBoardCtl;
-  std::shared_ptr<ParameterBase> mParam;
+  std::shared_ptr<Parameter> mParam;
 };
 }  // namespace zephyr
 }  // namespace coriander

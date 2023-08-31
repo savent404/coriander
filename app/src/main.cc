@@ -89,7 +89,7 @@ static int get_reboot_times() {
 }
 
 static void parameter_default_value_setup(
-    std::shared_ptr<coriander::ParameterBase> param) {
+    std::shared_ptr<coriander::Parameter> param) {
   using Property = coriander::base::Property;
   using ID = coriander::base::ParamId;
   using P = Property;
@@ -143,7 +143,7 @@ static void zephyr_backend_setup(T* injector) {
   os << "Reboot times: " << get_reboot_times() << std::endl;
 
   auto param =
-      injector->template create<std::shared_ptr<coriander::ParameterBase>>();
+      injector->template create<std::shared_ptr<coriander::Parameter>>();
   parameter_default_value_setup(param);
 
   auto diag_regsiter =

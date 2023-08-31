@@ -17,11 +17,11 @@
 namespace coriander {
 struct BoardCtl {
   using IBoardEvent = coriander::IBoardEvent;
-  using ParameterBase = coriander::ParameterBase;
+  using Parameter = coriander::Parameter;
 
   BoardCtl(std::shared_ptr<IBoardEvent> boardEvent,
-           std::shared_ptr<ParameterBase> parameterBase)
-      : mBoardEvent(boardEvent), mParameterBase(parameterBase) {}
+           std::shared_ptr<Parameter> Parameter)
+      : mBoardEvent(boardEvent), mParameter(Parameter) {}
 
   void motorEnable() {
     mBoardEvent->eventLock();
@@ -43,7 +43,7 @@ struct BoardCtl {
 
  private:
   std::shared_ptr<IBoardEvent> mBoardEvent;
-  std::shared_ptr<ParameterBase> mParameterBase;
+  std::shared_ptr<Parameter> mParameter;
 };
 
 }  // namespace coriander

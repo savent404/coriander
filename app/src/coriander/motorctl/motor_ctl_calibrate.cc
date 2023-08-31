@@ -16,7 +16,7 @@ namespace motorctl {
 MotorCtlCalibrate::MotorCtlCalibrate(
     std::shared_ptr<IBldcDriver> motor,
     std::shared_ptr<IElecAngleEstimator> elecAngleEstimator,
-    std::shared_ptr<ParameterBase> param,
+    std::shared_ptr<Parameter> param,
     std::shared_ptr<IBoardEvent> boardEvent, std::shared_ptr<ISystick> systick,
     std::shared_ptr<IParamReqValidator> paramReqValidator)
     : mMotor(motor),

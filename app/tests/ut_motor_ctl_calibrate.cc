@@ -31,7 +31,7 @@ using MockLogger = testing::mock::MockLogger;
 using MotorCtlCalibrate = coriander::motorctl::MotorCtlCalibrate;
 using IMotorCtl = coriander::motorctl::IMotorCtl;
 using IParamReqValidator = coriander::IParamReqValidator;
-using ParameterBase = coriander::ParameterBase;
+using Parameter = coriander::Parameter;
 using Property = coriander::base::Property;
 using ParamId = coriander::base::ParamId;
 using IBoardEvent = coriander::IBoardEvent;
@@ -50,7 +50,7 @@ static auto createInjector() {
       bind<IBldcDriver>().to<MockBldcDriver>(),
       bind<IElecAngleEstimator>().to<MockElecAngleEstimator>(),
       bind<ISystick>().to<MockSystick>(),
-      bind<ParameterBase>().to<ParameterBase>(),
+      bind<Parameter>().to<Parameter>(),
       bind<ILogger>().to<MockLogger>(),
       bind<IBoardEvent>().to<MockBoardEvent>(),
       bind<IMotorCtl>().to<MotorCtlCalibrate>(),
@@ -62,7 +62,7 @@ TEST(MotorCtl, calibrate) {
   auto c = createInjector();
 
   // prepare parameters
-  auto param = c.create<std::shared_ptr<ParameterBase>>();
+  auto param = c.create<std::shared_ptr<Parameter>>();
   auto motor = c.create<std::shared_ptr<MockBldcDriver>>();
   auto elecAngle = c.create<std::shared_ptr<MockElecAngleEstimator>>();
   auto systick = c.create<std::shared_ptr<MockSystick>>();

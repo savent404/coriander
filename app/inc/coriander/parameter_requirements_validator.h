@@ -21,11 +21,11 @@ namespace coriander {
 
 struct ParamReqValidator : public IParamReqValidator {
   using ILogger = coriander::base::ILogger;
-  using ParameterBase = coriander::ParameterBase;
+  using Parameter = coriander::Parameter;
   using ParameterRequireItem = coriander::ParameterRequireItem;
 
   ParamReqValidator(std::shared_ptr<ILogger> logger,
-                    std::shared_ptr<ParameterBase> param)
+                    std::shared_ptr<Parameter> param)
       : mLogger(logger), mParam(param) {
     mParamMap.reserve(64);
   }
@@ -61,7 +61,7 @@ struct ParamReqValidator : public IParamReqValidator {
  private:
   std::unordered_map<uint32_t, const ParameterRequireItem *> mParamMap;
   std::shared_ptr<ILogger> mLogger;
-  std::shared_ptr<ParameterBase> mParam;
+  std::shared_ptr<Parameter> mParam;
 };
 
 }  // namespace coriander

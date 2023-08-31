@@ -63,7 +63,7 @@ TEST(BoardStateRun, basic) {
   using AppStatus = coriander::application::IAppStatus::Status;
   auto c = coriander::coriander_create_injector(createInjector());
 
-  auto param = c.create<std::shared_ptr<coriander::ParameterBase>>();
+  auto param = c.create<std::shared_ptr<coriander::Parameter>>();
   param->add(Property{1, ParamId::MotorCtl_General_Mode_RT});
   param->add(Property{1.0f, ParamId::MotorCtl_SpeedCtl_PidP});
   param->add(Property{0.0f, ParamId::MotorCtl_SpeedCtl_PidI});

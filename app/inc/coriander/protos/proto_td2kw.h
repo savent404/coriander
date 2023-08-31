@@ -27,7 +27,7 @@ namespace proto {
 
 struct ProtoTd2kw : public IProtocolCtl {
   using ITty = base::ITty;
-  using Param = coriander::ParameterBase;
+  using Param = coriander::Parameter;
   using ParamId = coriander::base::ParamId;
   using BoardEvent = coriander::IBoardEvent::Event;
   using Systick = coriander::os::ISystick;

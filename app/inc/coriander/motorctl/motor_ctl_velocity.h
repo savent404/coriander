@@ -36,7 +36,7 @@ struct MotorCtlVelocity : public IMotorCtl, public IParamReq {
   using DurationTimeout =
       detail::DurationExpired<detail::DurationEstimatorUnit::US>;
   MotorCtlVelocity(std::shared_ptr<IVelocityEstimator> velocityEstimator,
-                   std::shared_ptr<ParameterBase> parameters,
+                   std::shared_ptr<Parameter> parameters,
                    std::unique_ptr<DurationEstimator> durationEstimator,
                    std::unique_ptr<DurationTimeout> durationTimeout,
                    std::shared_ptr<MotorCtlCurrent> motorCtlCurrent,
@@ -81,7 +81,7 @@ struct MotorCtlVelocity : public IMotorCtl, public IParamReq {
   // dependencies
   std::shared_ptr<MotorCtlCurrent> mMotorCtlCurrent;
   std::shared_ptr<IVelocityEstimator> mVelocityEstimator;
-  std::shared_ptr<ParameterBase> mParameters;
+  std::shared_ptr<Parameter> mParameters;
   std::unique_ptr<DurationEstimator> mDurationEstimator;
   std::unique_ptr<DurationTimeout> mDurationTimeout;
 

@@ -14,7 +14,7 @@ namespace motorctl {
 
 VelocityEstimator::VelocityEstimator(
     std::shared_ptr<IMechAngleEstimator> mechAngleEstimator,
-    std::shared_ptr<ParameterBase> param, std::shared_ptr<ISystick> systick,
+    std::shared_ptr<Parameter> param, std::shared_ptr<ISystick> systick,
     std::shared_ptr<IParamReqValidator> paramReqValidator)
     : mMechAngleEstimator(mechAngleEstimator),
       mParam(param),

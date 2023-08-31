@@ -15,7 +15,7 @@
 #include "tests/mocks.h"
 
 using ParamId = coriander::base::ParamId;
-using coriander::ParameterBase;
+using coriander::Parameter;
 using coriander::base::Property;
 using coriander::motorctl::EncoderMechAngleEstimator;
 using coriander::motorctl::IEncoder;
@@ -42,7 +42,7 @@ struct dummyEncoder : public IEncoder {
 
 TEST(ISensor, BasicEncoderMechAngleEstimator) {
   auto encoder = std::make_shared<::dummyEncoder>();
-  auto param = std::make_shared<ParameterBase>();
+  auto param = std::make_shared<Parameter>();
   auto paramReqValidator =
       std::make_shared<testing::mock::MockParamReqValidator>();
 
@@ -60,7 +60,7 @@ TEST(ISensor, BasicEncoderMechAngleEstimator) {
 
 TEST(ISensor, CalibrateEncoderMechAngleEstimator) {
   std::shared_ptr<::dummyEncoder> encoder = std::make_shared<::dummyEncoder>();
-  std::shared_ptr<ParameterBase> param = std::make_shared<ParameterBase>();
+  std::shared_ptr<Parameter> param = std::make_shared<Parameter>();
   auto paramReqValidator =
       std::make_shared<testing::mock::MockParamReqValidator>();
 
@@ -81,7 +81,7 @@ TEST(ISensor, CalibrateEncoderMechAngleEstimator) {
 
 TEST(ISensor, PersistEncoderMechAngleEstimator) {
   auto encoder = std::make_shared<::dummyEncoder>();
-  auto param = std::make_shared<ParameterBase>();
+  auto param = std::make_shared<Parameter>();
   auto paramReqValidator =
       std::make_shared<testing::mock::MockParamReqValidator>();
 

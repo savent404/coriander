@@ -37,7 +37,7 @@ struct VelocityEstimator : public IVelocityEstimator, public IParamReq {
 
   explicit VelocityEstimator(
       std::shared_ptr<IMechAngleEstimator> mechAngleEstimator,
-      std::shared_ptr<ParameterBase> param, std::shared_ptr<ISystick> systick,
+      std::shared_ptr<Parameter> param, std::shared_ptr<ISystick> systick,
       std::shared_ptr<IParamReqValidator> paramReqValidator);
   virtual void enable();
   virtual void disable();
@@ -60,7 +60,7 @@ struct VelocityEstimator : public IVelocityEstimator, public IParamReq {
 
  private:
   std::shared_ptr<IMechAngleEstimator> mMechAngleEstimator;
-  std::shared_ptr<ParameterBase> mParam;
+  std::shared_ptr<Parameter> mParam;
   std::shared_ptr<ISystick> mSystick;
   float mVelocity;
   Records mRecords;

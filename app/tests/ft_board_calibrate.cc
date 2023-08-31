@@ -70,7 +70,7 @@ TEST(BoardStateCalibrateHandler, Calibrate) {
   auto standbyBoardState =
       c.create<std::shared_ptr<testing::mock::MockBoardStateStandbyHandler>>();
   auto motor = c.create<std::shared_ptr<testing::mock::MockBldcDriver>>();
-  auto param = c.create<std::shared_ptr<coriander::ParameterBase>>();
+  auto param = c.create<std::shared_ptr<coriander::Parameter>>();
   auto calibrateBoardState =
       c.create<std::shared_ptr<coriander::IBoardStateCalibrateHandler>>();
   auto logger = c.create<std::shared_ptr<testing::mock::MockLogger>>();

@@ -21,6 +21,7 @@ using coriander::base::operator""_hash;
 using coriander::base::ParamId;
 using coriander::base::Type;
 using coriander::base::TypeId;
+
 struct ParameterBase : public base::PropertySet {
   template <typename T>
   T getValue(const char* name) const noexcept {
@@ -76,4 +77,7 @@ struct ParameterMemoryMapper {
   std::unique_ptr<uint8_t[]> mMapped = nullptr;
   size_t mMappedSize = 0;
 };
+
+
+using Parameter = ParameterBase;
 }  // namespace coriander

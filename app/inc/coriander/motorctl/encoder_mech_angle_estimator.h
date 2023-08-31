@@ -26,7 +26,7 @@ namespace motorctl {
 struct EncoderMechAngleEstimator : public IMechAngleEstimator,
                                    public IParamReq {
   EncoderMechAngleEstimator(
-      std::shared_ptr<IEncoder> encoder, std::shared_ptr<ParameterBase> param,
+      std::shared_ptr<IEncoder> encoder, std::shared_ptr<Parameter> param,
       std::shared_ptr<IParamReqValidator> paramReqValidator) noexcept;
 
   virtual void enable();
@@ -49,7 +49,7 @@ struct EncoderMechAngleEstimator : public IMechAngleEstimator,
 
  private:
   std::shared_ptr<IEncoder> mEncoder;
-  std::shared_ptr<ParameterBase> mParam;
+  std::shared_ptr<Parameter> mParam;
   float mRawMechAngle;
   float mPersistOffset;
   float mMechAngleOffset;

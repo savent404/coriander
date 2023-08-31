@@ -14,7 +14,7 @@
 #include "tests/mocks.h"
 
 using ParamId = coriander::base::ParamId;
-using coriander::ParameterBase;
+using coriander::Parameter;
 using coriander::base::Property;
 using coriander::motorctl::EncoderElecAngleEstimator;
 using coriander::motorctl::IEncoder;
@@ -39,7 +39,7 @@ struct dummyEncoder : public IEncoder {
 
 TEST(ISensor, CalibrateEncoderElecAngleEstimator) {
   auto encoder = std::make_shared<::dummyEncoder>();
-  auto param = std::make_shared<ParameterBase>();
+  auto param = std::make_shared<Parameter>();
   auto paramReqValidator = std::make_shared<MockParamReqValidator>();
 
   EncoderElecAngleEstimator estimator(encoder, param, paramReqValidator);
@@ -63,7 +63,7 @@ TEST(ISensor, CalibrateEncoderElecAngleEstimator) {
 
 TEST(ISensor, CalibrateEncoderElecAngleEstimatorWithPersist) {
   auto encoder = std::make_shared<::dummyEncoder>();
-  auto param = std::make_shared<ParameterBase>();
+  auto param = std::make_shared<Parameter>();
   auto paramReqValidator = std::make_shared<MockParamReqValidator>();
 
   EncoderElecAngleEstimator estimator(encoder, param, paramReqValidator);
@@ -92,7 +92,7 @@ TEST(ISensor, CalibrateEncoderElecAngleEstimatorWithPersist) {
 
 TEST(ISensor, CalibratedEncoderElecAngleEstimator) {
   auto encoder = std::make_shared<::dummyEncoder>();
-  auto param = std::make_shared<ParameterBase>();
+  auto param = std::make_shared<Parameter>();
   auto paramReqValidator = std::make_shared<MockParamReqValidator>();
 
   EncoderElecAngleEstimator estimator(encoder, param, paramReqValidator);
@@ -114,7 +114,7 @@ TEST(ISensor, CalibratedEncoderElecAngleEstimator) {
 TEST(ISensor, CalibratedEncoderElecAngleEstimatorWithPersist) {
   using ParamId = coriander::base::ParamId;
   auto encoder = std::make_shared<::dummyEncoder>();
-  auto param = std::make_shared<ParameterBase>();
+  auto param = std::make_shared<Parameter>();
   auto paramReqValidator = std::make_shared<MockParamReqValidator>();
 
   EncoderElecAngleEstimator estimator(encoder, param, paramReqValidator);
@@ -143,7 +143,7 @@ TEST(ISensor, CalibratedEncoderElecAngleEstimatorWithPersist) {
 TEST(ISensor, EncoderElecAngleEstimatorRecoveryAfterPowerOn) {
   using ParamId = coriander::base::ParamId;
   auto encoder = std::make_shared<::dummyEncoder>();
-  auto param = std::make_shared<ParameterBase>();
+  auto param = std::make_shared<Parameter>();
   auto paramReqValidator = std::make_shared<MockParamReqValidator>();
 
   EncoderElecAngleEstimator estimator(encoder, param, paramReqValidator);
