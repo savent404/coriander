@@ -111,6 +111,8 @@
 	#address-cells = <1>;
 	#size-cells = <0>;
 
+	st,adc-prescaler = <8>;
+
 	pinctrl-0 = <&adc1_in1_pa1 &adc1_in3_pa3 &adc1_in8_pb0 &adc1_in15_pc5>;
 	pinctrl-names = "default";
 
@@ -159,6 +161,7 @@
 	status = "okay";
 	#address-cells = <1>;
 	#size-cells = <0>;
+	st,adc-prescaler = <4>;
 
 	pinctrl-0 = <&adc2_in11_pc1 &adc2_in12_pc2 &adc2_in13_pc3>;
 	pinctrl-names = "default";
