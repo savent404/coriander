@@ -55,6 +55,7 @@ TEST(MotorCtlCurrent, targetMode) {
   param->add(Property{1000u, ID::MotorCtl_CurrCtl_Freq});
   param->add(Property{1.0f, ID::MotorCtl_General_TargetCurrentD_RT});
   param->add(Property{1.0f, ID::MotorCtl_General_TargetCurrentQ_RT});
+  param->add(Property{0.0f, ID::MotorCtl_CurrCtl_Lpf_TimeConstant});
 
   auto motorCtl =
       injector.create<std::shared_ptr<coriander::motorctl::MotorCtlCurrent>>();

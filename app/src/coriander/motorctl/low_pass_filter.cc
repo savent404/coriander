@@ -22,5 +22,10 @@ float LowPassFilter::operator()(float x, float ts) {
   y_prev = y;
   return y;
 }
+
+void LowPassFilter::clear() {
+  y_prev = 0.0f;
+}
+
 }  // namespace motorctl
 }  // namespace coriander

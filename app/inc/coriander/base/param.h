@@ -67,18 +67,21 @@ BETTER_ENUM(ParamId, int,
   MotorCtl_PosCtl_PidOutputRamp,
   MotorCtl_PosCtl_PidLimit,
   MotorCtl_PosCtl_Freq,
+  MotorCtl_PosCtl_Lpf_TimeConstant,
   MotorCtl_SpeedCtl_PidP,
   MotorCtl_SpeedCtl_PidI,
   MotorCtl_SpeedCtl_PidD,
   MotorCtl_SpeedCtl_PidOutputRamp,
   MotorCtl_SpeedCtl_PidLimit,
   MotorCtl_SpeedCtl_Freq,
+  MotorCtl_SpeedCtl_Lpf_TimeConstant,
   MotorCtl_CurrCtl_PidP,
   MotorCtl_CurrCtl_PidI,
   MotorCtl_CurrCtl_PidD,
   MotorCtl_CurrCtl_PidOutputRamp,
   MotorCtl_CurrCtl_PidLimit,
   MotorCtl_CurrCtl_Freq,
+  MotorCtl_CurrCtl_Lpf_TimeConstant,
   MotorCtl_SpeedEstimator_WindowSize,
   MotorCtl_SpeedEstimator_MinDuration,
   MotorCtl_SpeedEstimator_SampleInterval,
@@ -136,6 +139,8 @@ struct ParamDescriber {
         [ParamId::MotorCtl_PosCtl_PidLimit] = "maxium output",
         [ParamId::MotorCtl_PosCtl_Freq] =
             "frequency of position control, unit: Hz",
+        [ParamId::MotorCtl_PosCtl_Lpf_TimeConstant] =
+            "time constant of position control, unit: us",
         [ParamId::MotorCtl_SpeedCtl_PidP] = "",
         [ParamId::MotorCtl_SpeedCtl_PidI] = "",
         [ParamId::MotorCtl_SpeedCtl_PidD] = "",
@@ -143,6 +148,8 @@ struct ParamDescriber {
         [ParamId::MotorCtl_SpeedCtl_PidLimit] = "maxium output",
         [ParamId::MotorCtl_SpeedCtl_Freq] =
             "frequency of speed control, unit: Hz",
+        [ParamId::MotorCtl_SpeedCtl_Lpf_TimeConstant] =
+            "time constant of speed control, unit: us",
         [ParamId::MotorCtl_CurrCtl_PidP] = "",
         [ParamId::MotorCtl_CurrCtl_PidI] = "",
         [ParamId::MotorCtl_CurrCtl_PidD] = "",
@@ -150,6 +157,8 @@ struct ParamDescriber {
         [ParamId::MotorCtl_CurrCtl_PidLimit] = "maxium output",
         [ParamId::MotorCtl_CurrCtl_Freq] =
             "frequency of current control, unit: Hz",
+        [ParamId::MotorCtl_CurrCtl_Lpf_TimeConstant] =
+            "time constant of current control, unit: us",
         [ParamId::MotorCtl_SpeedEstimator_WindowSize] =
             "window size of velocity estimator, default: 16",
         [ParamId::MotorCtl_SpeedEstimator_MinDuration] =

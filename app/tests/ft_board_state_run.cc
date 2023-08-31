@@ -88,6 +88,9 @@ TEST(BoardStateRun, basic) {
   param->add(Property{1000u, ParamId::MotorCtl_CurrCtl_Freq});
   param->add(Property{1.0f, ParamId::MotorCtl_General_TargetCurrentD_RT});
   param->add(Property{1.0f, ParamId::MotorCtl_General_TargetCurrentQ_RT});
+  param->add(Property{1e-3f, ParamId::MotorCtl_CurrCtl_Lpf_TimeConstant});
+  param->add(Property{10e-3f, ParamId::MotorCtl_SpeedCtl_Lpf_TimeConstant});
+  param->add(Property{100e-3f, ParamId::MotorCtl_PosCtl_Lpf_TimeConstant});
 
   auto encoder = c.create<std::shared_ptr<testing::mock::MockEncoder>>();
 

@@ -17,6 +17,7 @@
 #include "coriander/motorctl/imotorctl.h"
 #include "coriander/motorctl/iphase_current_estimator.h"
 #include "coriander/motorctl/pid.h"
+#include "coriander/motorctl/low_pass_filter.h"
 #include "coriander/parameter_requirements.h"
 
 namespace coriander {
@@ -43,7 +44,8 @@ struct MotorCtlCurrent : public IMotorCtl, public IParamReq {
         mTargetId{0.0f},
         mTargetIq{0.0f},
         mPidD{0.0f, 0.0f, 0.0f, 0.0f, 0.0f},
-        mPidQ{0.0f, 0.0f, 0.0f, 0.0f, 0.0f} {}
+        mPidQ{0.0f, 0.0f, 0.0f, 0.0f, 0.0f},
+        mIdLpf(0.0f), mIqLpf(0.0f) {}
   virtual void start();
   virtual void stop();
   virtual void loop();
@@ -72,10 +74,16 @@ struct MotorCtlCurrent : public IMotorCtl, public IParamReq {
   std::shared_ptr<FocMotorDriver> mFocMotorDriver;
   std::shared_ptr<DurationEstimator> mDurationEstimator;
   std::shared_ptr<DurationTimeout> mDurationTimeout;
+
+  // parameters
   float mTargetId;
   float mTargetIq;
+
+  // runtime vars
   Pid mPidD;
   Pid mPidQ;
+  LowPassFilter mIdLpf;
+  LowPassFilter mIqLpf;
 };  // namespace motorctl
 }  // namespace motorctl
 }  // namespace coriander

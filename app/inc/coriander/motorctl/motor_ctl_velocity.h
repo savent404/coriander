@@ -15,6 +15,7 @@
 #include "coriander/motorctl/duration_estimator.h"
 #include "coriander/motorctl/imotorctl.h"
 #include "coriander/motorctl/ivelocity_estimator.h"
+#include "coriander/motorctl/low_pass_filter.h"
 #include "coriander/motorctl/motor_ctl_current.h"
 #include "coriander/motorctl/pid.h"
 #include "coriander/motorctl/sensor_handler.h"
@@ -46,7 +47,8 @@ struct MotorCtlVelocity : public IMotorCtl, public IParamReq {
         mDurationTimeout{std::move(durationTimeout)},
         mMotorCtlCurrent{motorCtlCurrent},
         mSensorHandler{mVelocityEstimator},
-        mVelocityPid{0.0f, 0.0f, 0.0f, 0.0f, 0.0f} {
+        mVelocityPid{0.0f, 0.0f, 0.0f, 0.0f, 0.0f},
+        mVelocityLpf(0.0f) {
     paramReqValidator->addParamReq(this);
   }
 
@@ -70,6 +72,7 @@ struct MotorCtlVelocity : public IMotorCtl, public IParamReq {
         {"MotorCtl_SpeedCtl_PidOutputRamp", Type::Float},
         {"MotorCtl_SpeedCtl_PidLimit", Type::Float},
         {"MotorCtl_SpeedCtl_Freq", Type::UInt32},
+        {"MotorCtl_SpeedCtl_Lpf_TimeConstant", Type::Float},
         PARAMETER_REQ_EOF};
     return items;
   }
@@ -89,6 +92,7 @@ struct MotorCtlVelocity : public IMotorCtl, public IParamReq {
   // runtime vars
   SensorHandler mSensorHandler;
   Pid mVelocityPid;
+  LowPassFilter mVelocityLpf;
 };
 
 }  // namespace motorctl
