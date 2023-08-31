@@ -31,7 +31,7 @@ using MockLogger = testing::mock::MockLogger;
 using MotorCtlCalibrate = coriander::motorctl::MotorCtlCalibrate;
 using IMotorCtl = coriander::motorctl::IMotorCtl;
 using IParamReqValidator = coriander::IParamReqValidator;
-using Parameter = coriander::Parameter;
+using coriander::Parameter;
 using Property = coriander::base::Property;
 using ParamId = coriander::base::ParamId;
 using IBoardEvent = coriander::IBoardEvent;
@@ -50,7 +50,7 @@ static auto createInjector() {
       bind<IBldcDriver>().to<MockBldcDriver>(),
       bind<IElecAngleEstimator>().to<MockElecAngleEstimator>(),
       bind<ISystick>().to<MockSystick>(),
-      bind<Parameter>().to<Parameter>(),
+      bind<Parameter>().to<testing::mock::MockPersistentParameter>(),
       bind<ILogger>().to<MockLogger>(),
       bind<IBoardEvent>().to<MockBoardEvent>(),
       bind<IMotorCtl>().to<MotorCtlCalibrate>(),

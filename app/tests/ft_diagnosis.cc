@@ -12,6 +12,7 @@
 #include "coriander/board_state.h"
 #include "coriander/coriander.h"
 #include "coriander/motorctl/foc_motor_driver.h"
+#include "coriander/parameters.h"
 #include "posix/posix_appstatus.h"
 #include "posix/posix_logger.h"
 #include "posix/posix_mutex.h"
@@ -34,6 +35,7 @@ TEST(Coriander, DiagError) {
       bind<coriander::os::IThread>.to<testing::mock::MockThread>(),
       bind<coriander::os::IMutex>.to<coriander::os::posix::Mutex>(),
       bind<coriander::motorctl::IPhaseCurrentEstimator>.to<Mpce>(),
+      bind<coriander::Parameter>.to<testing::mock::MockPersistentParameter>(),
       bind<coriander::IShellCtl>.to<testing::mock::MockShellCtl>()));
 
   auto dignosis = injector.template create<

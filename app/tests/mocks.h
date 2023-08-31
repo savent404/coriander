@@ -216,5 +216,10 @@ struct MockPhaseCurrentEstimator
   MOCK_METHOD(bool, needCalibrate, (), (override));
 };
 
+struct MockPersistentParameter : public coriander::IPersistentParameter {
+  MOCK_METHOD(bool, save, (), (override));
+  MOCK_METHOD(bool, load, (), (override));
+};
+
 }  // namespace mock
 }  // namespace testing
