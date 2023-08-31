@@ -83,5 +83,5 @@ struct IPersistentParameter : public ParameterBase {
   virtual bool load() = 0;
 };
 
-using Parameter = ParameterBase;
+using Parameter = IPersistentParameter;
 }  // namespace coriander

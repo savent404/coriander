@@ -21,8 +21,8 @@
 #include "coriander/motorctl/ibldc_driver.h"
 #include "coriander/motorctl/ielec_angle_estimator.h"
 #include "coriander/os/isystick.h"
-#include "tests/mocks.h"
 #include "posix/posix_mutex.h"
+#include "tests/mocks.h"
 
 namespace {
 static inline auto createInjector() {
@@ -55,6 +55,7 @@ static inline auto createInjector() {
       bind<coriander::os::ISemaphore>().to<testing::mock::MockSemaphore>(),
       bind<coriander::os::IMutex>().to<coriander::os::posix::Mutex>(),
       bind<coriander::os::IThread>().to<testing::mock::MockThread>(),
+      bind<coriander::Parameter>().to<testing::mock::MockPersistentParameter>(),
       bind<coriander::IParamReqValidator>()
           .to<testing::mock::MockParamReqValidator>());
 }

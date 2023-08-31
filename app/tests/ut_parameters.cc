@@ -14,6 +14,7 @@
 #include "coriander/parameters.h"
 #include "posix/posix_logger.h"
 #include "posix/posix_persistent_parameter.h"
+#include "tests/mocks.h"
 
 using ParamId = coriander::base::ParamId;
 using ParameterBase = coriander::ParameterBase;
@@ -124,7 +125,7 @@ struct Foo : public coriander::IParamReq {
 }  // namespace
 
 TEST(Parameter, requirements) {
-  auto param = std::make_shared<coriander::Parameter>();
+  auto param = std::make_shared<testing::mock::MockPersistentParameter>();
   auto validator = std::make_shared<coriander::ParamReqValidator>(
       std::make_shared<coriander::base::posix::Logger>(), param);
   auto foo = std::make_shared<Foo>();

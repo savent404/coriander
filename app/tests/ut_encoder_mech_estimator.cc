@@ -15,7 +15,7 @@
 #include "tests/mocks.h"
 
 using ParamId = coriander::base::ParamId;
-using coriander::Parameter;
+using Parameter = testing::mock::MockPersistentParameter;
 using coriander::base::Property;
 using coriander::motorctl::EncoderMechAngleEstimator;
 using coriander::motorctl::IEncoder;

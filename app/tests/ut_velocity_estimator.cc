@@ -38,7 +38,7 @@ struct DummySystick : public coriander::os::ISystick {
 
 using Property = coriander::base::Property;
 using ParamId = coriander::base::ParamId;
-using Parameter = coriander::Parameter;
+using Parameter = testing::mock::MockPersistentParameter;
 
 TEST(ISensor, BasicVelocityEstimator) {
   auto mechAngleEstimator = std::make_shared<DummyMechAngleEstimator>();

@@ -53,6 +53,7 @@ static auto createInjector() {
       bind<coriander::os::ISemaphore>.to<coriander::os::posix::Semaphore>(),
       bind<coriander::motorctl::IEncoder>.to<testing::mock::MockEncoder>(),
       bind<coriander::motorctl::IPhaseCurrentEstimator>.to<Mpce>(),
+      bind<coriander::Parameter>.to<testing::mock::MockPersistentParameter>(),
       bind<coriander::motorctl::FocMotorDriver>.to<MockFocMotorDriver>());
 }
 }  // namespace

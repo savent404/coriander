@@ -12,6 +12,7 @@
 #include "boost/di.hpp"
 #include "coriander/motorctl/iphase_current_estimator.h"
 #include "coriander/motorctl/motor_ctl_current.h"
+#include "coriander/parameters.h"
 #include "tests/mocks.h"
 
 namespace {
@@ -29,6 +30,7 @@ auto& createInjector() {
       bind<coriander::os::ISystick>.to<MockSystick>(),
       bind<coriander::motorctl::FocMotorDriver>.to<Mfmd>(),
       bind<coriander::motorctl::IPhaseCurrentEstimator>.to<Mpce>(),
+      bind<coriander::Parameter>.to<testing::mock::MockPersistentParameter>(),
       bind<coriander::motorctl::IElecAngleEstimator>.to<Meae>());
   return injector;
 }

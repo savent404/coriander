@@ -25,6 +25,7 @@
 #include "zephyr/zephyr_motor.h"
 #include "zephyr/zephyr_mutex.h"
 #include "zephyr/zephyr_nvs.h"
+#include "zephyr/zephyr_persistent_parameter.h"
 #include "zephyr/zephyr_phase_current_estimator.h"
 #include "zephyr/zephyr_semaphore.h"
 #include "zephyr/zephyr_shell_protocol.h"
@@ -53,6 +54,8 @@ static auto zephyr_backends_bindings() {
   using IPhaseCurrentEstimator = coriander::motorctl::IPhaseCurrentEstimator;
   using PhaseCurrentEstimator =
       coriander::motorctl::zephyr::PhaseCurrentEstimator;
+  using coriander::Parameter;
+  using PersistentParameter = coriander::zephyr::PersistentParameter;
   return boost::di::make_injector(
       boost::di::bind<ILogger>.to<coriander::base::zephyr::Logger>(),
       boost::di::bind<IAppStatus>.to<BackendAppStatus>(),
@@ -64,6 +67,7 @@ static auto zephyr_backends_bindings() {
       boost::di::bind<IThread>.to<coriander::os::zephyr::Thread>(),
       boost::di::bind<IMutex>.to<coriander::os::zephyr::Mutex>(),
       boost::di::bind<IPhaseCurrentEstimator>.to<PhaseCurrentEstimator>(),
+      boost::di::bind<Parameter>.to<PersistentParameter>(),
       boost::di::bind<IShellCtl>.to<coriander::zephyr::ShellProtocol>());
 }
 
