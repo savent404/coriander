@@ -175,6 +175,24 @@ static int shell_param_set(const struct shell* shell, size_t argc,
   return 0;
 }
 
+static int shell_param_save(const struct shell* shell, size_t argc,
+                            char** argv) {
+  if (!param) {
+    return -1;
+  }
+  bool res = param->save();
+  return res ? 0 : -1;
+}
+
+static int shell_param_load(const struct shell* shell, size_t argc,
+                            char** argv) {
+  if (!param) {
+    return -1;
+  }
+  bool res = param->load();
+  return res ? 0 : -1;
+}
+
 SHELL_STATIC_SUBCMD_SET_CREATE(
     motor_cmd,
     SHELL_CMD_ARG(enable, NULL, "enable motor", shell_enable_motor, 1, 0),
@@ -186,6 +204,8 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
     param_cmd, SHELL_CMD_ARG(list, NULL, "list params", shell_param_list, 1, 0),
     SHELL_CMD_ARG(get, NULL, "get param", shell_param_get, 2, 0),
     SHELL_CMD_ARG(set, NULL, "set param", shell_param_set, 3, 0),
+    SHELL_CMD_ARG(save, NULL, "save param", shell_param_save, 1, 0),
+    SHELL_CMD_ARG(load, NULL, "load param", shell_param_load, 1, 0),
     SHELL_SUBCMD_SET_END /* Array terminated. */);
 
 SHELL_CMD_REGISTER(motor, &motor_cmd, "motor control", NULL);
