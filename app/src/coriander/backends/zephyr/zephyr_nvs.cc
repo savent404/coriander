@@ -62,15 +62,11 @@ nvs* nvs::getInstance() {
   return &instance;
 }
 
-bool nvs::read(int id, void* data, size_t len) {
+int nvs::read(int id, void* data, size_t len) {
   int rc;
   struct nvs_fs* fs = &::fs;
   rc = nvs_read(fs, id, data, len);
-  if (rc != static_cast<int>(len)) {
-    LOG_ERR("Unable to read nvs id: %d", id);
-    return false;
-  }
-  return true;
+  return rc;
 }
 
 bool nvs::write(int id, void* data, size_t len) {
