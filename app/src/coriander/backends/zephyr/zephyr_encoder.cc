@@ -14,27 +14,15 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
-#ifdef CONFIG_CORIANDER_MINIMAL
-namespace coriander {
-namespace motorctl {
-namespace zephyr {
-void Encoder::enable() {}
-void Encoder::disable() {}
-bool Encoder::enabled() { return true; }
-void Encoder::sync() {}
-void Encoder::calibrate() {}
-bool Encoder::needCalibrate() { return false; }
-unsigned Encoder::getEncoderCount() { return 0; }
-unsigned Encoder::getEncoderCountPerRound() { return 0; }
-int Encoder::getOverflowCount() { return 0; }
-}  // namespace zephyr
-}  // namespace motorctl
-}  // namespace coriander
-#else
-
 LOG_MODULE_REGISTER(encoder, CONFIG_APP_LOG_LEVEL);
 
-#define ENCODER_QDEC DEVICE_DT_GET(DT_CHOSEN(usr_encoder))
+#if !DT_HAS_CHOSEN(usr_encoder)
+#warning "No encoder chosen"
+#endif
+
+#define ENCODER_QDEC DEVICE_DT_GET_OR_NULL(DT_CHOSEN(usr_encoder))
+#define ENCODER_PPR \
+  DT_PROP_OR(DT_CHOSEN(usr_encoder), st_counts_per_revolution, 0)
 
 struct _instance {
   const struct device* encoder;
@@ -46,7 +34,7 @@ struct _instance {
 
 static struct _instance _encoder_instance = {
     .encoder = ENCODER_QDEC,
-    .ppr = 0x8000,
+    .ppr = ENCODER_PPR,
     .found_zero = false,
 };
 
@@ -110,5 +98,3 @@ int Encoder::getOverflowCount() {
 }  // namespace zephyr
 }  // namespace motorctl
 }  // namespace coriander
-
-#endif

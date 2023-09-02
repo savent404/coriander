@@ -19,6 +19,7 @@
 		zephyr,code-partition = &slot0_partition;
 
 		usr,led = &leds;
+		usr,encoder = &qdec;
 	};
 
 	leds: leds {
