@@ -135,6 +135,7 @@ static void parameter_default_value_setup(
       P{1e-3f, ID::MotorCtl_CurrCtl_Lpf_TimeConstant},    // 1KHz
       P{10e-3f, ID::MotorCtl_SpeedCtl_Lpf_TimeConstant},  // 100KHz
       P{100e-3f, ID::MotorCtl_PosCtl_Lpf_TimeConstant},   // 10Hz
+      P(2.0f, ID::MotorCtl_OpenLoop_OutVoltage),          // 2.0V
   };
   for (auto& p : properties) {
     param->add(p);

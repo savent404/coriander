@@ -13,6 +13,7 @@
 
 #include "coriander/motorctl/imotorctl.h"
 #include "coriander/motorctl/motor_ctl_dummy.h"
+#include "coriander/motorctl/motor_ctl_openloop.h"
 #include "coriander/motorctl/motor_ctl_position.h"
 #include "coriander/motorctl/motor_ctl_velocity.h"
 #include "coriander/parameter_requirements.h"
@@ -21,15 +22,24 @@
 namespace coriander {
 namespace motorctl {
 struct DynamicMotorCtl : public IMotorCtl, public IParamReq {
-  enum class Mode : int { Dummy = 0, Velocity, Position, MODE_MAX };
+  enum class Mode : int {
+    Dummy = 0,
+    Torque,
+    Velocity,
+    Position,
+    OpenLoop,
+    MODE_MAX
+  };
 
   DynamicMotorCtl(std::shared_ptr<Parameter> param,
                   std::shared_ptr<MotorCtlDummy> dummyMc,
+                  std::shared_ptr<MotorCtlCurrent> currentMc,
                   std::shared_ptr<MotorCtlVelocity> velocityMc,
                   std::shared_ptr<MotorCtlPosition> positionMc,
+                  std::shared_ptr<MotorCtlOpenLoop> openLoopMc,
                   std::shared_ptr<IParamReqValidator> paramReqValidator)
       : mParam(param),
-        mMotorCtl{dummyMc, velocityMc, positionMc},
+        mMotorCtl{dummyMc, currentMc, velocityMc, positionMc, openLoopMc},
         mCurrentMc(dummyMc) {
     paramReqValidator->addParamReq(this);
   }
@@ -53,11 +63,14 @@ struct DynamicMotorCtl : public IMotorCtl, public IParamReq {
 
  protected:
   void parseMode() {
-    auto mode = mParam->getValue<int>("MotorCtl_General_Mode_RT");
+    using ParamId = coriander::base::ParamId;
+    auto mode = mParam->getValue<int>(ParamId::MotorCtl_General_Mode_RT);
     if (mode < static_cast<int>(Mode::MODE_MAX)) {
       setMode(static_cast<Mode>(mode));
     } else {
       setMode(Mode::Dummy);
+      mParam->setValue(ParamId::MotorCtl_General_Mode_RT,
+                       static_cast<int>(Mode::Dummy));
     }
   }
 
