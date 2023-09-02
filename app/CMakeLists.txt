@@ -77,7 +77,7 @@ if (UNIT_TEST)
     target_link_libraries(ut PRIVATE gtest_main gmock coriander ${coriander_lib})
     target_include_directories(ut PRIVATE . ${coriander_inc})
 else ()
-    target_sources(app PRIVATE src/main.cc ${coriander_src} ${backend_src})
+    target_sources(app PRIVATE src/main_zephyr.cc ${coriander_src} ${backend_src})
     target_include_directories(app PRIVATE
         inc
         ${coriander_inc})
