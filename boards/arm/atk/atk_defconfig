@@ -24,3 +24,7 @@ CONFIG_PINCTRL=y
 
 # Enable LED
 CONFIG_LED=y
+
+
+# Enable uart based shell
+CONFIG_SHELL_BACKEND_SERIAL=y
