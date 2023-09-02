@@ -17,9 +17,11 @@
 
 		// mcuboot
 		zephyr,code-partition = &slot0_partition;
+
+		usr,led = &leds;
 	};
 
-	leds {
+	leds: leds {
 		compatible = "gpio-leds";
         red_led_0: led0 {
             gpios = <&gpioe 0 GPIO_ACTIVE_LOW>;
