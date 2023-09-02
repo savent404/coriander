@@ -1,0 +1,8 @@
+config CORIANDER_MINIMAL
+    bool "minimal coriander implement"
+    default n
+    help
+        This option enables minimal coriander implement.
+        It is used for validate coriander basic function.
+        If you want to use coriander as a real firmware,
+        please disable this option.

@@ -14,6 +14,24 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
+#ifdef CONFIG_CORIANDER_MINIMAL
+namespace coriander {
+namespace motorctl {
+namespace zephyr {
+void Encoder::enable() {}
+void Encoder::disable() {}
+bool Encoder::enabled() { return true; }
+void Encoder::sync() {}
+void Encoder::calibrate() {}
+bool Encoder::needCalibrate() { return false; }
+unsigned Encoder::getEncoderCount() { return 0; }
+unsigned Encoder::getEncoderCountPerRound() { return 0; }
+int Encoder::getOverflowCount() { return 0; }
+}  // namespace zephyr
+}  // namespace motorctl
+}  // namespace coriander
+#else
+
 LOG_MODULE_REGISTER(encoder, CONFIG_APP_LOG_LEVEL);
 
 #define ENCODER_QDEC DEVICE_DT_GET(DT_CHOSEN(usr_encoder))
@@ -92,3 +110,5 @@ int Encoder::getOverflowCount() {
 }  // namespace zephyr
 }  // namespace motorctl
 }  // namespace coriander
+
+#endif

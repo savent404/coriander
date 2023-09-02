@@ -18,6 +18,22 @@
 
 LOG_MODULE_REGISTER(bldc, CONFIG_APP_LOG_LEVEL);
 
+#ifdef CONFIG_CORIANDER_MINIMAL
+
+namespace coriander {
+namespace motorctl {
+namespace zephyr {
+static bool enabled = false;
+void BldcDriver::enable() { enabled = true; }
+void BldcDriver::disable() { enabled = false; }
+void BldcDriver::emergencyBreak() { disable(); }
+void BldcDriver::setPhaseDutyCycle(uint16_t u, uint16_t v, uint16_t w) {}
+}  // namespace zephyr
+}  // namespace motorctl
+}  // namespace coriander
+
+#else
+
 #define SERVO_DEVICE DT_NODELABEL(servo)
 
 struct bldc_data {
@@ -29,7 +45,8 @@ struct bldc_data {
 };
 
 static bldc_data bldc_instance = {
-    .phase = {
+    .phase =
+        {
             PWM_DT_SPEC_GET_BY_IDX_OR(SERVO_DEVICE, 0, NULL),  // phase U
             PWM_DT_SPEC_GET_BY_IDX_OR(SERVO_DEVICE, 1, NULL),  // phase V
             PWM_DT_SPEC_GET_BY_IDX_OR(SERVO_DEVICE, 2, NULL),  // phase W
@@ -149,3 +166,4 @@ void BldcDriver::setPhaseDutyCycle(uint16_t u, uint16_t v, uint16_t w) {
 }  // namespace zephyr
 }  // namespace motorctl
 }  // namespace coriander
+#endif

@@ -14,6 +14,19 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/storage/flash_map.h>
 
+#ifdef CONFIG_CORIANDER_MINIMAL
+namespace coriander {
+namespace zephyr {
+nvs* nvs::getInstance() {
+  static nvs instance;
+  return &instance;
+}
+int nvs::read(int id, void* data, size_t len) { return 0; }
+bool nvs::write(int id, void* data, size_t len) { return true; }
+}  // namespace zephyr
+}  // namespace coriander
+#else
+
 LOG_MODULE_REGISTER(nvs);
 
 namespace {
@@ -81,3 +94,5 @@ bool nvs::write(int id, void* data, size_t len) {
 }
 }  // namespace zephyr
 }  // namespace coriander
+
+#endif

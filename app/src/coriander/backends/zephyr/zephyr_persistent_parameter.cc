@@ -12,6 +12,13 @@
 #include <zephyr/fs/fs.h>
 #include <zephyr/logging/log.h>
 
+#ifdef CONFIG_CORIANDER_MINIMAL
+namespace coriander::zephyr {
+bool PersistentParameter::save() { return true; }
+bool PersistentParameter::load() { return true; }
+}  // namespace coriander::zephyr
+#else
+
 LOG_MODULE_REGISTER(persistent, CONFIG_APP_LOG_LEVEL);
 
 namespace coriander {
@@ -84,3 +91,5 @@ bool PersistentParameter::load() {
 }
 }  // namespace zephyr
 }  // namespace coriander
+
+#endif

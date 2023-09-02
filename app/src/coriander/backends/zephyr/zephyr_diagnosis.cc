@@ -16,6 +16,27 @@
 
 LOG_MODULE_REGISTER(diagnosis);
 
+#ifdef CONFIG_CORIANDER_MINIMAL
+namespace coriander {
+namespace application {
+namespace zephyr {
+DiagnosisRegister::DiagnosisRegister() {}
+DiagnosisRegister* DiagnosisRegister::getInstance() {
+  static DiagnosisRegister* instance;
+  if (instance == nullptr) {
+    instance = new DiagnosisRegister();
+  }
+  return instance;
+}
+void DiagnosisRegister::applyAll(coriander::application::Diagnosis* diagnosis) {
+}
+void DiagnosisRegister::updateStatus(uint32_t ref_2048, uint32_t ps28Voltage,
+                                     uint32_t ps5Voltage, uint32_t psCurrent) {}
+}  // namespace zephyr
+}  // namespace application
+}  // namespace coriander
+#else
+
 #define DT_SPEC_AND_COMMA(node_id, prop, idx) \
   ADC_DT_SPEC_GET_BY_IDX(node_id, idx),
 
@@ -158,3 +179,5 @@ void DiagnosisRegister::updateStatus(uint32_t ref_2048, uint32_t ps28Voltage,
 }  // namespace zephyr
 }  // namespace application
 }  // namespace coriander
+
+#endif

@@ -8,4 +8,7 @@
  *
  */
 
+#ifdef CONFIG_CORIANDER_MINIMAL
+#else
 #include "../../recovery/src/fs_shell.c" // NOLINT, it is for import source code from recovery project
+#endif

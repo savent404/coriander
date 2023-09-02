@@ -15,6 +15,21 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
+#ifdef CONFIG_CORIANDER_MINIMAL
+namespace coriander::motorctl::zephyr {
+void PhaseCurrentEstimator::enable() {}
+void PhaseCurrentEstimator::disable() {}
+bool PhaseCurrentEstimator::enabled() { return true; }
+void PhaseCurrentEstimator::sync() {}
+bool PhaseCurrentEstimator::needCalibrate() { return false; }
+void PhaseCurrentEstimator::calibrate() {}
+void PhaseCurrentEstimator::getPhaseCurrent(float *alpha, float *beta) {
+  *alpha = 0.0f;
+  *beta = 0.0f;
+}
+}  // namespace coriander::motorctl::zephyr
+#else
+
 LOG_MODULE_REGISTER(phase_current_estimator);
 
 #ifndef DT_SPEC_AND_COMMA
@@ -118,3 +133,5 @@ bool PhaseCurrentEstimator::needCalibrate() { return false; }
 }  // namespace zephyr
 }  // namespace motorctl
 }  // namespace coriander
+
+#endif
