@@ -15,6 +15,8 @@
 	zephyr,user {
 		io-channels =  <&adc1 1>, <&adc1 3>, <&adc1 15>, <&adc1 8>,
 		/* For phase current */ <&adc2 11>, <&adc2 12>, <&adc2 13>;
+		io-channel-names = "adc1-1", "adc1-3", "adc1-15", "adc1-8",
+		    "motor_iu", "motor_iv", "motor_iw";
 	};
 	
     chosen {

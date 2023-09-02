@@ -37,10 +37,16 @@ LOG_MODULE_REGISTER(phase_current_estimator);
   ADC_DT_SPEC_GET_BY_IDX(node_id, idx),
 #endif
 
+#ifndef ADC_DT_SPEC_GET_BY_NAME
+#define ADC_DT_SPEC_GET_BY_NAME(node_id, name)                   \
+  ADC_DT_SPEC_STRUCT(DT_IO_CHANNELS_CTLR_BY_NAME(node_id, name), \
+                     DT_IO_CHANNELS_INPUT_BY_NAME(node_id, name))
+#endif
+
 static const struct adc_dt_spec adc_channels[] = {
-    ADC_DT_SPEC_GET_BY_IDX(DT_PATH(zephyr_user), 4),
-    ADC_DT_SPEC_GET_BY_IDX(DT_PATH(zephyr_user), 5),
-    ADC_DT_SPEC_GET_BY_IDX(DT_PATH(zephyr_user), 6),
+    ADC_DT_SPEC_GET_BY_NAME(DT_PATH(zephyr_user), motor_iu),
+    ADC_DT_SPEC_GET_BY_NAME(DT_PATH(zephyr_user), motor_iv),
+    ADC_DT_SPEC_GET_BY_NAME(DT_PATH(zephyr_user), motor_iw),
 };
 static int32_t adc_raw[ARRAY_SIZE(adc_channels)];
 
