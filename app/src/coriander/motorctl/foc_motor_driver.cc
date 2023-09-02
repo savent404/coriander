@@ -15,8 +15,8 @@
 namespace coriander {
 namespace motorctl {
 
-void FocMotorDriver::setVoltage(float d, float q) {
-  float elecAngle = mElecAngleEstimator->getElectricalAngle();
+void FocMotorDriverBase::setVoltageNoSensor(float d, float q, float angle) {
+  float elecAngle = angle;
   float elecAngleRad = elecAngle / 180.0f * M_PI;
   float sinTheta = sinf(elecAngleRad);
   float cosTheta = cosf(elecAngleRad);
@@ -30,6 +30,11 @@ void FocMotorDriver::setVoltage(float d, float q) {
   v = static_cast<uint16_t>(vv * UINT16_MAX);
   w = static_cast<uint16_t>(vw * UINT16_MAX);
   setPhaseDutyCycle(u, v, w);
+}
+
+void FocMotorDriver::setVoltage(float d, float q) {
+  float angle = mElecAngleEstimator->getElectricalAngle();
+  setVoltageNoSensor(d, q, angle);
 }
 
 }  // namespace motorctl
