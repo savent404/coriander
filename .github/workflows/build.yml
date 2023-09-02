@@ -2,12 +2,12 @@ name: pr-check
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
     runs-on: ubuntu-22.04
-    container: ghcr.io/zephyrproject-rtos/ci:v0.26.2 
+    container: ghcr.io/zephyrproject-rtos/ci:v0.26.2
     env:
       CMAKE_PREFIX_PATH: /opt/toolchains
     steps:
@@ -22,12 +22,12 @@ jobs:
           west init -l .
           west update -o=--depth=1 -n
 
-      - name: Build firmware
+      - name: Build firmware(qemu)
         working-directory: coriander
         run: |
-          west build -b td2kw app
-      
-      - name: Build manufatory firmware
+          west build -b qemu_cortex_a9 app -- -DCONFIG_CORIANDER_MINIMAL=y
+
+      - name: Build manufaturor firmware
         working-directory: coriander
         run: |
           west build -b td2kw app -d build-manu --sysbuild
