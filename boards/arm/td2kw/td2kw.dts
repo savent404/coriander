@@ -6,6 +6,7 @@
 /dts-v1/;
 #include <st/f4/stm32f405Xg.dtsi>
 #include <st/f4/stm32f405rgtx-pinctrl.dtsi>
+#include <zephyr/dt-bindings/timer/stm32-timer.h>
 
 / {
 
@@ -196,6 +197,7 @@
 
 &timers1 {
 	status = "okay";
+	st,countermode = <STM32_TIM_COUNTERMODE_CENTER_UP>; // center_up, see dt-bindings/timer/stm32-timer.h
 
 	pwm: pwm {
 		status = "okay";
