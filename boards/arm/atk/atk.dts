@@ -1,0 +1,194 @@
+/dts-v1/;
+#include <st/f4/stm32f407Xg.dtsi>
+#include <st/f4/stm32f407i(e-g)tx-pinctrl.dtsi>
+
+/ {
+	model = "atk_dmf407 board";
+	compatible = "st,stm32f4discovery";
+
+	chosen {
+		zephyr,console = &usart1;
+		zephyr,shell-uart = &usart1;
+		zephyr,sram = &sram0;
+		zephyr,flash = &flash0;
+		zephyr,ccm = &ccm0;
+		zephyr,canbus = &can2;
+		zephyr,uart_mcumgr = &usart1;
+
+		// mcuboot
+		zephyr,code-partition = &slot0_partition;
+	};
+
+	leds {
+		compatible = "gpio-leds";
+        red_led_0: led0 {
+            gpios = <&gpioe 0 GPIO_ACTIVE_LOW>;
+            label = "User LD1";
+        };
+        green_led_1: led1 {
+            gpios = <&gpioe 1 GPIO_ACTIVE_LOW>;
+            label = "User LD2";
+        };
+	};
+
+	gpio_keys {
+		compatible = "gpio-keys";
+		user_button1: button1 {
+			label = "Button1";
+			gpios = <&gpioe 2 GPIO_ACTIVE_LOW>;
+		};
+        user_button2: button2 {
+            label = "Button2";
+            gpios = <&gpioe 3 GPIO_ACTIVE_LOW>;
+        };
+        user_button3: button3 {
+            label = "Button3";
+            gpios = <&gpioe 4 GPIO_ACTIVE_LOW>;
+        };
+	};
+
+	bldc: pwm_bldc {
+		compatible = "pwm-bldc";
+		status = "okay";
+		pwms =
+			<&pwm 1 PWM_USEC(50) PWM_POLARITY_NORMAL>,								// ch1
+			<&pwm 2 PWM_USEC(50) PWM_POLARITY_NORMAL>,								// ch2
+			<&pwm 3 PWM_USEC(50) PWM_POLARITY_NORMAL>,								// ch3
+			<&pwm 1 PWM_USEC(50) (PWM_POLARITY_NORMAL | STM32_PWM_COMPLEMENTARY)>,	// ch1n
+			<&pwm 2 PWM_USEC(50) (PWM_POLARITY_NORMAL | STM32_PWM_COMPLEMENTARY)>,  // ch2n
+			<&pwm 3 PWM_USEC(50) (PWM_POLARITY_NORMAL | STM32_PWM_COMPLEMENTARY)>;	// ch3n
+		gpios = <&gpiof 10 GPIO_ACTIVE_HIGH>;
+		supply-voltage = <16>;
+	};
+
+	mc-parameters {
+		compatible = "param,mc";
+		status = "okay";
+		velocity-pid = <100 10 0>;
+		position-pid = <1000 0 0>;
+	};
+
+	aliases {
+        led0 = &red_led_0;
+        led1 = &green_led_1;
+        sw0 = &user_button1;
+        sw1 = &user_button2;
+        sw2 = &user_button3;
+	};
+};
+
+&timers1 {
+	status = "okay";
+
+	pwm: pwm {
+		status = "okay";
+
+		// enable ch1/ch1n ch2/ch2n ch3/ch3n AF GPIO
+		pinctrl-0 = <&tim1_ch1_pa8 &tim1_ch1n_pb13
+				&tim1_ch2_pa9 &tim1_ch2n_pb14
+				&tim1_ch3_pa10 &tim1_ch3n_pb15>;
+
+		pinctrl-names = "default";
+	};
+};
+
+&usart1 {
+	pinctrl-0 = <&usart1_tx_pb6 &usart1_rx_pb7>;
+	pinctrl-names = "default";
+	current-speed = <115200>;
+	status = "okay";
+};
+
+&flash0 {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x00000000 0x00040000>;
+		};
+
+		slot0_partition: partition@40000 {
+			label = "image-0";
+			reg = <0x00040000 0x00040000>;
+		};
+
+		slot1_partition: partition@80000 {
+			label = "image-1";
+			reg = <0x00080000 0x00040000>;
+		};
+
+		scratch_partition: partition@C0000 {
+			label = "scratch";
+			reg = <0x000C0000 0x00040000>;
+		};
+	};
+};
+
+&clk_lsi {
+	status = "okay";
+};
+
+&clk_hse {
+	clock-frequency = <DT_FREQ_M(8)>;
+	status = "okay";
+};
+
+&pll {
+	div-m = <8>;
+	mul-n = <336>;
+	div-p = <2>;
+	div-q = <7>;
+	clocks = <&clk_hse>;
+	status = "okay";
+};
+
+&rcc {
+	clocks = <&pll>;
+	clock-frequency = <DT_FREQ_M(168)>;
+	ahb-prescaler = <1>;
+	apb1-prescaler = <4>;
+	apb2-prescaler = <2>;
+};
+
+&usart2 {
+	pinctrl-0 = <&usart2_tx_pa2 &usart2_rx_pa3>;
+	pinctrl-names = "default";
+	current-speed = <115200>;
+	status = "okay";
+};
+
+&timers2 {
+	status = "okay";
+
+	pwm2: pwm {
+		status = "okay";
+		pinctrl-0 = <&tim2_ch1_pa0>;
+		pinctrl-names = "default";
+	};
+};
+
+&timers3 {
+	status = "okay";
+
+	qdec: qdec {
+		status = "okay";
+		pinctrl-0 = <&tim3_ch1_pc6 &tim3_ch2_pc7>;
+		pinctrl-names = "default";
+  		// st,input-polarity-inverted;
+		st,input-filter-level= <3>;
+		st,counts-per-revolution = <2000>;
+	};
+};
+
+&rtc {
+	clocks = <&rcc STM32_CLOCK_BUS_APB1 0x10000000>,
+		 <&rcc STM32_SRC_LSI RTC_SEL(2)>;
+	status = "okay";
+
+	backup_regs {
+		status = "okay";
+	};
+};
