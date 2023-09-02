@@ -1,13 +1,14 @@
 /**
- * @file zephyr_bldc_driver.cc
- * @author savent404 (savent_gate@outlook.com)
+ * @file zephyr_motor.cc
+ * @author Savent Gate (savent_gate@outlook.com)
  * @brief
- * @date 2023-08-31
+ * @date 2023-09-02
  *
  * Copyright 2023 savent_gate
  *
  */
-#include "zephyr/zephyr_bldc_driver.h"
+
+#include "zephyr/zephyr_motor.h"
 
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/drivers/pwm.h>
@@ -17,22 +18,6 @@
 #include "zephyr/device.h"
 
 LOG_MODULE_REGISTER(bldc, CONFIG_APP_LOG_LEVEL);
-
-#ifdef CONFIG_CORIANDER_MINIMAL
-
-namespace coriander {
-namespace motorctl {
-namespace zephyr {
-static bool enabled = false;
-void BldcDriver::enable() { enabled = true; }
-void BldcDriver::disable() { enabled = false; }
-void BldcDriver::emergencyBreak() { disable(); }
-void BldcDriver::setPhaseDutyCycle(uint16_t u, uint16_t v, uint16_t w) {}
-}  // namespace zephyr
-}  // namespace motorctl
-}  // namespace coriander
-
-#else
 
 #define SERVO_DEVICE DT_NODELABEL(servo)
 
@@ -81,7 +66,7 @@ static int bldc_init() {
     }
   }
 
-  for (size_t i = 0; i < 3; i++) {
+  for (size_t i = 0; i < ARRAY_SIZE(inst->phase); i++) {
     ret = pwm_set_pulse_dt(&inst->phase[i], 0);
     if (ret < 0) {
       LOG_ERR("Failed to set PWM pulse");
@@ -98,7 +83,7 @@ namespace coriander {
 namespace motorctl {
 namespace zephyr {
 
-void BldcDriver::enable() {
+void MotorDriver::enable() {
   auto inst = &bldc_instance;
   // set PWM at 50% duty cycle
   for (size_t i = 0; i < 3; i++) {
@@ -112,7 +97,7 @@ void BldcDriver::enable() {
   gpio_pin_set_dt(&inst->enable_pin, 1);
 }
 
-void BldcDriver::disable() {
+void MotorDriver::disable() {
   auto inst = &bldc_instance;
   // disable output
   gpio_pin_set_dt(&inst->enable_pin, 0);
@@ -122,7 +107,7 @@ void BldcDriver::disable() {
   }
 }
 
-void BldcDriver::emergencyBreak() {
+void MotorDriver::emergencyBreak() {
   auto inst = &bldc_instance;
   // enable break
   gpio_pin_set_dt(&inst->break_pin, 1);
@@ -148,7 +133,7 @@ static inline uint32_t convert2pulse(uint16_t dutycycle_in_16bit,
   return pulse;
 }
 
-void BldcDriver::setPhaseDutyCycle(uint16_t u, uint16_t v, uint16_t w) {
+void MotorDriver::setPhaseDutyCycle(uint16_t u, uint16_t v, uint16_t w) {
   auto inst = &bldc_instance;
   uint32_t pulse[3] = {
       convert2pulse(u, inst->phase[0].period, inst->pwm_deadband_min,
@@ -165,4 +150,3 @@ void BldcDriver::setPhaseDutyCycle(uint16_t u, uint16_t v, uint16_t w) {
 }  // namespace zephyr
 }  // namespace motorctl
 }  // namespace coriander
-#endif

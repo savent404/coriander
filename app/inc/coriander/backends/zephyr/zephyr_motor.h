@@ -20,10 +20,10 @@ namespace zephyr {
 struct MotorDriver : public coriander::motorctl::FocMotorDriver {
   explicit MotorDriver(std::shared_ptr<IElecAngleEstimator> elecAngleEstimator)
       : coriander::motorctl::FocMotorDriver(elecAngleEstimator) {}
-  void enable() override {}
-  void disable() override {}
-  void emergencyBreak() override {}
-  void setPhaseDutyCycle(uint16_t u, uint16_t v, uint16_t w) override {}
+  void enable() override;
+  void disable() override;
+  void emergencyBreak() override;
+  void setPhaseDutyCycle(uint16_t u, uint16_t v, uint16_t w) override;
 };
 }  // namespace zephyr
 }  // namespace motorctl

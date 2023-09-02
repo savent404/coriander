@@ -42,6 +42,7 @@ static auto zephyr_backends_bindings() {
   using ILogger = coriander::base::ILogger;
   using IAppStatus = coriander::application::IAppStatus;
   using FocMotorDriver = coriander::motorctl::FocMotorDriver;
+  using FocMotorDriverBase = coriander::motorctl::FocMotorDriverBase;
   using IBldcDriver = coriander::motorctl::IBldcDriver;
   using IEncoder = coriander::motorctl::IEncoder;
   using ISystick = coriander::os::ISystick;
@@ -51,6 +52,7 @@ static auto zephyr_backends_bindings() {
   using IShellCtl = coriander::IShellCtl;
   using BackendAppStatus = coriander::application::zephyr::AppStatus;
   using BackendMotorDriver = coriander::motorctl::zephyr::MotorDriver;
+  // using BackendMotorDriver = coriander::motorctl::zephyr::BldcDriver;
   using IPhaseCurrentEstimator = coriander::motorctl::IPhaseCurrentEstimator;
   using PhaseCurrentEstimator =
       coriander::motorctl::zephyr::PhaseCurrentEstimator;

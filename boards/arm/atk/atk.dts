@@ -50,8 +50,8 @@
         };
 	};
 
-	bldc: pwm_bldc {
-		compatible = "pwm-bldc";
+	servo: servo {
+		compatible = "coriander,bldc";
 		status = "okay";
 		pwms =
 			<&pwm 1 PWM_USEC(50) PWM_POLARITY_NORMAL>,								// ch1
@@ -60,8 +60,10 @@
 			<&pwm 1 PWM_USEC(50) (PWM_POLARITY_NORMAL | STM32_PWM_COMPLEMENTARY)>,	// ch1n
 			<&pwm 2 PWM_USEC(50) (PWM_POLARITY_NORMAL | STM32_PWM_COMPLEMENTARY)>,  // ch2n
 			<&pwm 3 PWM_USEC(50) (PWM_POLARITY_NORMAL | STM32_PWM_COMPLEMENTARY)>;	// ch3n
-		gpios = <&gpiof 10 GPIO_ACTIVE_HIGH>;
-		supply-voltage = <16>;
+		pwm-names = "motor-u", "motor-v", "motor-w", "motor-un", "motor-vn", "motor-wn";
+		enable-pin = <&gpiof 10 GPIO_ACTIVE_HIGH>;
+		max_pulse = <PWM_USEC(49)>;
+		min_pulse = <PWM_USEC(1)>;
 	};
 
 	mc-parameters {
