@@ -28,3 +28,6 @@ CONFIG_LED=y
 
 # Enable uart based shell
 CONFIG_SHELL_BACKEND_SERIAL=y
+
+# Enable Encoder
+CONFIG_QDEC_STM32=y
