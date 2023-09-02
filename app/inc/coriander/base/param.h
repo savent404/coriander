@@ -61,6 +61,7 @@ BETTER_ENUM(ParamId, int,
   MotorCtl_Calibrate_CaliMechAngleOffset,
   MotorCtl_Calibrate_CaliVoltage,
   MotorCtl_Calibrate_CaliDuration,
+  MotorCtl_OpenLoop_OutVoltage,
   MotorCtl_PosCtl_PidP,
   MotorCtl_PosCtl_PidI,
   MotorCtl_PosCtl_PidD,
@@ -102,7 +103,7 @@ struct ParamDescriber {
         [ParamId::Sensor_Motor_Current_RT] = "current motor current, uint A",
         [ParamId::Sensor_Motor_Temp_RT] = "current motor temp, unit degree",
         [ParamId::MotorCtl_General_Mode_RT] =
-            "0:dummy, 1: torque, 2:velocity, 3:position",
+            "0:dummy, 1: torque, 2:velocity, 3:position, 4: OpenLoop",
         [ParamId::MotorCtl_General_TargetPosition_RT] =
             "target position, works in mode:3, unit: degree",
         [ParamId::MotorCtl_General_TargetVelocity_RT] =
@@ -132,6 +133,7 @@ struct ParamDescriber {
             "motor output voltage when calibrating, unit: volt",
         [ParamId::MotorCtl_Calibrate_CaliDuration] =
             "duration of motor enabling when calibrating, unit: ms",
+        [ParamId::MotorCtl_OpenLoop_OutVoltage] = "output voltage of open loop",
         [ParamId::MotorCtl_PosCtl_PidP] = "",
         [ParamId::MotorCtl_PosCtl_PidI] = "",
         [ParamId::MotorCtl_PosCtl_PidD] = "",
