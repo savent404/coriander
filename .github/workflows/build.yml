@@ -22,10 +22,10 @@ jobs:
           west init -l .
           west update -o=--depth=1 -n
 
-      - name: Build firmware(qemu)
+      - name: Build firmware(minimal)
         working-directory: coriander
         run: |
-          west build -b qemu_cortex_a9 app -- -DCONFIG_CORIANDER_MINIMAL=y
+          west build -b atk app -- -DCONFIG_CORIANDER_MINIMAL=y
 
       - name: Build manufaturor firmware
         working-directory: coriander
