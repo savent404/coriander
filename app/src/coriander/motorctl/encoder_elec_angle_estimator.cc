@@ -72,11 +72,15 @@ void EncoderElecAngleEstimator::sync() {
 bool EncoderElecAngleEstimator::enabled() { return mEncoder->enabled(); }
 
 void EncoderElecAngleEstimator::calibrate() {
+  using Property = base::Property;
   mNeedCalibrate = false;
   mElecAngleOffset = -mRawElecAngle;
   if (mParam->has(ParamId::MotorCtl_Calibrate_CaliElecAngleOffset)) {
     mParam->setValue(ParamId::MotorCtl_Calibrate_CaliElecAngleOffset,
                      mElecAngleOffset);
+  } else {
+    mParam->add(Property{mElecAngleOffset,
+                         ParamId::MotorCtl_Calibrate_CaliElecAngleOffset});
   }
 }
 

@@ -41,7 +41,6 @@ struct EncoderElecAngleEstimator : public IElecAngleEstimator,
   virtual const ParameterRequireItem* requiredParameters() const {
     constexpr static const ParameterRequireItem items[] = {
         {"MotorCtl_MotorDriver_PolePair", TypeId::Int32},
-        {"MotorCtl_Calibrate_CaliElecAngleOffset", TypeId::Float},
         {"MotorCtl_MotorDriver_PersistRawElecAngle", TypeId::Float},
         PARAMETER_REQ_EOF};
 
