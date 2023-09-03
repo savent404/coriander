@@ -27,15 +27,20 @@ LOG_MODULE_REGISTER(phase_current_estimator);
 #define PHASE_CURRENT_OFFSET DT_PROP(PHASE_CURRENT_NODE, voltage_offset)
 #define PHASE_CURRENT_SCALE DT_PROP(PHASE_CURRENT_NODE, voltage_scale)
 
-static const struct adc_dt_spec adc_channels[] = {
-    ADC_DT_SPEC_GET_BY_NAME(DT_PATH(zephyr_user), motor_iu),
-    ADC_DT_SPEC_GET_BY_NAME(DT_PATH(zephyr_user), motor_iv),
-    ADC_DT_SPEC_GET_BY_NAME(DT_PATH(zephyr_user), motor_iw),
+struct adc_instance {
+  const struct adc_dt_spec adc_channels[3];
+  int32_t adc_raw[3];
 };
-static int32_t adc_raw[ARRAY_SIZE(adc_channels)];
 
-static_assert(ARRAY_SIZE(adc_channels) == 3U,
-              "3 ADC channels are required(Ia, Ib, Ic)");
+static struct adc_instance adc_inst = {
+    .adc_channels =
+        {
+            ADC_DT_SPEC_GET_BY_NAME(DT_PATH(zephyr_user), motor_iu),
+            ADC_DT_SPEC_GET_BY_NAME(DT_PATH(zephyr_user), motor_iv),
+            ADC_DT_SPEC_GET_BY_NAME(DT_PATH(zephyr_user), motor_iw),
+        },
+    .adc_raw = {0},
+};
 
 namespace coriander {
 namespace motorctl {
@@ -43,8 +48,9 @@ namespace zephyr {
 void PhaseCurrentEstimator::enable() {}
 void PhaseCurrentEstimator::disable() {}
 bool PhaseCurrentEstimator::enabled() {
+  constexpr const adc_dt_spec *adc_channels = &adc_inst.adc_channels[0];
   bool enabled = true;
-  for (size_t i = 0U; i < ARRAY_SIZE(adc_channels); i++) {
+  for (size_t i = 0U; i < 3; i++) {
     enabled &= adc_is_ready_dt(&adc_channels[i]);
   }
   return enabled;
@@ -52,6 +58,8 @@ bool PhaseCurrentEstimator::enabled() {
 void PhaseCurrentEstimator::sync() {
   static bool adc_configured = false;
   static bool adc_fatal_error = false;
+  constexpr const adc_dt_spec *adc_channels = &adc_inst.adc_channels[0];
+  constexpr int32_t *adc_raw = &adc_inst.adc_raw[0];
   static uint16_t buf[3];
   static struct adc_sequence sequence[3] = {
       {.buffer = &buf[0], .buffer_size = 2},
@@ -65,7 +73,7 @@ void PhaseCurrentEstimator::sync() {
   }
 
   if (!adc_configured) {
-    for (size_t i = 0U; i < ARRAY_SIZE(adc_channels); i++) {
+    for (size_t i = 0U; i < 3; i++) {
       if (!adc_is_ready_dt(&adc_channels[i])) {
         LOG_ERR("ADC controller device %s not ready\n",
                 adc_channels[i].dev->name);
@@ -83,7 +91,7 @@ void PhaseCurrentEstimator::sync() {
     adc_configured = true;
   }
 
-  for (size_t i = 0U; i < ARRAY_SIZE(adc_channels); i++) {
+  for (size_t i = 0U; i < 3; i++) {
     adc_sequence_init_dt(&adc_channels[i], &sequence[i]);
     int err = adc_read(adc_channels[i].dev, &sequence[i]);
     if (err < 0) {
@@ -107,6 +115,7 @@ void PhaseCurrentEstimator::sync() {
 void PhaseCurrentEstimator::getPhaseCurrent(float *alpha, float *beta) {
   constexpr float offset = PHASE_CURRENT_OFFSET;
   constexpr float factor = (1000.0f / PHASE_CURRENT_SCALE);
+  constexpr int32_t *adc_raw = &adc_inst.adc_raw[0];
   float Ia, Ib, Ic;
 
   // based on Ia + Ib + Ic = 0
