@@ -9,6 +9,7 @@
  */
 #include "coriander/motorctl/encoder_elec_angle_estimator.h"
 
+#include "coriander/base/loggerstream.h"
 #include "coriander/base/math.h"
 
 namespace coriander {
@@ -16,10 +17,12 @@ namespace motorctl {
 
 EncoderElecAngleEstimator::EncoderElecAngleEstimator(
     std::shared_ptr<IEncoder> encoder, std::shared_ptr<Parameter> param,
+    std::shared_ptr<ILogger> logger,
     std::shared_ptr<IParamReqValidator> paramReqValidator) noexcept
     : mEncoder(encoder),
       mParam(param),
       mPolePair(-1),
+      mLogger(logger),
       mElecAngle(0),
       mRawElecAngle(0),
       mPersistOffset(0),
@@ -73,6 +76,7 @@ bool EncoderElecAngleEstimator::enabled() { return mEncoder->enabled(); }
 
 void EncoderElecAngleEstimator::calibrate() {
   using Property = base::Property;
+  coriander::base::LoggerStream stream(mLogger);
   mNeedCalibrate = false;
   mElecAngleOffset = -mRawElecAngle;
   if (mParam->has(ParamId::MotorCtl_Calibrate_CaliElecAngleOffset)) {
@@ -82,6 +86,9 @@ void EncoderElecAngleEstimator::calibrate() {
     mParam->add(Property{mElecAngleOffset,
                          ParamId::MotorCtl_Calibrate_CaliElecAngleOffset});
   }
+
+  stream << "Calibrated electrical angle offset: " << mElecAngleOffset
+         << std::endl;
 }
 
 bool EncoderElecAngleEstimator::needCalibrate() { return mNeedCalibrate; }
