@@ -127,9 +127,8 @@ static void adc_init(adc_instance *inst) {
     }
   }
 }
-
-static inline void get_current_alpha_beta(adc_instance *inst, float *alpha,
-                                          float *beta) {
+static inline void current_convert(adc_instance *inst, float *Iu, float *Iv,
+                                   float *Iw) {
   constexpr int32_t offset = PHASE_CURRENT_OFFSET;
   constexpr float factor = (1000.0f / PHASE_CURRENT_SCALE);
   int32_t *adc_raw = &inst->adc_raw[0];
@@ -143,6 +142,14 @@ static inline void get_current_alpha_beta(adc_instance *inst, float *alpha,
   // assert abs(Ia + Ib + Ic) < 0.01A
   assert_param(Ia + Ib + Ic < 0.01f && Ia + Ib + Ic > -0.01f);
 
+  *Iu = Ia;
+  *Iv = Ib;
+  *Iw = Ic;
+}
+
+static inline void get_current_alpha_beta(adc_instance *inst, const float Ia,
+                                          const float Ib, const float Ic,
+                                          float *alpha, float *beta) {
   *alpha = Ia - 0.5f * Ib - 0.5f * Ic;
   *beta = 0.866025f * Ib - 0.866025f * Ic;
 }
@@ -175,11 +182,38 @@ bool PhaseCurrentEstimator::enabled() {
 void PhaseCurrentEstimator::sync() { adc_sync(&adc_inst); }
 
 void PhaseCurrentEstimator::getPhaseCurrent(float *alpha, float *beta) {
-  get_current_alpha_beta(&adc_inst, alpha, beta);
+  float c[3];
+  current_convert(&adc_inst, &c[0], &c[1], &c[2]);
+
+  if (calibrateFlag) {
+    for (int i = 0; i < 3; i++) {
+      c[i] -= offset[i];
+    }
+  }
+
+  get_current_alpha_beta(&adc_inst, c[0], c[1], c[2], alpha, beta);
+
+  for (int i = 0; i < 3; i++) {
+    current[i] = c[i];
+  }
 }
 
-void PhaseCurrentEstimator::calibrate() {}
-bool PhaseCurrentEstimator::needCalibrate() { return false; }
+void PhaseCurrentEstimator::calibrate() {
+  float c[3];
+  current_convert(&adc_inst, &c[0], &c[1], &c[2]);
+  for (int i = 0; i < 3; i++) {
+    c[i] -= offset[i];
+  }
+  // assume the current is stable as zero
+  for (int i = 0; i < 3; i++) {
+    offset[i] += c[i] * 0.1;  // use 10% of the current to calibrate, callibrate
+                              // more than 10 times to get a stable offset
+  }
+  LOG_INF("calibrate: %f, %f, %f", offset[0], offset[1], offset[2]);
+  calibrateFlag = true;
+}
+
+bool PhaseCurrentEstimator::needCalibrate() { return !calibrateFlag; }
 
 }  // namespace zephyr
 }  // namespace motorctl
