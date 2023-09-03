@@ -23,6 +23,7 @@ LOG_MODULE_REGISTER(bldc, CONFIG_APP_LOG_LEVEL);
 
 struct bldc_data {
   const struct pwm_dt_spec phase[6];
+  const struct pwm_dt_spec adc_sample_trigger;
   const struct gpio_dt_spec enable_pin;
   const struct gpio_dt_spec break_pin;
   const uint32_t pwm_deadband_min;
@@ -38,6 +39,8 @@ static bldc_data bldc_instance = {
             PWM_DT_SPEC_GET_BY_IDX_OR(SERVO_DEVICE, 4, NULL),  // phase V-N
             PWM_DT_SPEC_GET_BY_IDX_OR(SERVO_DEVICE, 5, NULL),  // phase W-N
         },
+    .adc_sample_trigger =
+        PWM_DT_SPEC_GET_BY_NAME_OR(SERVO_DEVICE, adc_trigger, NULL),
     .enable_pin = GPIO_DT_SPEC_GET(SERVO_DEVICE, enable_pin),
     .break_pin = GPIO_DT_SPEC_GET_OR(SERVO_DEVICE, break_pins, {0}),
     .pwm_deadband_min = DT_PROP(SERVO_DEVICE, min_pulse),
@@ -74,6 +77,12 @@ static int bldc_init() {
     }
   }
 
+  ret = pwm_set_pulse_dt(&inst->adc_sample_trigger, 0);
+  if (ret < 0) {
+    LOG_ERR("Failed to set PWM pulse");
+    return ret;
+  }
+
   return 0;
 }
 
@@ -85,16 +94,20 @@ namespace zephyr {
 
 void MotorDriver::enable() {
   auto inst = &bldc_instance;
+  int cr4_delay_in_us = 0;
   // set PWM at 50% duty cycle
   for (size_t i = 0; i < 3; i++) {
     pwm_set_pulse_dt(&inst->phase[i], inst->phase[i].period / 2);
   }
+
   // disable break
   if (gpio_is_ready_dt(&inst->break_pin)) {
     gpio_pin_set_dt(&inst->break_pin, 0);
   }
+  // TODO(savent): based on parameter to adjust TIM1CH4's CCR value
+  cr4_delay_in_us = 0;
   // enable output
-  gpio_pin_set_dt(&inst->enable_pin, 1);
+  gpio_pin_set_dt(&inst->enable_pin, PWM_USEC(cr4_delay_in_us));
 }
 
 void MotorDriver::disable() {
