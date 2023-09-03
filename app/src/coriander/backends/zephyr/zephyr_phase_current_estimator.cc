@@ -73,8 +73,9 @@ static inline uint32_t channel_from_idx(unsigned idx) {
   return channels[idx];
 }
 
+static bool adc_inited = false;
 static void adc_init(adc_instance *inst) {
-  static bool init = false;
+  auto &init = adc_inited;
   const adc_dt_spec *adc_channels = &inst->adc_channels[0];
   int err;
   if (init) {
@@ -171,14 +172,7 @@ namespace motorctl {
 namespace zephyr {
 void PhaseCurrentEstimator::enable() { adc_init(&adc_inst); }
 void PhaseCurrentEstimator::disable() {}
-bool PhaseCurrentEstimator::enabled() {
-  constexpr const adc_dt_spec *adc_channels = &adc_inst.adc_channels[0];
-  bool enabled = true;
-  for (size_t i = 0U; i < 3; i++) {
-    enabled &= adc_is_ready_dt(&adc_channels[i]);
-  }
-  return enabled;
-}
+bool PhaseCurrentEstimator::enabled() { return adc_inited; }
 void PhaseCurrentEstimator::sync() { adc_sync(&adc_inst); }
 
 void PhaseCurrentEstimator::getPhaseCurrent(float *alpha, float *beta) {
