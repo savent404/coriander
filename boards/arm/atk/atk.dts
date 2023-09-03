@@ -214,21 +214,21 @@
 	pinctrl-0 = <&adc1_in8_pb0 &adc1_in6_pa6 &adc1_in3_pa3>;
 	pinctrl-names = "default";
 	channel@8 {
-		reg = <1>;
+		reg = <8>;
 		zephyr,gain = "ADC_GAIN_1";
 		zephyr,reference = "ADC_REF_INTERNAL";
 		zephyr,acquisition-time = <ADC_ACQ_TIME(ADC_ACQ_TIME_TICKS, 56)>;
 		zephyr,resolution = <8>;
 	};
 	channel@6 {
-		reg = <1>;
+		reg = <6>;
 		zephyr,gain = "ADC_GAIN_1";
 		zephyr,reference = "ADC_REF_INTERNAL";
 		zephyr,acquisition-time = <ADC_ACQ_TIME(ADC_ACQ_TIME_TICKS, 56)>;
 		zephyr,resolution = <8>;
 	};
 	channel@3 {
-		reg = <1>;
+		reg = <3>;
 		zephyr,gain = "ADC_GAIN_1";
 		zephyr,reference = "ADC_REF_INTERNAL";
 		zephyr,acquisition-time = <ADC_ACQ_TIME(ADC_ACQ_TIME_TICKS, 56)>;
