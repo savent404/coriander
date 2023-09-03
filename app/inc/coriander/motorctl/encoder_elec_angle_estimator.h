@@ -12,6 +12,7 @@
 #include <memory>
 
 #include "coriander/base/const_hash.h"
+#include "coriander/base/ilogger.h"
 #include "coriander/motorctl/ielec_angle_estimator.h"
 #include "coriander/motorctl/iencoder.h"
 #include "coriander/parameter_requirements.h"
@@ -26,8 +27,10 @@ namespace motorctl {
  */
 struct EncoderElecAngleEstimator : public IElecAngleEstimator,
                                    public IParamReq {
+  using ILogger = coriander::base::ILogger;
   EncoderElecAngleEstimator(
       std::shared_ptr<IEncoder> encoder, std::shared_ptr<Parameter> param,
+      std::shared_ptr<ILogger> logger,
       std::shared_ptr<IParamReqValidator> paramReqValidator) noexcept;
 
   virtual void enable();
@@ -50,6 +53,7 @@ struct EncoderElecAngleEstimator : public IElecAngleEstimator,
  private:
   std::shared_ptr<IEncoder> mEncoder;
   std::shared_ptr<Parameter> mParam;
+  std::shared_ptr<ILogger> mLogger;
   int32_t mPolePair;
   float mElecAngle;
   float mRawElecAngle;

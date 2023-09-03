@@ -41,8 +41,10 @@ TEST(ISensor, CalibrateEncoderElecAngleEstimator) {
   auto encoder = std::make_shared<::dummyEncoder>();
   auto param = std::make_shared<Parameter>();
   auto paramReqValidator = std::make_shared<MockParamReqValidator>();
+  auto logger = std::make_shared<testing::mock::MockLogger>();
 
-  EncoderElecAngleEstimator estimator(encoder, param, paramReqValidator);
+  EncoderElecAngleEstimator estimator(encoder, param, logger,
+                                      paramReqValidator);
 
   param->add(Property{4, ParamId::MotorCtl_MotorDriver_PolePair});
   ASSERT_TRUE(param->has("MotorCtl_MotorDriver_PolePair"));
@@ -65,8 +67,10 @@ TEST(ISensor, CalibrateEncoderElecAngleEstimatorWithPersist) {
   auto encoder = std::make_shared<::dummyEncoder>();
   auto param = std::make_shared<Parameter>();
   auto paramReqValidator = std::make_shared<MockParamReqValidator>();
+  auto logger = std::make_shared<testing::mock::MockLogger>();
 
-  EncoderElecAngleEstimator estimator(encoder, param, paramReqValidator);
+  EncoderElecAngleEstimator estimator(encoder, param, logger,
+                                      paramReqValidator);
 
   param->add(Property{4, ParamId::MotorCtl_MotorDriver_PolePair});
   param->add(Property{0.0f, ParamId::MotorCtl_MotorDriver_PersistRawElecAngle});
@@ -94,8 +98,10 @@ TEST(ISensor, CalibratedEncoderElecAngleEstimator) {
   auto encoder = std::make_shared<::dummyEncoder>();
   auto param = std::make_shared<Parameter>();
   auto paramReqValidator = std::make_shared<MockParamReqValidator>();
+  auto logger = std::make_shared<testing::mock::MockLogger>();
 
-  EncoderElecAngleEstimator estimator(encoder, param, paramReqValidator);
+  EncoderElecAngleEstimator estimator(encoder, param, logger,
+                                      paramReqValidator);
 
   param->add(Property{4, ParamId::MotorCtl_MotorDriver_PolePair});
   param->add(Property{0.0f, ParamId::MotorCtl_Calibrate_CaliElecAngleOffset});
@@ -116,8 +122,10 @@ TEST(ISensor, CalibratedEncoderElecAngleEstimatorWithPersist) {
   auto encoder = std::make_shared<::dummyEncoder>();
   auto param = std::make_shared<Parameter>();
   auto paramReqValidator = std::make_shared<MockParamReqValidator>();
+  auto logger = std::make_shared<testing::mock::MockLogger>();
 
-  EncoderElecAngleEstimator estimator(encoder, param, paramReqValidator);
+  EncoderElecAngleEstimator estimator(encoder, param, logger,
+                                      paramReqValidator);
 
   param->add(Property{4, ParamId::MotorCtl_MotorDriver_PolePair});
   param->add(Property{10.0f, ParamId::MotorCtl_Calibrate_CaliElecAngleOffset});
@@ -145,8 +153,10 @@ TEST(ISensor, EncoderElecAngleEstimatorRecoveryAfterPowerOn) {
   auto encoder = std::make_shared<::dummyEncoder>();
   auto param = std::make_shared<Parameter>();
   auto paramReqValidator = std::make_shared<MockParamReqValidator>();
+  auto logger = std::make_shared<testing::mock::MockLogger>();
 
-  EncoderElecAngleEstimator estimator(encoder, param, paramReqValidator);
+  EncoderElecAngleEstimator estimator(encoder, param, logger,
+                                      paramReqValidator);
 
   param->add(Property{4, ParamId::MotorCtl_MotorDriver_PolePair});
   param->add(Property{0.0f, ParamId::MotorCtl_Calibrate_CaliElecAngleOffset});
