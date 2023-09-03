@@ -42,21 +42,29 @@ static struct adc_instance adc_inst = {
     .adc_raw = {0},
 };
 
-namespace coriander {
-namespace motorctl {
-namespace zephyr {
-void PhaseCurrentEstimator::enable() {}
-void PhaseCurrentEstimator::disable() {}
-bool PhaseCurrentEstimator::enabled() {
-  constexpr const adc_dt_spec *adc_channels = &adc_inst.adc_channels[0];
-  bool enabled = true;
-  for (size_t i = 0U; i < 3; i++) {
-    enabled &= adc_is_ready_dt(&adc_channels[i]);
+static void adc_init(adc_instance *inst) {
+  static bool init = false;
+  const adc_dt_spec *adc_channels = &inst->adc_channels[0];
+  int err;
+  if (init) {
+    return;
   }
-  return enabled;
+  init = true;
+
+  for (int i = 0; i < 3; i++) {
+    if (!adc_is_ready_dt(&adc_channels[i])) {
+      LOG_ERR("ADC controller device %s not ready\n",
+              adc_channels[i].dev->name);
+      return;
+    }
+    err = adc_channel_setup_dt(&adc_channels[i]);
+    if (err < 0) {
+      LOG_ERR("Could not setup channel #%d (%d)\n", i, err);
+      return;
+    }
+  }
 }
-void PhaseCurrentEstimator::sync() {
-  static bool adc_configured = false;
+static void adc_sync(adc_instance *inst) {
   static bool adc_fatal_error = false;
   constexpr const adc_dt_spec *adc_channels = &adc_inst.adc_channels[0];
   constexpr int32_t *adc_raw = &adc_inst.adc_raw[0];
@@ -70,25 +78,6 @@ void PhaseCurrentEstimator::sync() {
 
   if (adc_fatal_error) {
     return;
-  }
-
-  if (!adc_configured) {
-    for (size_t i = 0U; i < 3; i++) {
-      if (!adc_is_ready_dt(&adc_channels[i])) {
-        LOG_ERR("ADC controller device %s not ready\n",
-                adc_channels[i].dev->name);
-        adc_fatal_error = true;
-        return;
-      }
-
-      int err = adc_channel_setup_dt(&adc_channels[i]);
-      if (err < 0) {
-        LOG_ERR("Could not setup channel #%d (%d)\n", i, err);
-        adc_fatal_error = true;
-        return;
-      }
-    }
-    adc_configured = true;
   }
 
   for (size_t i = 0U; i < 3; i++) {
@@ -110,7 +99,23 @@ void PhaseCurrentEstimator::sync() {
     }
     adc_raw[i] = val;
   }
+  LOG_INF("raw message--Iu: %d, Iv: %d, Iw: %d\n", adc_raw[0], adc_raw[1], adc_raw[2]);
 }
+
+namespace coriander {
+namespace motorctl {
+namespace zephyr {
+void PhaseCurrentEstimator::enable() { adc_init(&adc_inst); }
+void PhaseCurrentEstimator::disable() {}
+bool PhaseCurrentEstimator::enabled() {
+  constexpr const adc_dt_spec *adc_channels = &adc_inst.adc_channels[0];
+  bool enabled = true;
+  for (size_t i = 0U; i < 3; i++) {
+    enabled &= adc_is_ready_dt(&adc_channels[i]);
+  }
+  return enabled;
+}
+void PhaseCurrentEstimator::sync() { adc_sync(&adc_inst); }
 
 void PhaseCurrentEstimator::getPhaseCurrent(float *alpha, float *beta) {
   constexpr float offset = PHASE_CURRENT_OFFSET;
