@@ -8,7 +8,7 @@
 	compatible = "st,stm32f4discovery";
 
 	zephyr,user {
-		io-channels = <&adc1 8>, <&adc1 6>, <&adc1 3>;
+		io-channels = <&adc1 8>, <&adc2 6>, <&adc3 3>;
 		io-channel-names = "motor_iu", "motor_iv", "motor_iw";
 	};
 
@@ -216,10 +216,8 @@
 	status = "okay";
 	#address-cells = <1>;
 	#size-cells = <0>;
-
 	st,adc-prescaler = <8>;
-
-	pinctrl-0 = <&adc1_in8_pb0 &adc1_in6_pa6 &adc1_in3_pa3>;
+	pinctrl-0 = <&adc1_in8_pb0>;
 	pinctrl-names = "default";
 	channel@8 {
 		reg = <8>;
@@ -228,6 +226,15 @@
 		zephyr,acquisition-time = <ADC_ACQ_TIME(ADC_ACQ_TIME_TICKS, 56)>;
 		zephyr,resolution = <8>;
 	};
+};
+
+&adc2 {
+	status = "okay";
+	#address-cells = <1>;
+	#size-cells = <0>;
+	st,adc-prescaler = <8>;
+	pinctrl-0 = <&adc2_in6_pa6>;
+	pinctrl-names = "default";
 	channel@6 {
 		reg = <6>;
 		zephyr,gain = "ADC_GAIN_1";
@@ -235,6 +242,16 @@
 		zephyr,acquisition-time = <ADC_ACQ_TIME(ADC_ACQ_TIME_TICKS, 56)>;
 		zephyr,resolution = <8>;
 	};
+
+};
+
+&adc3 {
+	status = "okay";
+	#address-cells = <1>;
+	#size-cells = <0>;
+	st,adc-prescaler = <8>;
+	pinctrl-0 = <&adc3_in3_pa3>;
+	pinctrl-names = "default";
 	channel@3 {
 		reg = <3>;
 		zephyr,gain = "ADC_GAIN_1";
