@@ -43,7 +43,7 @@ static struct adc_instance adc_inst = {
     .adc_raw = {0},
 };
 
-static ADC_TypeDef *adc_from_spec(const adc_dt_spec *spec) {
+static inline ADC_TypeDef *adc_from_spec(const adc_dt_spec *spec) {
   // NOTE(savent): based on adc_stm32.c the first four bytes of dev->config is
   // device base addr
   uint32_t base_addr = *(uint32_t *)(spec->dev->config);
@@ -60,7 +60,7 @@ static ADC_TypeDef *adc_from_spec(const adc_dt_spec *spec) {
   return NULL;
 }
 
-static uint32_t channel_from_idx(unsigned idx) {
+static inline uint32_t channel_from_idx(unsigned idx) {
   constexpr const uint32_t channels[] = {
       LL_ADC_CHANNEL_0,  LL_ADC_CHANNEL_1,  LL_ADC_CHANNEL_2,
       LL_ADC_CHANNEL_3,  LL_ADC_CHANNEL_4,  LL_ADC_CHANNEL_5,
@@ -131,7 +131,26 @@ static void adc_init(adc_instance *inst) {
   }
 }
 
-static void adc_sync(adc_instance *inst) {
+static inline void get_current_alpha_beta(adc_instance *inst, float *alpha,
+                                          float *beta) {
+  constexpr int32_t offset = PHASE_CURRENT_OFFSET;
+  constexpr float factor = (1000.0f / PHASE_CURRENT_SCALE);
+  int32_t *adc_raw = &inst->adc_raw[0];
+  float Ia, Ib, Ic;
+
+  // based on Ia + Ib + Ic = 0
+  Ia = (adc_raw[0] - offset) * factor;
+  Ib = (adc_raw[1] - offset) * factor;
+  Ic = (adc_raw[2] - offset) * factor;
+
+  // assert abs(Ia + Ib + Ic) < 0.01A
+  assert_param(Ia + Ib + Ic < 0.01f && Ia + Ib + Ic > -0.01f);
+
+  *alpha = Ia - 0.5f * Ib - 0.5f * Ic;
+  *beta = 0.866025f * Ib - 0.866025f * Ic;
+}
+
+static inline void adc_sync(adc_instance *inst) {
   constexpr const adc_dt_spec *adc_channels = &adc_inst.adc_channels[0];
   constexpr int32_t *adc_raw = &adc_inst.adc_raw[0];
   for (int i = 0; i < 3; i++) {
@@ -141,8 +160,12 @@ static void adc_sync(adc_instance *inst) {
     val = LL_ADC_INJ_ReadConversionData12(adc, adc_rank);
     adc_raw[i] = static_cast<int32_t>((val * 3.3f / 4096) * 1000.0f);
   }
-  LOG_INF("raw message--Iu: %d, Iv: %d, Iw: %d\n", adc_raw[0], adc_raw[1],
-          adc_raw[2]);
+#if 0
+  LOG_INF("raw message--Iu: %d, Iv: %d, Iw: %d", adc_raw[0], adc_raw[1], adc_raw[2]);
+  float alpha, beta;
+  get_current_alpha_beta(inst, &alpha, &beta);
+  LOG_INF("alpha: %f, beta: %f", alpha, beta);
+#endif
 }
 
 namespace coriander {
@@ -161,18 +184,7 @@ bool PhaseCurrentEstimator::enabled() {
 void PhaseCurrentEstimator::sync() { adc_sync(&adc_inst); }
 
 void PhaseCurrentEstimator::getPhaseCurrent(float *alpha, float *beta) {
-  constexpr float offset = PHASE_CURRENT_OFFSET;
-  constexpr float factor = (1000.0f / PHASE_CURRENT_SCALE);
-  constexpr int32_t *adc_raw = &adc_inst.adc_raw[0];
-  float Ia, Ib, Ic;
-
-  // based on Ia + Ib + Ic = 0
-  Ia = (adc_raw[0] - offset) * factor;
-  Ib = (adc_raw[1] - offset) * factor;
-  Ic = (adc_raw[2] - offset) * factor;
-
-  *alpha = Ia - 0.5f * Ib - 0.5f * Ic;
-  *beta = 0.866025f * Ib - 0.866025f * Ic;
+  get_current_alpha_beta(&adc_inst, alpha, beta);
 }
 
 void PhaseCurrentEstimator::calibrate() {}
