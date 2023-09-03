@@ -35,6 +35,12 @@ struct BoardCtl {
     mBoardEvent->eventUnlock();
   }
 
+  void motorCalibrate() {
+    mBoardEvent->eventLock();
+    mBoardEvent->raiseEvent(IBoardEvent::Event::CalibrateStart);
+    mBoardEvent->eventUnlock();
+  }
+
   void parameterUpdate() {
     mBoardEvent->eventLock();
     mBoardEvent->raiseEvent(IBoardEvent::Event::ParameterUpdate);

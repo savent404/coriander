@@ -57,6 +57,15 @@ static int shell_disable_motor(const struct shell* shell, size_t argc,
   return 0;
 }
 
+static int shell_calibrate_motor(const struct shell* shell, size_t argc,
+                                 char** argv) {
+  if (!ctl) {
+    return -1;
+  }
+  ctl->motorCalibrate();
+  return 0;
+}
+
 static int shell_param_list(const struct shell* shell, size_t argc,
                             char** argv) {
   if (!ctl || !param) {
@@ -197,6 +206,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
     motor_cmd,
     SHELL_CMD_ARG(enable, NULL, "enable motor", shell_enable_motor, 1, 0),
     SHELL_CMD_ARG(disable, NULL, "disable motor", shell_disable_motor, 1, 0),
+    SHELL_CMD_ARG(calibrate, NULL, "calibrate motor", shell_calibrate_motor, 1, 0),
     SHELL_SUBCMD_SET_END /* Array terminated. */
 );
 
