@@ -16,8 +16,8 @@
 #include "coriander/motorctl/foc_motor_driver.h"
 #include "coriander/motorctl/imotorctl.h"
 #include "coriander/motorctl/iphase_current_estimator.h"
-#include "coriander/motorctl/pid.h"
 #include "coriander/motorctl/low_pass_filter.h"
+#include "coriander/motorctl/pid.h"
 #include "coriander/parameter_requirements.h"
 
 namespace coriander {
@@ -45,7 +45,10 @@ struct MotorCtlCurrent : public IMotorCtl, public IParamReq {
         mTargetIq{0.0f},
         mPidD{0.0f, 0.0f, 0.0f, 0.0f, 0.0f},
         mPidQ{0.0f, 0.0f, 0.0f, 0.0f, 0.0f},
-        mIdLpf(0.0f), mIqLpf(0.0f) {}
+        mIdLpf(0.0f),
+        mIqLpf(0.0f) {
+    paramReqValidator->addParamReq(this);
+  }
   virtual void start();
   virtual void stop();
   virtual void loop();
@@ -64,6 +67,10 @@ struct MotorCtlCurrent : public IMotorCtl, public IParamReq {
         {"MotorCtl_CurrCtl_PidOutputRamp", Type::Float},
         {"MotorCtl_CurrCtl_PidLimit", Type::Float},
         {"MotorCtl_CurrCtl_Freq", Type::Int32},
+        {"MotorCtl_CurrCtl_Lpf_TimeConstant", Type::Float},
+        {"MotorCtl_General_TargetCurrentD_RT", Type::Float},
+        {"MotorCtl_General_TargetCurrentQ_RT", Type::Float},
+        PARAMETER_REQ_EOF,
     };
     return items;
   }
