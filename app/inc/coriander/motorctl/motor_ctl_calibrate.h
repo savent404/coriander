@@ -11,11 +11,13 @@
 
 #include <memory>
 
+#include "coriander/base/ilogger.h"
 #include "coriander/iboard_event.h"
 #include "coriander/motorctl/ibldc_driver.h"
 #include "coriander/motorctl/ielec_angle_estimator.h"
 #include "coriander/motorctl/imech_angle_estimator.h"
 #include "coriander/motorctl/imotorctl.h"
+#include "coriander/motorctl/iphase_current_estimator.h"
 #include "coriander/motorctl/ivelocity_estimator.h"
 #include "coriander/motorctl/sensor_handler.h"
 #include "coriander/os/isystick.h"
@@ -30,13 +32,21 @@ namespace motorctl {
  *
  */
 struct MotorCtlCalibrate : public IMotorCtl, public IParamReq {
+  enum class State {
+    Calibrate_Idle,
+    Calibrate_PhaseCurrent,
+    Calibrate_ElecAngle,
+  };
+
   using ISystick = os::ISystick;
-  MotorCtlCalibrate(std::shared_ptr<IBldcDriver> motor,
-                    std::shared_ptr<IElecAngleEstimator> elecAngleEstimator,
-                    std::shared_ptr<Parameter> param,
-                    std::shared_ptr<IBoardEvent> boardEvent,
-                    std::shared_ptr<ISystick> systick,
-                    std::shared_ptr<IParamReqValidator> paramReqValidator);
+  using ILogger = base::ILogger;
+  MotorCtlCalibrate(
+      std::shared_ptr<IBldcDriver> motor,
+      std::shared_ptr<IPhaseCurrentEstimator> phaseCurrentEstimator,
+      std::shared_ptr<IElecAngleEstimator> elecAngleEstimator,
+      std::shared_ptr<Parameter> param, std::shared_ptr<IBoardEvent> boardEvent,
+      std::shared_ptr<ISystick> systick, std::shared_ptr<ILogger> logger,
+      std::shared_ptr<IParamReqValidator> paramReqValidator);
   virtual void start();
   virtual void stop();
   virtual void loop();
@@ -55,11 +65,18 @@ struct MotorCtlCalibrate : public IMotorCtl, public IParamReq {
   }
 
  private:
+  void seekCalibrateItem();
+  void enterState(State state);
+  void exitState();
+
+ private:
   std::shared_ptr<IBldcDriver> mMotor;
+  std::shared_ptr<IPhaseCurrentEstimator> mPhaseCurrentEstimator;
   std::shared_ptr<IElecAngleEstimator> mElecAngleEstimator;
   std::shared_ptr<Parameter> mParam;
   std::shared_ptr<IBoardEvent> mBoardEvent;
   std::shared_ptr<ISystick> mSystick;
+  std::shared_ptr<ILogger> mLogger;
 
   // parameters
   float mCalibrateVoltage;
@@ -69,6 +86,7 @@ struct MotorCtlCalibrate : public IMotorCtl, public IParamReq {
   // runtime variables
   SensorHandler mSensorHandler;
   uint32_t startTimestamp;
+  State mState = State::Calibrate_Idle;
 };
 }  // namespace motorctl
 }  // namespace coriander
