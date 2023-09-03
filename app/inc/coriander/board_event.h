@@ -36,9 +36,24 @@ struct BoardEvent : public IBoardEvent {
         mThreadInfo(std::move(thread)) {}
 
   void raiseEvent(Event event) noexcept override {
+    constexpr const char *msg[] = {"BoardInited",
+                                   "MotorStart",
+                                   "MotorStop",
+                                   "ParameterUpdate",
+                                   "Crap",
+                                   "CrapHandled",
+                                   "CrapUnhandle",
+                                   "CalibrateStart",
+                                   "CalibrateDone",
+                                   "FirmwareStartUpdate",
+                                   "FirmwareUpdateDone"};
+    static_assert(
+        sizeof(msg) / sizeof(msg[0]) == static_cast<int>(Event::MAX_EVENT),
+        "Event message not match");
     base::LoggerStream os(mLogger);
 
-    os << "Raise event: " << static_cast<int>(event) << std::endl;
+    os << "Raise event: " << static_cast<int>(event) << " "
+       << msg[static_cast<int>(event)] << std::endl;
 
     for (auto &cb : mEventCallbacks[static_cast<int>(event)]) {
       cb(event);
@@ -46,7 +61,7 @@ struct BoardEvent : public IBoardEvent {
   }
 
   void registerEventCallback(Event event,
-                                     EventCallback callback) noexcept override {
+                             EventCallback callback) noexcept override {
     mEventCallbacks[static_cast<int>(event)].push_front(callback);
   }
 
