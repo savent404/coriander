@@ -131,7 +131,7 @@ static void adc_init(adc_instance *inst) {
 static inline void current_convert(adc_instance *inst, float *Iu, float *Iv,
                                    float *Iw) {
   constexpr int32_t offset = PHASE_CURRENT_OFFSET;
-  constexpr float factor = (1000.0f / PHASE_CURRENT_SCALE);
+  constexpr float factor = (1.0f / PHASE_CURRENT_SCALE);
   int32_t *adc_raw = &inst->adc_raw[0];
   float Ia, Ib, Ic;
 
@@ -193,17 +193,21 @@ void PhaseCurrentEstimator::getPhaseCurrent(float *alpha, float *beta) {
 }
 
 void PhaseCurrentEstimator::calibrate() {
-  float c[3];
-  current_convert(&adc_inst, &c[0], &c[1], &c[2]);
+  float r[3], d[3];
+  current_convert(&adc_inst, &r[0], &r[1], &r[2]);
+
+  // assume the current is stable as zero, c[i] is the offset
   for (int i = 0; i < 3; i++) {
-    c[i] -= offset[i];
+    d[i] = r[i] - offset[i];
   }
-  // assume the current is stable as zero
+
   for (int i = 0; i < 3; i++) {
-    offset[i] += c[i] * 0.1;  // use 10% of the current to calibrate, callibrate
+    offset[i] += d[i] * 0.1;  // use 10% of the current to calibrate, callibrate
                               // more than 10 times to get a stable offset
   }
-  LOG_INF("calibrate: %f, %f, %f", offset[0], offset[1], offset[2]);
+  LOG_INF("raw/diff/offset: %d/%f/%f %d/%f/%f %d/%f/%f", adc_inst.adc_raw[0],
+          d[0], offset[0], adc_inst.adc_raw[1], d[1], offset[1],
+          adc_inst.adc_raw[2], d[2], offset[2]);
   calibrateFlag = true;
 }
 
