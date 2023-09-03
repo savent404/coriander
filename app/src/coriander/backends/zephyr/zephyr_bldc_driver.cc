@@ -45,8 +45,7 @@ struct bldc_data {
 };
 
 static bldc_data bldc_instance = {
-    .phase =
-        {
+    .phase = {
             PWM_DT_SPEC_GET_BY_IDX_OR(SERVO_DEVICE, 0, NULL),  // phase U
             PWM_DT_SPEC_GET_BY_IDX_OR(SERVO_DEVICE, 1, NULL),  // phase V
             PWM_DT_SPEC_GET_BY_IDX_OR(SERVO_DEVICE, 2, NULL),  // phase W
