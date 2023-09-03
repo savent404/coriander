@@ -34,9 +34,9 @@ static bldc_data bldc_instance = {
             PWM_DT_SPEC_GET_BY_IDX_OR(SERVO_DEVICE, 0, NULL),  // phase U
             PWM_DT_SPEC_GET_BY_IDX_OR(SERVO_DEVICE, 1, NULL),  // phase V
             PWM_DT_SPEC_GET_BY_IDX_OR(SERVO_DEVICE, 2, NULL),  // phase W
-            // PWM_DT_SPEC_GET_BY_IDX_OR(SERVO_DEVICE, 3, NULL),  // phase U-N
-            // PWM_DT_SPEC_GET_BY_IDX_OR(SERVO_DEVICE, 4, NULL),  // phase V-N
-            // PWM_DT_SPEC_GET_BY_IDX_OR(SERVO_DEVICE, 5, NULL),  // phase W-N
+            PWM_DT_SPEC_GET_BY_IDX_OR(SERVO_DEVICE, 3, NULL),  // phase U-N
+            PWM_DT_SPEC_GET_BY_IDX_OR(SERVO_DEVICE, 4, NULL),  // phase V-N
+            PWM_DT_SPEC_GET_BY_IDX_OR(SERVO_DEVICE, 5, NULL),  // phase W-N
         },
     .enable_pin = GPIO_DT_SPEC_GET(SERVO_DEVICE, enable_pin),
     .break_pin = GPIO_DT_SPEC_GET_OR(SERVO_DEVICE, break_pins, {0}),
