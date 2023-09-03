@@ -23,6 +23,10 @@ LOG_MODULE_REGISTER(phase_current_estimator);
                      DT_IO_CHANNELS_INPUT_BY_NAME(node_id, name))
 #endif
 
+#define PHASE_CURRENT_NODE DT_NODELABEL(phase_current)
+#define PHASE_CURRENT_OFFSET DT_PROP(PHASE_CURRENT_NODE, voltage_offset)
+#define PHASE_CURRENT_SCALE DT_PROP(PHASE_CURRENT_NODE, voltage_scale)
+
 static const struct adc_dt_spec adc_channels[] = {
     ADC_DT_SPEC_GET_BY_NAME(DT_PATH(zephyr_user), motor_iu),
     ADC_DT_SPEC_GET_BY_NAME(DT_PATH(zephyr_user), motor_iv),
@@ -101,13 +105,14 @@ void PhaseCurrentEstimator::sync() {
 }
 
 void PhaseCurrentEstimator::getPhaseCurrent(float *alpha, float *beta) {
+  constexpr float offset = PHASE_CURRENT_OFFSET;
+  constexpr float factor = (1000.0f / PHASE_CURRENT_SCALE);
   float Ia, Ib, Ic;
 
-  // TODO(savent): need to know current motor sector to recovery Ix
   // based on Ia + Ib + Ic = 0
-  Ia = (adc_raw[0] - 1650) / 8.8f;
-  Ib = (adc_raw[1] - 1650) / 8.8f;
-  Ic = (adc_raw[2] - 1650) / 8.8f;
+  Ia = (adc_raw[0] - offset) * factor;
+  Ib = (adc_raw[1] - offset) * factor;
+  Ic = (adc_raw[2] - offset) * factor;
 
   *alpha = Ia - 0.5f * Ib - 0.5f * Ic;
   *beta = 0.866025f * Ib - 0.866025f * Ic;

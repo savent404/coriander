@@ -67,6 +67,15 @@
 		max_pulse = <PWM_USEC(490)>;
 		min_pulse = <PWM_USEC(10)>;
 	};
+
+	phase_current: phase_current {
+		compatible = "coriander,phase_current";
+		status = "okay";
+		voltage-offset = <1650>;
+		voltage-scale = <8800>;
+	};
+
+
 };
 
 // spi flash
