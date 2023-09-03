@@ -1,0 +1,15 @@
+compatible: "coriander,phase_current"
+description: |
+  using adc io-channel-names: "motor_iu", "motor_iv", "motor_iw" to detect phase current
+  actual Current(mA) = (adc(mV) - voltage-offset) / (scale / 1000)
+
+include: base.yaml
+
+properties:
+  voltage-offset:
+    type: int
+    required: true
+
+  voltage-scale:
+    type: int
+    required: true

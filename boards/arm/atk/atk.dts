@@ -72,6 +72,13 @@
 		min_pulse = <PWM_USEC(1)>;
 	};
 
+	phase_current: phase_current {
+		compatible = "coriander,phase_current";
+		status = "okay";
+		voltage-offset = <1250>;
+		voltage-scale = <120>;
+	};
+
 	mc-parameters {
 		compatible = "param,mc";
 		status = "okay";
