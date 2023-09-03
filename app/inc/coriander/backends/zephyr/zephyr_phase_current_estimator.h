@@ -24,6 +24,11 @@ struct PhaseCurrentEstimator : public IPhaseCurrentEstimator {
   virtual void getPhaseCurrent(float *alpha, float *beta);
   virtual void calibrate();
   virtual bool needCalibrate();
+
+ private:
+  bool calibrateFlag = false;
+  float current[3] = {0.0f, 0.0f, 0.0f};
+  float offset[3] = {0.0f, 0.0f, 0.0f};
 };
 }  // namespace zephyr
 }  // namespace motorctl
