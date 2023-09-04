@@ -17,6 +17,7 @@
 #include "coriander/motorctl/ibldc_driver.h"
 #include "coriander/motorctl/ielec_angle_estimator.h"
 #include "coriander/motorctl/imotorctl.h"
+#include "coriander/motorctl/iphase_current_estimator.h"
 #include "coriander/motorctl/motor_ctl_calibrate.h"
 #include "coriander/os/isystick.h"
 #include "coriander/parameters.h"
@@ -54,6 +55,8 @@ static auto createInjector() {
       bind<ILogger>().to<MockLogger>(),
       bind<IBoardEvent>().to<MockBoardEvent>(),
       bind<IMotorCtl>().to<MotorCtlCalibrate>(),
+      bind<coriander::motorctl::IPhaseCurrentEstimator>()
+          .to<testing::mock::MockPhaseCurrentEstimator>(),
       bind<IParamReqValidator>().to<testing::mock::MockParamReqValidator>());
 }
 
