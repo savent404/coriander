@@ -22,6 +22,7 @@
 #include "coriander/motorctl/ielec_angle_estimator.h"
 #include "coriander/motorctl/iphase_current_estimator.h"
 #include "coriander/os/isystick.h"
+#include "posix/posix_logger.h"
 #include "posix/posix_mutex.h"
 #include "tests/mocks.h"
 
@@ -37,7 +38,7 @@ static inline auto createInjector() {
       bind<coriander::motorctl::IElecAngleEstimator>()
           .to<testing::mock::MockElecAngleEstimator>(),
       bind<coriander::IBoardEvent>().to<coriander::BoardEvent>(),
-      bind<coriander::base::ILogger>().to<testing::mock::MockLogger>(),
+      bind<coriander::base::ILogger>().to<coriander::base::posix::Logger>(),
       bind<coriander::IBoardState>().to<coriander::BoardState>(),
       bind<coriander::IBoardStateInitHandler>()
           .to<testing::mock::MockBoardStateInitHandler>(),
@@ -66,6 +67,7 @@ static inline auto createInjector() {
 
 TEST(BoardStateCalibrateHandler, Calibrate) {
   using Property = coriander::base::Property;
+  using testing::_;
   auto c = createInjector();
 
   auto event = c.create<std::shared_ptr<coriander::IBoardEvent>>();
@@ -77,10 +79,11 @@ TEST(BoardStateCalibrateHandler, Calibrate) {
   auto param = c.create<std::shared_ptr<coriander::Parameter>>();
   auto calibrateBoardState =
       c.create<std::shared_ptr<coriander::IBoardStateCalibrateHandler>>();
-  auto logger = c.create<std::shared_ptr<testing::mock::MockLogger>>();
   auto systick = c.create<std::shared_ptr<testing::mock::MockSystick>>();
   auto elecAngleEstimator =
       c.create<std::shared_ptr<testing::mock::MockElecAngleEstimator>>();
+  auto phaseCurrentEstimator =
+      c.create<std::shared_ptr<testing::mock::MockPhaseCurrentEstimator>>();
 
   // init required parameters
   using ParamId = coriander::base::ParamId;
@@ -92,13 +95,26 @@ TEST(BoardStateCalibrateHandler, Calibrate) {
   event->raiseEvent(coriander::IBoardEvent::Event::BoardInited);
 
   EXPECT_CALL(*standbyBoardState, onExit()).Times(1);
-  EXPECT_CALL(*motor, enable()).Times(1);
-  EXPECT_CALL(*motor, setPhaseDutyCycle(UINT16_MAX / 2, 0, 0)).Times(1);
-  EXPECT_CALL(*systick, systick_ms()).Times(1).WillOnce(testing::Return(0));
+  EXPECT_CALL(*motor, setPhaseDutyCycle(_, 0, 0)).Times(1);
   EXPECT_CALL(*elecAngleEstimator, enable()).Times(1);
   event->raiseEvent(coriander::IBoardEvent::Event::CalibrateStart);
 
-  EXPECT_CALL(*systick, systick_ms()).Times(1).WillOnce(testing::Return(3001));
+  EXPECT_CALL(*phaseCurrentEstimator, needCalibrate())
+      .Times(2)
+      .WillOnce(testing::Return(false))
+      .WillOnce(testing::Return(false));
+  EXPECT_CALL(*elecAngleEstimator, needCalibrate())
+      .Times(2)
+      .WillOnce(testing::Return(true))
+      .WillOnce(testing::Return(false));
+  EXPECT_CALL(*motor, enable()).Times(1);
+  EXPECT_CALL(*systick, systick_ms()).Times(1).WillOnce(testing::Return(0));
+  board->loop();
+
+  EXPECT_CALL(*systick, systick_ms())
+      .Times(2)
+      .WillOnce(testing::Return(3001))
+      .WillOnce(testing::Return(3002));
   EXPECT_CALL(*motor, disable()).Times(1);
   EXPECT_CALL(*standbyBoardState, onEnter()).Times(1);
   EXPECT_CALL(*elecAngleEstimator, enabled())

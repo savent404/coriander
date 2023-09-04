@@ -60,6 +60,7 @@ static auto createInjector() {
 
 TEST(BoardStateRun, basic) {
   using ParamId = coriander::base::ParamId;
+  using ID = ParamId;
   using Property = coriander::base::Property;
   using AppStatus = coriander::application::IAppStatus::Status;
   auto c = coriander::coriander_create_injector(createInjector());
@@ -92,6 +93,16 @@ TEST(BoardStateRun, basic) {
   param->add(Property{1e-3f, ParamId::MotorCtl_CurrCtl_Lpf_TimeConstant});
   param->add(Property{10e-3f, ParamId::MotorCtl_SpeedCtl_Lpf_TimeConstant});
   param->add(Property{100e-3f, ParamId::MotorCtl_PosCtl_Lpf_TimeConstant});
+  param->add(Property{0.01f, ID::MotorCtl_CurrCtl_PidP});
+  param->add(Property{0.0f, ID::MotorCtl_CurrCtl_PidI});
+  param->add(Property{0.0f, ID::MotorCtl_CurrCtl_PidD});
+  param->add(Property(100.0f, ID::MotorCtl_CurrCtl_PidOutputRamp));
+  param->add(Property{2.5f, ID::MotorCtl_CurrCtl_PidLimit});
+  param->add(Property{4000, ID::MotorCtl_CurrCtl_Freq});
+  param->add(Property{0.0f, ID::MotorCtl_General_TargetCurrentD_RT});
+  param->add(Property{0.0f, ID::MotorCtl_General_TargetCurrentQ_RT});
+  param->add(Property{
+      1000.0f, ID::MotorCtl_CurrCtl_Lpf_TimeConstant});  // 1000us, LPF: 1MHz;
 
   auto encoder = c.create<std::shared_ptr<testing::mock::MockEncoder>>();
 

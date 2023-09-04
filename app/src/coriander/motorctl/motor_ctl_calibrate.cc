@@ -31,30 +31,23 @@ MotorCtlCalibrate::MotorCtlCalibrate(
   paramReqValidator->addParamReq(this);
 }
 
-void MotorCtlCalibrate::start() {
-  mSensorHandler.enable();
+void MotorCtlCalibrate::start() { mSensorHandler.enable(); }
 
-  mCalibrateVoltage =
-      mParam->getValue<float>(ParamId::MotorCtl_Calibrate_CaliVoltage);
-  mMotorSupplyVoltage =
-      mParam->getValue<float>(ParamId::MotorCtl_MotorDriver_SupplyVoltage);
-
-  seekCalibrateItem();
-}
-
-void MotorCtlCalibrate::stop() {
-  mMotor->disable();
-  mSensorHandler.disable();
-}
+void MotorCtlCalibrate::stop() { mSensorHandler.disable(); }
 
 void MotorCtlCalibrate::loop() {
-  uint32_t current = mSystick->systick_ms();
-  bool expired = current > startTimestamp + mCalibrateDuration;
+  uint32_t current;
+  bool expired = false;
 
-  mSensorHandler.sync();
+  if (mState > State::Calibrate_Done) {
+    current = mSystick->systick_ms();
+    expired = current > startTimestamp + mCalibrateDuration;
+    mSensorHandler.sync();
+  }
 
   switch (mState) {
     case State::Calibrate_Idle:
+    case State::Calibrate_Done:
       break;
     case State::Calibrate_PhaseCurrent:
       mPhaseCurrentEstimator->calibrate();
@@ -64,7 +57,7 @@ void MotorCtlCalibrate::loop() {
       break;
   }
 
-  if (expired) {
+  if (expired || mState == State::Calibrate_Idle) {
     exitState();
     seekCalibrateItem();
   }
@@ -78,6 +71,9 @@ void MotorCtlCalibrate::enterState(State state) {
   switch (state) {
     case State::Calibrate_Idle:
       break;
+    case State::Calibrate_Done:
+      mBoardEvent->raiseEvent(IBoardEvent::Event::CalibrateDone);
+      break;
     case State::Calibrate_PhaseCurrent:
       mCalibrateDuration = 256;  // fixed 256ms
       mMotor->enable();
@@ -85,10 +81,15 @@ void MotorCtlCalibrate::enterState(State state) {
       mLogger->log("Phase current calibration start");
       break;
     case State::Calibrate_ElecAngle: {
-      uint16_t dc = static_cast<uint16_t>(UINT16_MAX * mCalibrateVoltage /
-                                          mMotorSupplyVoltage);
+      uint16_t dc;
+      mCalibrateVoltage =
+          mParam->getValue<float>(ParamId::MotorCtl_Calibrate_CaliVoltage);
+      mMotorSupplyVoltage =
+          mParam->getValue<float>(ParamId::MotorCtl_MotorDriver_SupplyVoltage);
       mCalibrateDuration =
           mParam->getValue<int32_t>(ParamId::MotorCtl_Calibrate_CaliDuration);
+      dc = static_cast<uint16_t>(UINT16_MAX * mCalibrateVoltage /
+                                 mMotorSupplyVoltage);
       mMotor->enable();
       mMotor->setPhaseDutyCycle(dc, 0, 0);
       mLogger->log("Electrical angle calibration start");
@@ -102,7 +103,8 @@ void MotorCtlCalibrate::enterState(State state) {
 void MotorCtlCalibrate::exitState() {
   switch (mState) {
     case State::Calibrate_Idle:
-      break;
+    case State::Calibrate_Done:
+      return;  // never exit
     case State::Calibrate_PhaseCurrent:
       mMotor->disable();
       mLogger->log("Phase current calibration done");
@@ -121,7 +123,7 @@ void MotorCtlCalibrate::seekCalibrateItem() {
   } else if (mElecAngleEstimator->needCalibrate()) {
     enterState(State::Calibrate_ElecAngle);
   } else {
-    mBoardEvent->raiseEvent(IBoardEvent::Event::CalibrateDone);
+    enterState(State::Calibrate_Done);
   }
 }
 
