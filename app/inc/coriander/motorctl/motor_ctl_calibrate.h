@@ -34,6 +34,7 @@ namespace motorctl {
 struct MotorCtlCalibrate : public IMotorCtl, public IParamReq {
   enum class State {
     Calibrate_Idle,
+    Calibrate_Done,
     Calibrate_PhaseCurrent,
     Calibrate_ElecAngle,
   };

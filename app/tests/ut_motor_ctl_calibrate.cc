@@ -21,6 +21,7 @@
 #include "coriander/motorctl/motor_ctl_calibrate.h"
 #include "coriander/os/isystick.h"
 #include "coriander/parameters.h"
+#include "posix/posix_logger.h"
 #include "tests/mocks.h"
 
 namespace {
@@ -52,7 +53,7 @@ static auto createInjector() {
       bind<IElecAngleEstimator>().to<MockElecAngleEstimator>(),
       bind<ISystick>().to<MockSystick>(),
       bind<Parameter>().to<testing::mock::MockPersistentParameter>(),
-      bind<ILogger>().to<MockLogger>(),
+      bind<ILogger>().to<coriander::base::posix::Logger>(),
       bind<IBoardEvent>().to<MockBoardEvent>(),
       bind<IMotorCtl>().to<MotorCtlCalibrate>(),
       bind<coriander::motorctl::IPhaseCurrentEstimator>()
@@ -80,33 +81,34 @@ TEST(MotorCtl, calibrate) {
   EXPECT_CALL(*motor, enable()).Times(1);
   EXPECT_CALL(*elecAngle, enable()).Times(1);
   EXPECT_CALL(*elecAngle, enabled()).Times(1).WillOnce(Return(false));
-  EXPECT_CALL(*systick, systick_ms()).Times(1).WillOnce(Return(0));
   EXPECT_CALL(
       *motor,
       setPhaseDutyCycle(static_cast<uint16_t>(UINT16_MAX * 5.0f / 16.0f), 0, 0))
       .Times(1);
   mc->start();
 
-  EXPECT_CALL(*elecAngle, sync()).Times(5);
-  EXPECT_CALL(*elecAngle, calibrate()).Times(5);
-  EXPECT_CALL(*systick, systick_ms())
-      .Times(5)
-      .WillOnce(Return(600))
-      .WillOnce(Return(1200))
-      .WillOnce(Return(1800))
-      .WillOnce(Return(2400))
-      .WillOnce(Return(3000));
-  for (int i = 0; i < 5; i++) {
-    mc->loop();
-  }
+  EXPECT_CALL(*elecAngle, needCalibrate())
+      .Times(2)
+      .WillOnce(Return(true))
+      .WillOnce(Return(false));
 
+  EXPECT_CALL(*elecAngle, sync()).Times(4);
+  EXPECT_CALL(*elecAngle, calibrate()).Times(4);  // 3s
+  EXPECT_CALL(*systick, systick_ms())
+      .Times(6)
+      .WillOnce(Return(0))
+      .WillOnce(Return(1000))
+      .WillOnce(Return(2000))
+      .WillOnce(Return(3000))
+      .WillOnce(Return(4000))
+      .WillOnce(Return(5000));
   // trigger CalibrateDone event
-  EXPECT_CALL(*systick, systick_ms()).Times(1).WillOnce(Return(3001));
   EXPECT_CALL(*boardEvent, raiseEvent(IBoardEvent::Event::CalibrateDone))
       .Times(1);
-  EXPECT_CALL(*elecAngle, sync()).Times(1);
-  EXPECT_CALL(*elecAngle, calibrate()).Times(1);
-  mc->loop();
+
+  for (int i = 0; i < 9; i++) {
+    mc->loop();
+  }
 
   // mc disable
   EXPECT_CALL(*elecAngle, enabled()).Times(1).WillOnce(Return(true));
