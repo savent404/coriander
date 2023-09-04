@@ -34,19 +34,16 @@ struct adc_instance {
 };
 
 static struct adc_instance adc_inst = {
-    .adc_channels =
-        {
-            ADC_DT_SPEC_GET_BY_NAME(DT_PATH(zephyr_user), motor_iu),
-            ADC_DT_SPEC_GET_BY_NAME(DT_PATH(zephyr_user), motor_iv),
-            ADC_DT_SPEC_GET_BY_NAME(DT_PATH(zephyr_user), motor_iw),
-        },
+    .adc_channels = {ADC_DT_SPEC_GET_BY_NAME(DT_PATH(zephyr_user), motor_iu),
+                     ADC_DT_SPEC_GET_BY_NAME(DT_PATH(zephyr_user), motor_iv),
+                     ADC_DT_SPEC_GET_BY_NAME(DT_PATH(zephyr_user), motor_iw)},
     .adc_raw = {0},
 };
 
 static inline ADC_TypeDef *adc_from_spec(const adc_dt_spec *spec) {
   // NOTE(savent): based on adc_stm32.c the first four bytes of dev->config is
   // device base addr
-  uint32_t base_addr = *(uint32_t *)(spec->dev->config);
+  uint32_t base_addr = *reinterpret_cast<const uint32_t *>(spec->dev->config);
   switch (base_addr) {
     case ADC1_BASE:
       return ADC1;
@@ -160,12 +157,6 @@ static inline void adc_sync(adc_instance *inst) {
     val = LL_ADC_INJ_ReadConversionData12(adc, adc_rank);
     adc_raw[i] = static_cast<int32_t>((val * 3.3f / 4096) * 1000.0f);
   }
-#if 0
-  LOG_INF("raw message--Iu: %d, Iv: %d, Iw: %d", adc_raw[0], adc_raw[1], adc_raw[2]);
-  float alpha, beta;
-  get_current_alpha_beta(inst, &alpha, &beta);
-  LOG_INF("alpha: %f, beta: %f", alpha, beta);
-#endif
 }
 
 namespace coriander {
