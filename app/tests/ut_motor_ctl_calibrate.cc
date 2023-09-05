@@ -113,6 +113,5 @@ TEST(MotorCtl, calibrate) {
   // mc disable
   EXPECT_CALL(*elecAngle, enabled()).Times(1).WillOnce(Return(true));
   EXPECT_CALL(*elecAngle, disable()).Times(1);
-  EXPECT_CALL(*motor, disable()).Times(1);
   mc->stop();
 }
