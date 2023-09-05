@@ -6,5 +6,5 @@
 
 Coriander project is FOC motor control firmware.
 
-[Develop](README.dev.md) is for setup develop env and debug application
-[Release](README.rel.md) is for release firmware in manufactory. 
+- [Develop](README.dev.md) is for setup develop env and debug application
+- [Release](README.rel.md) is for release firmware in manufactory. 
