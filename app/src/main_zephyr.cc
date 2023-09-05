@@ -7,6 +7,7 @@
 #include <zephyr/drivers/sensor.h>
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
+#include <zephyr/sys/sem.h>
 
 #include <boost/di.hpp>
 
@@ -34,9 +35,18 @@
 
 LOG_MODULE_REGISTER(main);
 
+K_SEM_DEFINE(main_wakeup, 0, 1);
+static void main_tick_expired(struct k_timer* timer) {
+  k_sem_give(&main_wakeup);
+}
+K_TIMER_DEFINE(main_tick, main_tick_expired, NULL);
+
 namespace {
 
-static void loop_hook() { k_sleep(K_MSEC(1)); }
+static void loop_hook() {
+  // wait for main loop tick, max wait time is 1ms
+  k_sem_take(&main_wakeup, K_MSEC(1));
+}
 
 static auto zephyr_backends_bindings() {
   using ILogger = coriander::base::ILogger;
@@ -166,6 +176,9 @@ static void zephyr_backend_setup(T* injector) {
   auto diag = injector->template create<
       std::shared_ptr<coriander::application::Diagnosis>>();
   diag_regsiter->applyAll(diag.get());
+
+  // bring up coriander main loop's tick, frequency is 2KHz
+  k_timer_start(&main_tick, K_USEC(500), K_USEC(500));
 }
 
 }  // namespace
