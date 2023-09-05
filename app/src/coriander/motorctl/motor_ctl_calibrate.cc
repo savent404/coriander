@@ -31,7 +31,10 @@ MotorCtlCalibrate::MotorCtlCalibrate(
   paramReqValidator->addParamReq(this);
 }
 
-void MotorCtlCalibrate::start() { mSensorHandler.enable(); }
+void MotorCtlCalibrate::start() {
+  mSensorHandler.enable();
+  mState = State::Calibrate_Idle;  // Done->Idle
+}
 
 void MotorCtlCalibrate::stop() { mSensorHandler.disable(); }
 
