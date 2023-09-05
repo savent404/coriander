@@ -12,6 +12,16 @@
 #include "coriander/base/loggerstream.h"
 #include "coriander/base/math.h"
 
+namespace {
+static float modular_angle(float angle) {
+  angle = coriander::base::math::fmodf(angle, 360.0f);
+  if (angle < 0) {
+    angle += 360.0f;
+  }
+  return angle;
+}
+}  // namespace
+
 namespace coriander {
 namespace motorctl {
 
@@ -77,7 +87,9 @@ bool EncoderElecAngleEstimator::enabled() { return mEncoder->enabled(); }
 void EncoderElecAngleEstimator::calibrate() {
   using Property = base::Property;
   coriander::base::LoggerStream stream(mLogger);
-  mNeedCalibrate = false;
+  float t = static_cast<float>(mEncoder->getEncoderCount()) /
+            mEncoder->getEncoderCountPerRound() * 360.0f * mPolePair;
+  mRawElecAngle = modular_angle(t - mPersistOffset);
   mElecAngleOffset = -mRawElecAngle;
   if (mParam->has(ParamId::MotorCtl_Calibrate_CaliElecAngleOffset)) {
     mParam->setValue(ParamId::MotorCtl_Calibrate_CaliElecAngleOffset,
@@ -86,20 +98,13 @@ void EncoderElecAngleEstimator::calibrate() {
     mParam->add(Property{mElecAngleOffset,
                          ParamId::MotorCtl_Calibrate_CaliElecAngleOffset});
   }
+  mNeedCalibrate = false;
 
   stream << "Calibrated electrical angle offset: " << mElecAngleOffset
          << std::endl;
 }
 
 bool EncoderElecAngleEstimator::needCalibrate() { return mNeedCalibrate; }
-
-static float modular_angle(float angle) {
-  angle = base::math::fmodf(angle, 360.0f);
-  if (angle < 0) {
-    angle += 360.0f;
-  }
-  return angle;
-}
 
 float EncoderElecAngleEstimator::getElectricalAngle() noexcept {
   float t = static_cast<float>(mEncoder->getEncoderCount()) /
