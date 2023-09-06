@@ -1,3 +1,4 @@
+_dOpenLoopElecAngle - Fake Electrical angle in OpenLoop mode
 _dPhaseCurrentAngle - ElecAngle based on Phase Currents
 _dPhaseCurrentAlpha - x1000 Alpha component of Phase Currents
 _dPhaseCurrentBeta -  x1000 Beta component of Phase Currents
