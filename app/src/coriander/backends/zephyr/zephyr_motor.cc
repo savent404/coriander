@@ -109,7 +109,7 @@ void MotorDriver::enable() {
   assert_param(cr4_delay_in_ns > 0);
   pwm_set_pulse_dt(&inst->adc_sample_trigger, PWM_NSEC(cr4_delay_in_ns));
   // enable output
-  gpio_pin_set_dt(&inst->enable_pin, PWM_USEC(cr4_delay_in_ns));
+  gpio_pin_set_dt(&inst->enable_pin, 1);
 }
 
 void MotorDriver::disable() {
