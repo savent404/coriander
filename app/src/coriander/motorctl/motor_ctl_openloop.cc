@@ -46,7 +46,7 @@ void MotorCtlOpenLoop::loop() {
 #if CONFIG_JSCOPE_ENABLE
     _dOpenLoopElecAngle = mCurrentAngle;
 #endif
-    mCurrentAngle += 0.5f;
+    mCurrentAngle += 10.0f;
     if (mCurrentAngle > 360.0f) {
       mCurrentAngle -= 360.0f;
     }
