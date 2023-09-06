@@ -7,3 +7,9 @@
 
 # rsource "drivers/Kconfig"
 # rsource "lib/Kconfig"
+
+config JSCOPE_ENABLE
+    bool "Enable jscope output"
+    default n
+    help
+      Enable debug output
