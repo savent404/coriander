@@ -1,0 +1,6 @@
+_dPhaseCurrentAngle - ElecAngle based on Phase Currents
+_dPhaseCurrentAlpha - x1000 Alpha component of Phase Currents
+_dPhaseCurrentBeta -  x1000 Beta component of Phase Currents
+_dPhaseCurrentU - x1000 U component of Phase Currents
+_dPhaseCurrentV - x1000 V component of Phase Currents
+_dPhaseCurrentW - x1000 W component of Phase Currents
