@@ -16,7 +16,22 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
+#include "coriander/base/jscope.h"
+
 LOG_MODULE_REGISTER(phase_current_estimator);
+
+#if CONFIG_JSCOPE_ENABLE
+#include <math.h>
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+ATTR_JSCOPE static float _dPhaseCurrentU = 0.0f;
+ATTR_JSCOPE static float _dPhaseCurrentV = 0.0f;
+ATTR_JSCOPE static float _dPhaseCurrentW = 0.0f;
+ATTR_JSCOPE static float _dPhaseCurrentAlpha = 0.0f;
+ATTR_JSCOPE static float _dPhaseCurrentBeta = 0.0f;
+ATTR_JSCOPE static float _dPhaseCurrentAngle = 0.0f;
+#endif
 
 #ifndef ADC_DT_SPEC_GET_BY_NAME
 #define ADC_DT_SPEC_GET_BY_NAME(node_id, name)                   \
@@ -173,7 +188,17 @@ namespace zephyr {
 void PhaseCurrentEstimator::enable() { adc_init(&adc_inst); }
 void PhaseCurrentEstimator::disable() {}
 bool PhaseCurrentEstimator::enabled() { return adc_inited; }
-void PhaseCurrentEstimator::sync() { adc_sync(&adc_inst); }
+void PhaseCurrentEstimator::sync() {
+  adc_sync(&adc_inst);
+#if CONFIG_JSCOPE_ENABLE
+  float alpha, beta, angle;
+  getPhaseCurrent(&alpha, &beta);
+  _dPhaseCurrentAlpha = alpha * 1000;
+  _dPhaseCurrentBeta = beta * 1000;
+  angle = atan2f(beta, alpha);
+  _dPhaseCurrentAngle = angle * 180.0f / M_PI;
+#endif
+}
 
 void PhaseCurrentEstimator::getPhaseCurrent(float *alpha, float *beta) {
   float c[3];
@@ -184,6 +209,12 @@ void PhaseCurrentEstimator::getPhaseCurrent(float *alpha, float *beta) {
       c[i] -= offset[i];
     }
   }
+
+#if CONFIG_JSCOPE_ENABLE
+  _dPhaseCurrentU = c[0] * 1000;
+  _dPhaseCurrentV = c[1] * 1000;
+  _dPhaseCurrentW = c[2] * 1000;
+#endif
 
   get_current_alpha_beta(&adc_inst, c[0], c[1], c[2], alpha, beta);
 
