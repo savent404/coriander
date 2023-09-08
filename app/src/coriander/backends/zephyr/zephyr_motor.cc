@@ -94,7 +94,7 @@ namespace zephyr {
 
 void MotorDriver::enable() {
   auto inst = &bldc_instance;
-  int cr4_delay_in_ns = 500;
+  uint32_t adc_sample_ccr4;
   // set PWM at 50% duty cycle
   for (size_t i = 0; i < 3; i++) {
     pwm_set_pulse_dt(&inst->phase[i], inst->phase[i].period / 2);
@@ -104,10 +104,16 @@ void MotorDriver::enable() {
   if (gpio_is_ready_dt(&inst->break_pin)) {
     gpio_pin_set_dt(&inst->break_pin, 0);
   }
-  // TODO(savent): based on parameter to adjust TIM1CH4's CCR value
+  // NOTE(savent): based on parameter to adjust TIM1CH4's CCR value
+  // NOTE(savent): to make sure sample at the centra, CCR4 = CC - 1
+  // ------------\         |        /----------------
+  //              \--------|-------/
+  //             (CR1)   (CR4)   (CR1)
+  // C=0.1.2.......CC-2...CC-1..CC-2....CC-3......1..0
+  adc_sample_ccr4 = inst->phase[0].period - 1;
   // NOTE(savent): CCR4 must be greater than ZERO to raise ADC sample trigger
   assert_param(cr4_delay_in_ns > 0);
-  pwm_set_pulse_dt(&inst->adc_sample_trigger, PWM_NSEC(cr4_delay_in_ns));
+  pwm_set_pulse_dt(&inst->adc_sample_trigger, PWM_NSEC(adc_sample_ccr4));
   // enable output
   gpio_pin_set_dt(&inst->enable_pin, 1);
 }
