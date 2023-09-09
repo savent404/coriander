@@ -9,6 +9,20 @@
  */
 #include "coriander/motorctl/motor_ctl_current.h"
 
+#include "coriander/base/jscope.h"
+
+#if CONFIG_JSCOPE_ENABLE
+ATTR_JSCOPE static float _dCurrCtlElecAngle = 0.0f;
+ATTR_JSCOPE static float _dCurrCtlTargetId = 0.0f;
+ATTR_JSCOPE static float _dCurrCtlTargetIq = 0.0f;
+ATTR_JSCOPE static float _dCurrCtlCurrId = 0.0f;
+ATTR_JSCOPE static float _dCurrCtlCurrIq = 0.0f;
+ATTR_JSCOPE static float _dCurrCtlErrId = 0.0f;
+ATTR_JSCOPE static float _dCurrCtlErrIq = 0.0f;
+ATTR_JSCOPE static float _dCurrCtlOutputUd = 0.0f;
+ATTR_JSCOPE static float _dCurrCtlOutputUq = 0.0f;
+#endif
+
 namespace coriander {
 namespace motorctl {
 
@@ -93,6 +107,17 @@ void MotorCtlCurrent::loop() {
     mFocMotorDriver->setVoltage(outputUd, outputUq);
 
     mDurationEstimator->recordStart();
+#if CONFIG_JSCOPE_ENABLE
+    _dCurrCtlElecAngle = mElecAngleEstimator->getElectricalAngle();
+    _dCurrCtlTargetId = mTargetId * 1000.0f;
+    _dCurrCtlTargetIq = mTargetIq * 1000.0f;
+    _dCurrCtlCurrId = currId * 1000.0f;
+    _dCurrCtlCurrIq = currIq * 1000.0f;
+    _dCurrCtlErrId = errorId * 1000.0f;
+    _dCurrCtlErrIq = errorIq * 1000.0f;
+    _dCurrCtlOutputUd = outputUd * 1000.0f;
+    _dCurrCtlOutputUq = outputUq * 1000.0f;
+#endif
   }
 }
 
