@@ -14,10 +14,12 @@
 
 #include "coriander/motorctl/duration_estimator.h"
 #include "coriander/motorctl/foc_motor_driver.h"
+#include "coriander/motorctl/ielec_angle_estimator.h"
 #include "coriander/motorctl/imotorctl.h"
 #include "coriander/motorctl/iphase_current_estimator.h"
 #include "coriander/motorctl/low_pass_filter.h"
 #include "coriander/motorctl/pid.h"
+#include "coriander/motorctl/sensor_handler.h"
 #include "coriander/parameter_requirements.h"
 
 namespace coriander {
@@ -33,12 +35,14 @@ struct MotorCtlCurrent : public IMotorCtl, public IParamReq {
       std::shared_ptr<IPhaseCurrentEstimator> phaseCurrentEstimator,
       std::shared_ptr<Parameter> parameters,
       std::shared_ptr<FocMotorDriver> focMotorDriver,
+      std::shared_ptr<IElecAngleEstimator> elecAngleEstimator,
       std::unique_ptr<DurationEstimator> durationEstimator,
       std::unique_ptr<DurationTimeout> durationTimeout,
       std::shared_ptr<IParamReqValidator> paramReqValidator)
       : mPhaseCurrentEstimator{phaseCurrentEstimator},
         mParams{parameters},
         mFocMotorDriver{focMotorDriver},
+        mElecAngleEstimator(elecAngleEstimator),
         mDurationEstimator{std::move(durationEstimator)},
         mDurationTimeout{std::move(durationTimeout)},
         mTargetId{0.0f},
@@ -46,7 +50,8 @@ struct MotorCtlCurrent : public IMotorCtl, public IParamReq {
         mPidD{0.0f, 0.0f, 0.0f, 0.0f, 0.0f},
         mPidQ{0.0f, 0.0f, 0.0f, 0.0f, 0.0f},
         mIdLpf(0.0f),
-        mIqLpf(0.0f) {
+        mIqLpf(0.0f),
+        mSensorHandler{mPhaseCurrentEstimator, elecAngleEstimator} {
     paramReqValidator->addParamReq(this);
   }
   virtual void start();
@@ -79,6 +84,7 @@ struct MotorCtlCurrent : public IMotorCtl, public IParamReq {
   std::shared_ptr<IPhaseCurrentEstimator> mPhaseCurrentEstimator;
   std::shared_ptr<Parameter> mParams;
   std::shared_ptr<FocMotorDriver> mFocMotorDriver;
+  std::shared_ptr<IElecAngleEstimator> mElecAngleEstimator;
   std::shared_ptr<DurationEstimator> mDurationEstimator;
   std::shared_ptr<DurationTimeout> mDurationTimeout;
 
@@ -91,6 +97,7 @@ struct MotorCtlCurrent : public IMotorCtl, public IParamReq {
   Pid mPidQ;
   LowPassFilter mIdLpf;
   LowPassFilter mIqLpf;
+  SensorHandler mSensorHandler;
 };  // namespace motorctl
 }  // namespace motorctl
 }  // namespace coriander
