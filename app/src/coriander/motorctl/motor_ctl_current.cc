@@ -46,14 +46,14 @@ void MotorCtlCurrent::start() {
   mIqLpf.clear();
 
   // enable sensors, motor
-  mPhaseCurrentEstimator->enable();
+  mSensorHandler.enable();
   mDurationEstimator->recordStart();
   mDurationTimeout->reset();
   mFocMotorDriver->enable();
 }
 
 void MotorCtlCurrent::stop() {
-  mPhaseCurrentEstimator->disable();
+  mSensorHandler.disable();
   mFocMotorDriver->disable();
 }
 
@@ -64,7 +64,7 @@ void MotorCtlCurrent::loop() {
   float currId, currIq;
   float outputUd, outputUq;
 
-  mPhaseCurrentEstimator->sync();
+  mSensorHandler.sync();
 
   // limit calculation frequency
   if (mDurationTimeout->expired()) {
