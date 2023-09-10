@@ -42,6 +42,7 @@ ATTR_JSCOPE static float _dPhaseCurrentAngle = 0.0f;
 #define PHASE_CURRENT_NODE DT_NODELABEL(phase_current)
 #define PHASE_CURRENT_OFFSET DT_PROP(PHASE_CURRENT_NODE, voltage_offset)
 #define PHASE_CURRENT_SCALE DT_PROP(PHASE_CURRENT_NODE, voltage_scale)
+#define PHASE_CURRENT_REVERSE DT_PROP(PHASE_CURRENT_NODE, reverse)
 
 struct adc_instance {
   const struct adc_dt_spec adc_channels[3];
@@ -146,7 +147,8 @@ static void adc_init(adc_instance *inst) {
 static inline void current_convert(adc_instance *inst, float *Iu, float *Iv,
                                    float *Iw) {
   constexpr int32_t offset = PHASE_CURRENT_OFFSET;
-  constexpr float factor = (1.0f / PHASE_CURRENT_SCALE);
+  constexpr float factor =
+      (1.0f / PHASE_CURRENT_SCALE) * (PHASE_CURRENT_REVERSE ? -1.0f : 1.0f);
   int32_t *adc_raw = &inst->adc_raw[0];
   float Ia, Ib, Ic;
 
