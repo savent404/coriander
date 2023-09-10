@@ -39,6 +39,7 @@ void VelocityEstimator::enable() {
   if (!mMechAngleEstimator->enabled()) {
     mMechAngleEstimator->enable();
   }
+  mMechAngleEstimator->reset();  // reset sync count
   mEnabled = true;
 
   // force sync to initialize first record
