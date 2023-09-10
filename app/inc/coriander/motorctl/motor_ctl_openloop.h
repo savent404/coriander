@@ -71,7 +71,7 @@ struct MotorCtlOpenLoop : public IMotorCtl, coriander::IParamReq {
 
   SensorHandler mSensorHandler;
 
-  float mDutyCycleUd = 0;
+  float mDutyCycleUq = 0;
   float mCurrentAngle = 0;
   bool mUseElecAngle = 0;
 };
