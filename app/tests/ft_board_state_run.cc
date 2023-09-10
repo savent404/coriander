@@ -72,7 +72,7 @@ TEST(BoardStateRun, basic) {
   param->add(Property{0.0f, ParamId::MotorCtl_SpeedCtl_PidD});
   param->add(Property{99999.0f, ParamId::MotorCtl_SpeedCtl_PidOutputRamp});
   param->add(Property{99999.0f, ParamId::MotorCtl_SpeedCtl_PidLimit});
-  param->add(Property{1000u, ParamId::MotorCtl_SpeedCtl_Freq});
+  param->add(Property{1000, ParamId::MotorCtl_SpeedCtl_Freq});
   param->add(Property{600.0f, ParamId::MotorCtl_General_TargetVelocity_RT});
   param->add(Property{16.0f, ParamId::MotorCtl_MotorDriver_SupplyVoltage});
   param->add(Property(16, ParamId::MotorCtl_SpeedEstimator_WindowSize));
@@ -103,6 +103,7 @@ TEST(BoardStateRun, basic) {
   param->add(Property{0.0f, ID::MotorCtl_General_TargetCurrentQ_RT});
   param->add(Property{
       1000.0f, ID::MotorCtl_CurrCtl_Lpf_TimeConstant});  // 1000us, LPF: 1MHz;
+  param->add(Property{0, ID::Sensor_Encoder_ReverseElecAngle});
 
   auto encoder = c.create<std::shared_ptr<testing::mock::MockEncoder>>();
 

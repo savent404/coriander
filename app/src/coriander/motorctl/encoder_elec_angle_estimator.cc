@@ -20,6 +20,10 @@ static float modular_angle(float angle) {
   }
   return angle;
 }
+static inline float reverse_angle(float angle) {
+  angle = modular_angle(-angle);
+  return angle;
+}
 }  // namespace
 
 namespace coriander {
@@ -64,6 +68,9 @@ void EncoderElecAngleEstimator::enable() {
         mRawElecAngle - mParam->getValue<float>(
                             ParamId::MotorCtl_MotorDriver_PersistRawElecAngle);
   }
+
+  mReverse =
+      mParam->getValue<int32_t>(ParamId::Sensor_Encoder_ReverseElecAngle) != 0;
 }
 
 void EncoderElecAngleEstimator::disable() {
@@ -89,6 +96,9 @@ void EncoderElecAngleEstimator::calibrate() {
   coriander::base::LoggerStream stream(mLogger);
   float t = static_cast<float>(mEncoder->getEncoderCount()) /
             mEncoder->getEncoderCountPerRound() * 360.0f * mPolePair;
+  if (mReverse) {
+    t = reverse_angle(t);
+  }
   mRawElecAngle = modular_angle(t - mPersistOffset);
   mElecAngleOffset = -mRawElecAngle;
   if (mParam->has(ParamId::MotorCtl_Calibrate_CaliElecAngleOffset)) {
@@ -109,6 +119,9 @@ bool EncoderElecAngleEstimator::needCalibrate() { return mNeedCalibrate; }
 float EncoderElecAngleEstimator::getElectricalAngle() noexcept {
   float t = static_cast<float>(mEncoder->getEncoderCount()) /
             mEncoder->getEncoderCountPerRound() * 360.0f * mPolePair;
+  if (mReverse) {
+    t = reverse_angle(t);
+  }
   mRawElecAngle = modular_angle(t - mPersistOffset);
   mElecAngle = modular_angle(mRawElecAngle + mElecAngleOffset);
   return mElecAngle;

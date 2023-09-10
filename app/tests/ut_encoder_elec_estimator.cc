@@ -10,6 +10,7 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include "coriander/base/property.h"
 #include "coriander/motorctl/encoder_elec_angle_estimator.h"
 #include "tests/mocks.h"
 
@@ -47,6 +48,7 @@ TEST(ISensor, CalibrateEncoderElecAngleEstimator) {
                                       paramReqValidator);
 
   param->add(Property{4, ParamId::MotorCtl_MotorDriver_PolePair});
+  param->add(Property{0, ParamId::Sensor_Encoder_ReverseElecAngle});
   ASSERT_TRUE(param->has("MotorCtl_MotorDriver_PolePair"));
 
   encoder->mCC = 1024;
@@ -74,6 +76,7 @@ TEST(ISensor, CalibrateEncoderElecAngleEstimatorWithPersist) {
 
   param->add(Property{4, ParamId::MotorCtl_MotorDriver_PolePair});
   param->add(Property{0.0f, ParamId::MotorCtl_MotorDriver_PersistRawElecAngle});
+  param->add(Property{0, ParamId::Sensor_Encoder_ReverseElecAngle});
 
   encoder->mCC = 1024;
   estimator.enable();
@@ -105,6 +108,7 @@ TEST(ISensor, CalibratedEncoderElecAngleEstimator) {
 
   param->add(Property{4, ParamId::MotorCtl_MotorDriver_PolePair});
   param->add(Property{0.0f, ParamId::MotorCtl_Calibrate_CaliElecAngleOffset});
+  param->add(Property{0, ParamId::Sensor_Encoder_ReverseElecAngle});
 
   encoder->mCC = 512;
   estimator.enable();
@@ -131,6 +135,7 @@ TEST(ISensor, CalibratedEncoderElecAngleEstimatorWithPersist) {
   param->add(Property{10.0f, ParamId::MotorCtl_Calibrate_CaliElecAngleOffset});
   param->add(
       Property{180.0f, ParamId::MotorCtl_MotorDriver_PersistRawElecAngle});
+  param->add(Property{0, ParamId::Sensor_Encoder_ReverseElecAngle});
 
   encoder->mCC = 512;
   estimator.enable();
@@ -161,6 +166,7 @@ TEST(ISensor, EncoderElecAngleEstimatorRecoveryAfterPowerOn) {
   param->add(Property{4, ParamId::MotorCtl_MotorDriver_PolePair});
   param->add(Property{0.0f, ParamId::MotorCtl_Calibrate_CaliElecAngleOffset});
   param->add(Property{0.0f, ParamId::MotorCtl_MotorDriver_PersistRawElecAngle});
+  param->add(Property{0, ParamId::Sensor_Encoder_ReverseElecAngle});
 
   encoder->mCC = 0;
   estimator.enable();
