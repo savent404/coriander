@@ -103,6 +103,9 @@ void MotorCtlCurrent::loop() {
     outputUd = mPidD(errorId, durationUs * 1.0e-6f);
     outputUq = mPidQ(errorIq, durationUs * 1.0e-6f);
 
+    // TODO(savent): enable Ud later
+    outputUd = 0;
+
     // set output
     mFocMotorDriver->setVoltage(outputUd, outputUq);
 
