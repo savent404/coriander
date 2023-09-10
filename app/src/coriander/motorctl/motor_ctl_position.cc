@@ -9,6 +9,14 @@
  */
 #include "coriander/motorctl/motor_ctl_position.h"
 
+#include "coriander/base/jscope.h"
+
+#if CONFIG_JSCOPE_ENABLE
+ATTR_JSCOPE static float _dPosCurr = 0.0f;
+ATTR_JSCOPE static float _dPosErr = 0.0f;
+ATTR_JSCOPE static float _dPosTarget = 0.0f;
+#endif
+
 namespace coriander {
 namespace motorctl {
 
@@ -24,8 +32,8 @@ void MotorCtlPosition::start() {
 
   mTargetPosition =
       mParameters->getValue<float>(ParamId::MotorCtl_General_TargetPosition_RT);
-  mDurationTimeout->setDuration(static_cast<uint32_t>(
-      1e6 / mParameters->getValue<uint32_t>(ParamId::MotorCtl_PosCtl_Freq)));
+  mDurationTimeout->setDuration(static_cast<int32_t>(
+      1e6 / mParameters->getValue<int32_t>(ParamId::MotorCtl_PosCtl_Freq)));
 
   mMechLpf.Tf =
       mParameters->getValue<float>(ParamId::MotorCtl_PosCtl_Lpf_TimeConstant);
@@ -48,7 +56,7 @@ void MotorCtlPosition::stop() {
 void MotorCtlPosition::loop() {
   const uint32_t maxDurationUs = 20'000;
   uint32_t durationUs;
-  float mechAngleError;
+  float mechAngle, mechAngleError;
   float targetVelocity;
 
   mSensorHandler.sync();
@@ -65,13 +73,19 @@ void MotorCtlPosition::loop() {
       durationUs = maxDurationUs;
     }
 
-    mechAngleError =
-        mTargetPosition - mMechLpf(mMechAngleEstimator->getMechanicalAngle(),
-                                   durationUs * 1.0e-6f);
+    mechAngle = mMechLpf(mMechAngleEstimator->getMechanicalAngle(),
+                         durationUs * 1.0e-6f);
+    mechAngleError = mTargetPosition - mechAngle;
     targetVelocity = mMechAnglePid(mechAngleError, durationUs * 1.0e-6f);
     mMotorCtlVelocity->setTargetVelocity(targetVelocity);
 
     mDurationEstimator->recordStart();
+
+#if CONFIG_JSCOPE_ENABLE
+    _dPosCurr = mechAngle;
+    _dPosErr = mechAngleError;
+    _dPosTarget = mTargetPosition;
+#endif
   }
   // next level loop
   mMotorCtlVelocity->loop();
