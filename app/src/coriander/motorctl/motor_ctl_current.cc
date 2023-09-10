@@ -9,7 +9,14 @@
  */
 #include "coriander/motorctl/motor_ctl_current.h"
 
+#include <math.h>
+
 #include "coriander/base/jscope.h"
+#include "coriander/motorctl/foc.h"
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846f
+#endif
 
 #if CONFIG_JSCOPE_ENABLE
 ATTR_JSCOPE static float _dCurrCtlElecAngle = 0.0f;
@@ -76,6 +83,8 @@ void MotorCtlCurrent::loop() {
   uint32_t durationUs;
   float errorId, errorIq;
   float currId, currIq;
+  float Ialpha, Ibeta;
+  float thetaRad, sinTheta, cosTheta;
   float outputUd, outputUq;
 
   mSensorHandler.sync();
@@ -93,7 +102,14 @@ void MotorCtlCurrent::loop() {
     }
 
     // get phase current
-    mPhaseCurrentEstimator->getPhaseCurrent(&currId, &currIq);
+    mPhaseCurrentEstimator->getPhaseCurrent(&Ialpha, &Ibeta);
+    thetaRad = mElecAngleEstimator->getElectricalAngle() / 180.0f * M_PI;
+    sinTheta = sinf(thetaRad);
+    cosTheta = cosf(thetaRad);
+    foc::park(Ialpha, Ibeta, sinTheta, cosTheta, &currId, &currIq);
+
+    currId = mIdLpf(currId, durationUs * 1.0e-6f);
+    currIq = mIqLpf(currIq, durationUs * 1.0e-6f);
 
     // calculate error
     errorId = mTargetId - currId;
@@ -102,9 +118,6 @@ void MotorCtlCurrent::loop() {
     // calculate output
     outputUd = mPidD(errorId, durationUs * 1.0e-6f);
     outputUq = mPidQ(errorIq, durationUs * 1.0e-6f);
-
-    // TODO(savent): enable Ud later
-    outputUd = 0;
 
     // set output
     mFocMotorDriver->setVoltage(outputUd, outputUq);
