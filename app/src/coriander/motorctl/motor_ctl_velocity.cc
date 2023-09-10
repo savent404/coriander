@@ -92,15 +92,14 @@ void MotorCtlVelocity::loop() {
 
     mDurationEstimator->recordStart();
 
-    // next level loop
-    mMotorCtlCurrent->loop();
-
 #if CONFIG_JSCOPE_ENABLE
     _dVelCurrent = mVelocityEstimator->getVelocity();
     _dVelTarget = mTargetVelocity;
     _dVelErr = velocityError;
 #endif
   }
+  // next level loop
+  mMotorCtlCurrent->loop();
 }
 
 void MotorCtlVelocity::emergencyStop() { this->stop(); }
