@@ -18,3 +18,6 @@ _dCurrCtlErrId - x1000 Id component of Current Control Error
 _dCurrCtlErrIq - x1000 Iq component of Current Control Error
 _dCurrCtlOutputUd - x1000 Ud component of Current Control Output
 _dCurrCtlOutputUq - x1000 Uq component of Current Control Output
+_dPosCurr - Position Current
+_dPosTarget - Position Target
+_dPosErr - Position Error
