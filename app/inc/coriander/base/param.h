@@ -48,6 +48,7 @@ BETTER_ENUM(ParamId, int,
   Sensor_Motor_Voltage_RT,
   Sensor_Motor_Current_RT,
   Sensor_Motor_Temp_RT,
+  Sensor_Encoder_ReverseElecAngle,
   MotorCtl_General_Mode_RT,
   MotorCtl_General_TargetPosition_RT,
   MotorCtl_General_TargetVelocity_RT,
@@ -103,6 +104,8 @@ struct ParamDescriber {
         [ParamId::Sensor_Motor_Voltage_RT] = "current motor voltage, unit V",
         [ParamId::Sensor_Motor_Current_RT] = "current motor current, uint A",
         [ParamId::Sensor_Motor_Temp_RT] = "current motor temp, unit degree",
+        [ParamId::Sensor_Encoder_ReverseElecAngle] =
+            "reverse electrical angle, used by encoder_elec_angle",
         [ParamId::MotorCtl_General_Mode_RT] =
             "0:dummy, 1: torque, 2:velocity, 3:position, 4: OpenLoop",
         [ParamId::MotorCtl_General_TargetPosition_RT] =

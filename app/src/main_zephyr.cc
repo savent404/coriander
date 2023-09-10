@@ -154,6 +154,7 @@ static void parameter_default_value_setup(
       P{4000, ID::MotorCtl_CurrCtl_Freq},
       P{0.0f, ID::MotorCtl_General_TargetCurrentD_RT},
       P{0.0f, ID::MotorCtl_General_TargetCurrentQ_RT},
+      P{1, ID::Sensor_Encoder_ReverseElecAngle},
       P{1000.0f, ID::MotorCtl_CurrCtl_Lpf_TimeConstant},  // 1000us, LPF: 1MHz;
   };
   for (auto& p : properties) {

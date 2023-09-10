@@ -45,6 +45,7 @@ struct EncoderElecAngleEstimator : public IElecAngleEstimator,
     constexpr static const ParameterRequireItem items[] = {
         {"MotorCtl_MotorDriver_PolePair", TypeId::Int32},
         {"MotorCtl_MotorDriver_PersistRawElecAngle", TypeId::Float},
+        {"Sensor_Encoder_ReverseElecAngle", TypeId::Int32},
         PARAMETER_REQ_EOF};
 
     return &items[0];
@@ -60,6 +61,7 @@ struct EncoderElecAngleEstimator : public IElecAngleEstimator,
   float mPersistOffset;
   float mElecAngleOffset;
   bool mNeedCalibrate;
+  bool mReverse;
 };
 }  // namespace motorctl
 }  // namespace coriander
