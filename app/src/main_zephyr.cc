@@ -111,7 +111,7 @@ static void parameter_default_value_setup(
   using P = Property;
 
   static const Property properties[] = {
-      P{0, ID::MotorCtl_General_Mode_RT},
+      P{2, ID::MotorCtl_General_Mode_RT},
       P{4, ID::MotorCtl_MotorDriver_PolePair},
       P{0.0f, ID::MotorCtl_MotorDriver_PersistRawElecAngle},
       P{0.0f, ID::MotorCtl_MotorDriver_PersistRawMechAngle},
@@ -126,13 +126,13 @@ static void parameter_default_value_setup(
       P{0.0f, ID::MotorCtl_PosCtl_PidLimit},
       P{2500, ID::MotorCtl_PosCtl_Freq},
       P{0.0f, ID::MotorCtl_General_TargetPosition_RT},
-      P{0.0f, ID::MotorCtl_General_TargetVelocity_RT},
-      P{0.0f, ID::MotorCtl_SpeedCtl_PidP},
-      P{0.0f, ID::MotorCtl_SpeedCtl_PidI},
+      P{480.0f, ID::MotorCtl_General_TargetVelocity_RT},
+      P{0.02f, ID::MotorCtl_SpeedCtl_PidP},
+      P{0.002f, ID::MotorCtl_SpeedCtl_PidI},
       P{0.0f, ID::MotorCtl_SpeedCtl_PidD},
-      P{0.0f, ID::MotorCtl_SpeedCtl_PidOutputRamp},
-      P{0.0f, ID::MotorCtl_SpeedCtl_PidLimit},
-      P{10000, ID::MotorCtl_SpeedCtl_Freq},
+      P{100.0f, ID::MotorCtl_SpeedCtl_PidOutputRamp},
+      P{10.0f, ID::MotorCtl_SpeedCtl_PidLimit},
+      P{500, ID::MotorCtl_SpeedCtl_Freq},
       P{16, ID::MotorCtl_SpeedEstimator_WindowSize},
       P{1000, ID::MotorCtl_SpeedEstimator_MinDuration},
       P{10, ID::MotorCtl_SpeedEstimator_SampleInterval},
