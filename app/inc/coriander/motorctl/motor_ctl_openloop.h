@@ -57,6 +57,7 @@ struct MotorCtlOpenLoop : public IMotorCtl, coriander::IParamReq {
     static const ParameterRequireItem items[] = {
         {"MotorCtl_MotorDriver_SupplyVoltage", Type::Float},
         {"MotorCtl_OpenLoop_OutVoltage", Type::Float},
+        {"MotorCtl_OpenLoop_UseElecAngle", Type::Int32},
         PARAMETER_REQ_EOF};
     return items;
   }
@@ -72,5 +73,6 @@ struct MotorCtlOpenLoop : public IMotorCtl, coriander::IParamReq {
 
   float mDutyCycleUd = 0;
   float mCurrentAngle = 0;
+  bool mUseElecAngle = 0;
 };
 }  // namespace coriander::motorctl

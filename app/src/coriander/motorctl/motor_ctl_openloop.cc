@@ -17,6 +17,7 @@
 #define ATTR_JSCOPE \
   __attribute__((section(".data.jscope"))) __attribute__((used))
 ATTR_JSCOPE static float _dOpenLoopElecAngle = 0.0f;
+ATTR_JSCOPE static float _dOpenLoopSensorElecAngle = 0.0f;
 #endif
 
 namespace coriander::motorctl {
@@ -26,6 +27,8 @@ void MotorCtlOpenLoop::start() {
       mParameters->getValue<float>(ParamId::MotorCtl_MotorDriver_SupplyVoltage);
   float outVoltage =
       mParameters->getValue<float>(ParamId::MotorCtl_OpenLoop_OutVoltage);
+  mUseElecAngle =
+      mParameters->getValue<int32_t>(ParamId::MotorCtl_OpenLoop_UseElecAngle);
   mDutyCycleUd = outVoltage / supplyVoltage;
   mDurationTimeout->setDuration(1);
   mDurationTimeout->reset();
@@ -45,10 +48,18 @@ void MotorCtlOpenLoop::loop() {
     mFocMotorDriver->setVoltageNoSensor(mDutyCycleUd, 0, mCurrentAngle);
 #if CONFIG_JSCOPE_ENABLE
     _dOpenLoopElecAngle = mCurrentAngle;
+    _dOpenLoopSensorElecAngle = mElecAngleEstimator->getElectricalAngle();
 #endif
-    mCurrentAngle += 10.0f;
-    if (mCurrentAngle > 360.0f) {
-      mCurrentAngle -= 360.0f;
+
+    if (mUseElecAngle) {
+      // update elec angle based on sensor
+      mCurrentAngle = mElecAngleEstimator->getElectricalAngle();
+    } else {
+      // fake elec angle
+      mCurrentAngle += 10.0f;
+      if (mCurrentAngle > 360.0f) {
+        mCurrentAngle -= 360.0f;
+      }
     }
   }
 }

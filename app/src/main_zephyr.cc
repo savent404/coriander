@@ -145,6 +145,7 @@ static void parameter_default_value_setup(
       P{10e-3f, ID::MotorCtl_SpeedCtl_Lpf_TimeConstant},  // 100KHz
       P{100e-3f, ID::MotorCtl_PosCtl_Lpf_TimeConstant},   // 10Hz
       P(2.0f, ID::MotorCtl_OpenLoop_OutVoltage),          // 2.0V
+      P{0, ID::MotorCtl_OpenLoop_UseElecAngle},
       P{0.01f, ID::MotorCtl_CurrCtl_PidP},
       P{0.0f, ID::MotorCtl_CurrCtl_PidI},
       P{0.0f, ID::MotorCtl_CurrCtl_PidD},
