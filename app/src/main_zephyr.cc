@@ -111,7 +111,7 @@ static void parameter_default_value_setup(
   using P = Property;
 
   static const Property properties[] = {
-      P{2, ID::MotorCtl_General_Mode_RT},
+      P{0, ID::MotorCtl_General_Mode_RT},
       P{4, ID::MotorCtl_MotorDriver_PolePair},
       P{0.0f, ID::MotorCtl_MotorDriver_PersistRawElecAngle},
       P{0.0f, ID::MotorCtl_MotorDriver_PersistRawMechAngle},
@@ -119,15 +119,15 @@ static void parameter_default_value_setup(
       P{3.0f, ID::MotorCtl_Calibrate_CaliVoltage},
       P{3000, ID::MotorCtl_Calibrate_CaliDuration},
       P{24.0f, ID::MotorCtl_MotorDriver_SupplyVoltage},
-      P{0.0f, ID::MotorCtl_PosCtl_PidP},
+      P{0.1f, ID::MotorCtl_PosCtl_PidP},
       P{0.0f, ID::MotorCtl_PosCtl_PidI},
       P{0.0f, ID::MotorCtl_PosCtl_PidD},
-      P{0.0f, ID::MotorCtl_PosCtl_PidOutputRamp},
-      P{0.0f, ID::MotorCtl_PosCtl_PidLimit},
-      P{2500, ID::MotorCtl_PosCtl_Freq},
-      P{0.0f, ID::MotorCtl_General_TargetPosition_RT},
-      P{480.0f, ID::MotorCtl_General_TargetVelocity_RT},
-      P{0.02f, ID::MotorCtl_SpeedCtl_PidP},
+      P{100.0f, ID::MotorCtl_PosCtl_PidOutputRamp},
+      P{960.0f, ID::MotorCtl_PosCtl_PidLimit},
+      P{100, ID::MotorCtl_PosCtl_Freq},
+      P{3600.0f, ID::MotorCtl_General_TargetPosition_RT},
+      P{0.0f, ID::MotorCtl_General_TargetVelocity_RT},
+      P{0.01f, ID::MotorCtl_SpeedCtl_PidP},
       P{0.002f, ID::MotorCtl_SpeedCtl_PidI},
       P{0.0f, ID::MotorCtl_SpeedCtl_PidD},
       P{100.0f, ID::MotorCtl_SpeedCtl_PidOutputRamp},
@@ -141,21 +141,20 @@ static void parameter_default_value_setup(
       P{0, ID::Sensor_Motor_Current_RT},
       P{0, ID::Sensor_Motor_Temp_RT},
       P{0, ID::Sensor_Motor_Voltage_RT},
-      P{1e-3f, ID::MotorCtl_CurrCtl_Lpf_TimeConstant},    // 1KHz
-      P{10e-3f, ID::MotorCtl_SpeedCtl_Lpf_TimeConstant},  // 100KHz
+      P{5e-3f, ID::MotorCtl_CurrCtl_Lpf_TimeConstant},  // LPF: 200Hz
+      P{10e-3f, ID::MotorCtl_SpeedCtl_Lpf_TimeConstant},  // 100Hz
       P{100e-3f, ID::MotorCtl_PosCtl_Lpf_TimeConstant},   // 10Hz
       P(2.0f, ID::MotorCtl_OpenLoop_OutVoltage),          // 2.0V
       P{0, ID::MotorCtl_OpenLoop_UseElecAngle},
       P{0.1f, ID::MotorCtl_CurrCtl_PidP},
       P{0.0f, ID::MotorCtl_CurrCtl_PidI},
       P{0.0f, ID::MotorCtl_CurrCtl_PidD},
-      P(100.0f, ID::MotorCtl_CurrCtl_PidOutputRamp),
+      P(0.3f, ID::MotorCtl_CurrCtl_PidOutputRamp),
       P{2.5f, ID::MotorCtl_CurrCtl_PidLimit},
       P{4000, ID::MotorCtl_CurrCtl_Freq},
       P{0.0f, ID::MotorCtl_General_TargetCurrentD_RT},
       P{0.0f, ID::MotorCtl_General_TargetCurrentQ_RT},
       P{0, ID::Sensor_Encoder_ReverseElecAngle},
-      P{5e-3f, ID::MotorCtl_CurrCtl_Lpf_TimeConstant},  // LPF: 200Hz
   };
   for (auto& p : properties) {
     param->add(p);
