@@ -2,6 +2,7 @@ _dOpenLoopElecAngle - Currently used Electrical angle in OpenLoop mode
 _dOpenLoopSensorElecAngle - Real Electrical angle from sensor in OpenLoop mode
 _dOpenLoopId - x1000 Id component of OpenLoop Target
 _dOpenLoopIq - x1000 Iq component of OpenLoop Target
+_dOpenLoopVel - Velocity(RPM) component of OpenLoop Target
 _dPhaseCurrentAngle - ElecAngle based on Phase Currents
 _dPhaseCurrentAlpha - x1000 Alpha component of Phase Currents
 _dPhaseCurrentBeta -  x1000 Beta component of Phase Currents
