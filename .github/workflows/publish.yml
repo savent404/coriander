@@ -41,7 +41,7 @@ jobs:
           mkdir -p firmware/bootloader
           rm build-manu/app/zephyr/*pre*
           cp build-manu/app/zephyr/zephyr.* firmware/app
-          cp build-manu/recovery/zephyr/zephyr.signed.bin firmware/recovery/zephyr.signed.bin
+          cp build-manu/recovery/zephyr/zephyr.bin firmware/recovery/zephyr.bin
           cp build-manu/mcuboot/zephyr/zephyr.bin firmware/bootloader/zephyr.bin
 
       - name: Publish firmware
