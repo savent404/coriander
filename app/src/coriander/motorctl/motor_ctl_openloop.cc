@@ -45,7 +45,7 @@ void MotorCtlOpenLoop::start() {
 
 void MotorCtlOpenLoop::stop() {
   mFocMotorDriver->disable();
-  mSensorHandler.enable();
+  mSensorHandler.disable();
 }
 
 void MotorCtlOpenLoop::loop() {
