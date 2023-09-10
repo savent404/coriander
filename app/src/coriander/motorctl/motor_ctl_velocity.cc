@@ -9,6 +9,14 @@
  */
 #include "coriander/motorctl/motor_ctl_velocity.h"
 
+#include "coriander/base/jscope.h"
+
+#if CONFIG_JSCOPE_ENABLE
+ATTR_JSCOPE static float _dVelCurrent = 0.0f;
+ATTR_JSCOPE static float _dVelTarget = 0.0f;
+ATTR_JSCOPE static float _dVelErr = 0.0f;
+#endif
+
 namespace coriander {
 namespace motorctl {
 
@@ -32,8 +40,8 @@ void MotorCtlVelocity::start() {
   mMotorSupplyVoltage =
       mParameters->getValue<float>(ParamId::MotorCtl_MotorDriver_SupplyVoltage);
 
-  mDurationTimeout->setDuration(static_cast<uint32_t>(
-      1e6 / mParameters->getValue<uint32_t>(ParamId::MotorCtl_SpeedCtl_Freq)));
+  mDurationTimeout->setDuration(static_cast<int32_t>(
+      1e6 / mParameters->getValue<int32_t>(ParamId::MotorCtl_SpeedCtl_Freq)));
 
   mVelocityLpf.Tf =
       mParameters->getValue<float>(ParamId::MotorCtl_SpeedCtl_Lpf_TimeConstant);
@@ -86,6 +94,12 @@ void MotorCtlVelocity::loop() {
 
     // next level loop
     mMotorCtlCurrent->loop();
+
+#if CONFIG_JSCOPE_ENABLE
+    _dVelCurrent = mVelocityEstimator->getVelocity();
+    _dVelTarget = mTargetVelocity;
+    _dVelErr = velocityError;
+#endif
   }
 }
 
