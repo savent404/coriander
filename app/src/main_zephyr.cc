@@ -112,7 +112,7 @@ static void parameter_default_value_setup(
 
   static const Property properties[] = {
       P{0, ID::MotorCtl_General_Mode_RT},
-      P{1, ID::MotorCtl_MotorDriver_PolePair},
+      P{4, ID::MotorCtl_MotorDriver_PolePair},
       P{0.0f, ID::MotorCtl_MotorDriver_PersistRawElecAngle},
       P{0.0f, ID::MotorCtl_MotorDriver_PersistRawMechAngle},
       P{0.0f, ID::MotorCtl_Calibrate_CaliMechAngleOffset},

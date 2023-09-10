@@ -29,7 +29,7 @@ void MotorCtlOpenLoop::start() {
       mParameters->getValue<float>(ParamId::MotorCtl_OpenLoop_OutVoltage);
   mUseElecAngle =
       mParameters->getValue<int32_t>(ParamId::MotorCtl_OpenLoop_UseElecAngle);
-  mDutyCycleUd = outVoltage / supplyVoltage;
+  mDutyCycleUq = outVoltage / supplyVoltage;
   mDurationTimeout->setDuration(1);
   mDurationTimeout->reset();
   mSensorHandler.enable();
@@ -45,7 +45,7 @@ void MotorCtlOpenLoop::loop() {
   if (mDurationTimeout->expired()) {
     mSensorHandler.sync();
     mDurationTimeout->reset();
-    mFocMotorDriver->setVoltageNoSensor(mDutyCycleUd, 0, mCurrentAngle);
+    mFocMotorDriver->setVoltageNoSensor(0, mDutyCycleUq, mCurrentAngle);
 #if CONFIG_JSCOPE_ENABLE
     _dOpenLoopElecAngle = mCurrentAngle;
     _dOpenLoopSensorElecAngle = mElecAngleEstimator->getElectricalAngle();
