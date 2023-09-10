@@ -9,6 +9,10 @@
  */
 #include "coriander/motorctl/motor_ctl_openloop.h"
 
+#include <math.h>
+
+#include "coriander/motorctl/foc.h"
+
 #ifndef CONFIG_JSCOPE_ENABLE
 #define CONFIG_JSCOPE_ENABLE 0
 #endif
@@ -18,6 +22,8 @@
   __attribute__((section(".data.jscope"))) __attribute__((used))
 ATTR_JSCOPE static float _dOpenLoopElecAngle = 0.0f;
 ATTR_JSCOPE static float _dOpenLoopSensorElecAngle = 0.0f;
+ATTR_JSCOPE static float _dOpenLoopIq = 0.0f;
+ATTR_JSCOPE static float _dOpenLoopId = 0.0f;
 #endif
 
 namespace coriander::motorctl {
@@ -49,6 +55,14 @@ void MotorCtlOpenLoop::loop() {
 #if CONFIG_JSCOPE_ENABLE
     _dOpenLoopElecAngle = mCurrentAngle;
     _dOpenLoopSensorElecAngle = mElecAngleEstimator->getElectricalAngle();
+    float alpha, beta, sineTheta, cosineTheta, theta, d, q;
+    mPhaseCurrentEstimator->getPhaseCurrent(&alpha, &beta);
+    theta = _dOpenLoopSensorElecAngle / 180.0f * 3.1415926f;
+    sineTheta = sinf(theta);
+    cosineTheta = cosf(theta);
+    foc::park(alpha, beta, sineTheta, cosineTheta, &d, &q);
+    _dOpenLoopId = d * 1000;
+    _dOpenLoopIq = q * 1000;
 #endif
 
     if (mUseElecAngle) {
