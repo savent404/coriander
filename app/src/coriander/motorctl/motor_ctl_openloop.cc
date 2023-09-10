@@ -24,6 +24,7 @@ ATTR_JSCOPE static float _dOpenLoopElecAngle = 0.0f;
 ATTR_JSCOPE static float _dOpenLoopSensorElecAngle = 0.0f;
 ATTR_JSCOPE static float _dOpenLoopIq = 0.0f;
 ATTR_JSCOPE static float _dOpenLoopId = 0.0f;
+ATTR_JSCOPE static float _dOpenLoopVel = 0.0f;
 #endif
 
 namespace coriander::motorctl {
@@ -63,6 +64,7 @@ void MotorCtlOpenLoop::loop() {
     foc::park(alpha, beta, sineTheta, cosineTheta, &d, &q);
     _dOpenLoopId = d * 1000;
     _dOpenLoopIq = q * 1000;
+    _dOpenLoopVel = mVelocityEstimator->getVelocity();
 #endif
 
     if (mUseElecAngle) {

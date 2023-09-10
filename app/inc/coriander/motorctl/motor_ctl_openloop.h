@@ -17,6 +17,7 @@
 #include "coriander/motorctl/ielec_angle_estimator.h"
 #include "coriander/motorctl/imotorctl.h"
 #include "coriander/motorctl/iphase_current_estimator.h"
+#include "coriander/motorctl/ivelocity_estimator.h"
 #include "coriander/motorctl/sensor_handler.h"
 #include "coriander/parameter_requirements.h"
 #include "coriander/parameter_requirements_validator.h"
@@ -34,13 +35,16 @@ struct MotorCtlOpenLoop : public IMotorCtl, coriander::IParamReq {
       std::unique_ptr<DurationExpired> durationEstimator,
       std::shared_ptr<IPhaseCurrentEstimator> phaseCurrentEstimator,
       std::shared_ptr<IElecAngleEstimator> elecAngleEstimator,
+      std::shared_ptr<IVelocityEstimator> velocityEstimator,
       std::shared_ptr<IParamReqValidator> paramReqValidator)
       : mFocMotorDriver(motor),
         mParameters(parameters),
         mDurationTimeout(std::move(durationEstimator)),
         mPhaseCurrentEstimator(phaseCurrentEstimator),
         mElecAngleEstimator(elecAngleEstimator),
-        mSensorHandler{phaseCurrentEstimator, elecAngleEstimator} {
+        mVelocityEstimator(velocityEstimator),
+        mSensorHandler{phaseCurrentEstimator, elecAngleEstimator,
+                       velocityEstimator} {
     paramReqValidator->addParamReq(this);
   }
   virtual ~MotorCtlOpenLoop() = default;
@@ -68,6 +72,7 @@ struct MotorCtlOpenLoop : public IMotorCtl, coriander::IParamReq {
   std::unique_ptr<DurationExpired> mDurationTimeout;
   std::shared_ptr<IPhaseCurrentEstimator> mPhaseCurrentEstimator;
   std::shared_ptr<IElecAngleEstimator> mElecAngleEstimator;
+  std::shared_ptr<IVelocityEstimator> mVelocityEstimator;
 
   SensorHandler mSensorHandler;
 
