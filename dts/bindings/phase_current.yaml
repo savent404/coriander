@@ -13,3 +13,10 @@ properties:
   voltage-scale:
     type: int
     required: true
+
+  reverse:
+    type: int
+    default: 0
+    required: false
+    description: |
+      Indicate if amp is negative multiple again

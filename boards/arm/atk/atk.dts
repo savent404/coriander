@@ -78,6 +78,7 @@
 		status = "okay";
 		voltage-offset = <1250>;
 		voltage-scale = <120>;
+		reverse = <1>;
 	};
 
 	mc-parameters {
