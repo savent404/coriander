@@ -57,6 +57,7 @@ void EncoderElecAngleEstimator::enable() {
   if (!mEncoder->enabled()) {
     mEncoder->enable();
   }
+  mEncoder->reset();  // reset sync count
 
   if (mParam->has(ParamId::MotorCtl_MotorDriver_PersistRawElecAngle)) {
     // force sync encoder and initialize mRawElecAngle
