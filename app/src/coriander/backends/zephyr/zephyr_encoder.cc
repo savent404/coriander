@@ -30,22 +30,33 @@ struct _instance {
   bool found_zero;
   struct sensor_value angle_cached;
   struct sensor_value full_angle;
+  bool enabled;
 };
 
 static struct _instance _encoder_instance = {
     .encoder = ENCODER_QDEC,
     .ppr = ENCODER_PPR,
     .found_zero = false,
+    .enabled = false,
 };
 
 namespace coriander {
 namespace motorctl {
 namespace zephyr {
-void Encoder::enable() {}
-void Encoder::disable() {}
-bool Encoder::enabled() { return true; }
+void Encoder::enable() {
+  auto inst = &_encoder_instance;
+  inst->enabled = true;
+}
+void Encoder::disable() {
+  auto inst = &_encoder_instance;
+  inst->enabled = false;
+}
+bool Encoder::enabled() {
+  auto inst = &_encoder_instance;
+  return inst->enabled;
+}
 void Encoder::sync() {
-  struct _instance* inst = &_encoder_instance;
+  auto inst = &_encoder_instance;
   int32_t diff, t = inst->angle_cached.val1;
   int ret;
 
