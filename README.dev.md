@@ -9,7 +9,8 @@ see the [zephyr application README](README.original.md) to setup zephyr build en
 ```
 west init -m https://github.com/savent404/coriander --mr main coriander-ws
 cd coriander-ws
-west build -b <board> app -- -DCMAKE_EXPORT_COMPILE_COMMANDS=ON <OTHER OPTIONS>
+west update
+west build -b <board> coriander/app -- -DCONFIG_CORIANDER_MINIMAL=y <OTHER OPTIONS>
 ninja -C build
 ```
 
