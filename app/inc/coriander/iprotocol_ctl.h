@@ -16,8 +16,22 @@ namespace coriander {
 struct IProtocolCtl {
   virtual ~IProtocolCtl() = default;
 
+  /**
+   * @brief Enable the protocol
+   *
+   */
   virtual void enable() noexcept = 0;
+
+  /**
+   * @brief Disable the protocol
+   *
+   */
   virtual void disable() noexcept = 0;
+
+  /**
+   * @brief Called when the protocol is enabled
+   *
+   */
   virtual void loop() noexcept = 0;
 };
 

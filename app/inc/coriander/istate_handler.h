@@ -14,8 +14,27 @@ namespace coriander {
 struct IStateHandler {
   virtual ~IStateHandler() = default;
 
+  /**
+   * @brief Called when the state is entered
+   *
+   * @note this function called in the thread
+   *       which called @c IBoardEvent::raiseEvent
+   */
   virtual void onEnter() noexcept = 0;
+
+  /**
+   * @brief Called when the state is exited
+   *
+   * @note this function called in the thread
+   *       which called @c IBoardEvent::raiseEvent
+   */
   virtual void onExit() noexcept = 0;
+
+  /**
+   * @brief Called when the state is looped
+   *
+   * @note this function called in self thread
+   */
   virtual void onLoop() noexcept = 0;
 };
 
