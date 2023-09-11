@@ -171,4 +171,26 @@ void BoardState::loop() noexcept {
   }
 }
 
+IStateHandler* BoardState::getHandler(State s) {
+  switch (s) {
+    case State::Init:
+      return mStateInitHandler.get();
+    case State::Standby:
+      return mStateStandbyHandler.get();
+    case State::Run:
+      return mStateRunHandler.get();
+    case State::Error:
+      return mStateErrorHandler.get();
+    case State::Calibrate:
+      return mStateCalibrateHandler.get();
+    case State::FirmwareUpdate:
+      return mStateFirmwareUpdateHandler.get();
+    case State::Reboot:
+      return mStateRebootHandler.get();
+  }
+  // NOTE(savent): there is no 'default:'
+  // to make sure all enum values are handled
+  return nullptr;
+}
+
 }  // namespace coriander
