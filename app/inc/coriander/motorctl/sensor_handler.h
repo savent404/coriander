@@ -19,37 +19,11 @@ namespace coriander {
 namespace motorctl {
 struct SensorHandler {
   explicit SensorHandler(
-      std::initializer_list<std::shared_ptr<ISensor>> sensors)
-      : mSync{0} {
-    for (auto sensor : sensors) {
-      mSensors.push_front(sensor);
-    }
-  }
+      std::initializer_list<std::shared_ptr<ISensor>> sensors);
 
-  void enable() {
-    mSync = 0;
-    for (auto &&sensor : mSensors) {
-      sensor->reset();
-      if (!sensor->enabled()) {
-        sensor->enable();
-      }
-    }
-  }
-  void disable() {
-    for (auto &&sensor : mSensors) {
-      if (sensor->enabled()) {
-        sensor->disable();
-      }
-    }
-  }
-  void sync() {
-    mSync++;
-    for (auto &&sensor : mSensors) {
-      if (sensor->needSync(mSync)) {
-        sensor->sync();
-      }
-    }
-  }
+  void enable();
+  void disable();
+  void sync();
 
  private:
   unsigned mSync;
