@@ -16,17 +16,14 @@
 
 namespace coriander {
 
-using application::IAppStatus;
 struct BoardStateErrorHandler : public IBoardStateErrorHandler {
+  using IAppStatus = application::IAppStatus;
   explicit BoardStateErrorHandler(
-      std::shared_ptr<IAppStatus> appStatus) noexcept
-      : mAppStatus(appStatus) {}
+      std::shared_ptr<IAppStatus> appStatus) noexcept;
 
-  void onEnter() noexcept override {
-    mAppStatus->setStatus(IAppStatus::Status::Error);
-  }
-  void onExit() noexcept override {}
-  void onLoop() noexcept override {}
+  void onEnter() noexcept override;
+  void onExit() noexcept override;
+  void onLoop() noexcept override;
 
  private:
   std::shared_ptr<IAppStatus> mAppStatus;
