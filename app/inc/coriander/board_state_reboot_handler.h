@@ -14,10 +14,10 @@
 namespace coriander {
 
 struct BoardStateRebootHandler : public IBoardStateRebootHandler {
-  BoardStateRebootHandler() noexcept {}
-  void onEnter() noexcept override {}
-  void onExit() noexcept override {}
-  void onLoop() noexcept override {}
+  BoardStateRebootHandler() noexcept;
+  void onEnter() noexcept override;
+  void onExit() noexcept override;
+  void onLoop() noexcept override;
 };
 
 }  // namespace coriander
