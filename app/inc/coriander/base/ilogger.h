@@ -60,7 +60,7 @@ struct LoggerPrefix {
     auto out = std::back_inserter(buf);                                \
     auto o1 = coriander::base::LoggerPrefix::appendPrefix(out, level); \
     auto o2 = fmt::format_to(o1, __VA_ARGS__);                         \
-    *o2 = '\0';                                                        \
+    *o2++ = '\0';                                                      \
     logger->log(buf.data());                                           \
   } while (0)
 
