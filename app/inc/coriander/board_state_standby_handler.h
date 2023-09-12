@@ -1,11 +1,11 @@
 /**
  * @file board_state_standby_handler.h
  * @author Savent Gate (savent_gate@outlook.com)
- * @brief 
+ * @brief
  * @date 2023-08-19
- * 
+ *
  * Copyright 2023 savent_gate
- * 
+ *
  */
 #pragma once
 
@@ -17,18 +17,13 @@
 
 namespace coriander {
 
-using application::IAppStatus;
 struct BoardStateStandbyHandler : public IBoardStateStandbyHandler {
+  using IAppStatus = application::IAppStatus;
   BoardStateStandbyHandler(std::shared_ptr<IAppStatus> appStatus,
-                           std::shared_ptr<IShellCtl> proto) noexcept
-      : mAppStatus(appStatus), mProtocolCtl(proto) {}
-
-  void onEnter() noexcept override {
-    mProtocolCtl->enable();
-    mAppStatus->setStatus(IAppStatus::Status::Ok);
-  }
-  void onExit() noexcept override {}
-  void onLoop() noexcept override { mProtocolCtl->loop(); }
+                           std::shared_ptr<IShellCtl> proto) noexcept;
+  void onEnter() noexcept override;
+  void onExit() noexcept override;
+  void onLoop() noexcept override;
 
  private:
   std::shared_ptr<IAppStatus> mAppStatus;

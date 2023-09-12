@@ -39,29 +39,18 @@ struct ParameterBase : public base::PropertySet {
    * @param name
    * @param t
    */
-  bool setValue(const char* name, Type t) noexcept {
-    if (has(name)) {
-      auto p = get(name);
-      p.setValue(t);
-      remove(name);
-      add(p);
-      return true;
-    } else {
-      return false;
-    }
-  }
+  bool setValue(const char* name, Type t) noexcept;
 
-  bool setValue(ParamId id, Type t) noexcept {
-    if (has(id)) {
-      auto p = get(id);
-      p.setValue(t);
-      remove(id);
-      add(p);
-      return true;
-    } else {
-      return false;
-    }
-  }
+  /**
+   * @brief Set the Value object
+   *
+   * @note Can't create new property if not exist
+   * @param id see @c ParamId
+   * @param t  see @c Type
+   * @return true
+   * @return false
+   */
+  bool setValue(ParamId id, Type t) noexcept;
 };
 
 struct ParameterMemoryMapper {

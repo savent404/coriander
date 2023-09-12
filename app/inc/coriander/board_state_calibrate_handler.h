@@ -22,20 +22,11 @@ struct BoardStateCalibrateHandler : public IBoardStateCalibrateHandler {
   using MotorCtlCalibrate = motorctl::MotorCtlCalibrate;
   BoardStateCalibrateHandler(
       std::shared_ptr<IAppStatus> appStatus,
-      std::shared_ptr<MotorCtlCalibrate> motorCtlCalibrate) noexcept
-      : mAppStatus(appStatus), mMotorCtlCalibrate(motorCtlCalibrate) {}
+      std::shared_ptr<MotorCtlCalibrate> motorCtlCalibrate) noexcept;
 
-  void onEnter() noexcept override {
-    mAppStatus->setStatus(IAppStatus::Status::Busy);
-    mMotorCtlCalibrate->start();
-  }
-
-  void onExit() noexcept override {
-    mMotorCtlCalibrate->stop();
-    mAppStatus->setStatus(IAppStatus::Status::Ok);
-  }
-
-  void onLoop() noexcept override { mMotorCtlCalibrate->loop(); }
+  void onEnter() noexcept override;
+  void onExit() noexcept override;
+  void onLoop() noexcept override;
 
  private:
   std::shared_ptr<IAppStatus> mAppStatus;

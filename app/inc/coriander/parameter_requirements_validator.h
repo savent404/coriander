@@ -14,7 +14,6 @@
 #include <utility>
 
 #include "base/ilogger.h"
-#include "base/loggerstream.h"
 #include "coriander/parameter_requirements.h"
 
 namespace coriander {
@@ -25,38 +24,22 @@ struct ParamReqValidator : public IParamReqValidator {
   using ParameterRequireItem = coriander::ParameterRequireItem;
 
   ParamReqValidator(std::shared_ptr<ILogger> logger,
-                    std::shared_ptr<Parameter> param)
-      : mLogger(logger), mParam(param) {
-    mParamMap.reserve(64);
-  }
+                    std::shared_ptr<Parameter> param);
 
-  virtual void addParamReq(IParamReq *req) {
-    const ParameterRequireItem *items = req->requiredParameters();
-    while (items->name != nullptr &&
-           items->type != coriander::base::TypeId::Invalid) {
-      mParamMap[coriander::base::string_hash(items->name)] = items;
-      items++;
-    }
-  }
+  /**
+   * @brief Add a requirement to the validator
+   *
+   * @param req see @c IParamReq
+   */
+  virtual void addParamReq(IParamReq *req);
 
-  virtual bool validate() {
-    for (auto &it : mParamMap) {
-      auto &item = it.second;
-      if (!mParam->has(item->name)) {
-        auto os = coriander::base::LoggerStream(mLogger);
-        os << "required param " << item->name << " not found" << std::endl;
-        return false;
-      }
-      auto &param = mParam->get(item->name);
-      auto &v = param.value();
-      if (coriander::base::TypeHelper::type(std::move(v)) != item->type) {
-        auto os = coriander::base::LoggerStream(mLogger);
-        os << "required param " << item->name << " type mismatch" << std::endl;
-        return false;
-      }
-    }
-    return true;
-  }
+  /**
+   * @brief validate the parameter requirements is satisfied
+   *
+   * @return true validate success
+   * @return false validate failed
+   */
+  virtual bool validate();
 
  private:
   std::unordered_map<uint32_t, const ParameterRequireItem *> mParamMap;

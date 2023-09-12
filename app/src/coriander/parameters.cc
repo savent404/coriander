@@ -64,6 +64,30 @@ struct HeaderItemVisitor : IPropertyVisitor {
 }  // namespace
 namespace coriander {
 
+bool ParameterBase::setValue(const char* name, Type t) noexcept {
+  if (has(name)) {
+    auto p = get(name);
+    p.setValue(t);
+    remove(name);
+    add(p);
+    return true;
+  } else {
+    return false;
+  }
+}
+
+bool ParameterBase::setValue(ParamId id, Type t) noexcept {
+  if (has(id)) {
+    auto p = get(id);
+    p.setValue(t);
+    remove(id);
+    add(p);
+    return true;
+  } else {
+    return false;
+  }
+}
+
 std::span<uint8_t> ParameterMemoryMapper::map(
     const ParameterBase* param) noexcept {
   if (mMapped) {
@@ -82,9 +106,7 @@ std::span<uint8_t> ParameterMemoryMapper::map(
   for (auto& item : visitor.items) {
     header.checksum += item.block_checksum;
   }
-  auto aligneTo4Bytes = [](uint32_t size) {
-    return (size + 3) & (~0x3);
-  };
+  auto aligneTo4Bytes = [](uint32_t size) { return (size + 3) & (~0x3); };
   auto headerSize = sizeof(Header) + sizeof(HeaderItem) * header.block_count;
   auto payloadSize = visitor.offset;
   auto totalSize = aligneTo4Bytes(headerSize + payloadSize);

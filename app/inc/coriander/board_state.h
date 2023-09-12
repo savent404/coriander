@@ -47,6 +47,7 @@ struct BoardState : public IBoardState {
  private:
   void enterCritical() noexcept;
   void exitCritical() noexcept;
+  IStateHandler* getHandler(State s);
 
   State mState;
   std::shared_ptr<IBoardStateInitHandler> mStateInitHandler;
@@ -57,27 +58,6 @@ struct BoardState : public IBoardState {
   std::shared_ptr<IBoardStateFirmwareUpdateHandler> mStateFirmwareUpdateHandler;
   std::shared_ptr<IBoardStateRebootHandler> mStateRebootHandler;
   std::shared_ptr<IBoardEvent> mEvent;
-
-  IStateHandler* getHandler(State s) {
-    switch (s) {
-      case State::Init:
-        return mStateInitHandler.get();
-      case State::Standby:
-        return mStateStandbyHandler.get();
-      case State::Run:
-        return mStateRunHandler.get();
-      case State::Error:
-        return mStateErrorHandler.get();
-      case State::Calibrate:
-        return mStateCalibrateHandler.get();
-      case State::FirmwareUpdate:
-        return mStateFirmwareUpdateHandler.get();
-      case State::Reboot:
-        return mStateRebootHandler.get();
-      default:
-        return nullptr;
-    }
-  }
 };
 
 }  // namespace coriander

@@ -34,12 +34,26 @@ namespace coriander {
 
 namespace detail {
 
+/**
+ * @brief Create injector with default container
+ *
+ * @tparam T_injector previous injector
+ * @tparam T_args type of user defined di bindings
+ * @param injector previous injector
+ * @param args user defined di bindings
+ * @return auto injector
+ */
 template <typename T_injector, typename... T_args>
 static inline auto extendContainer(T_injector&& injector, T_args&&... args) {
   return boost::di::make_injector(std::forward<T_injector>(injector),
                                   std::forward<T_args>(args)...);
 }
 
+/**
+ * @brief Create coriander default injector
+ *
+ * @return auto injector
+ */
 static inline auto createInjector() {
   using boost::di::bind;
   using coriander::IBoardEvent;
@@ -68,6 +82,11 @@ static inline auto createInjector() {
       bind<IParamReqValidator>.to<coriander::ParamReqValidator>());
 }
 
+/**
+ * @brief Create coriander default injector
+ *
+ * @return auto injector
+ */
 static inline auto defaultContainer() {
   return boost::di::make_injector(
       std::move(coriander::detail::createInjector()),
