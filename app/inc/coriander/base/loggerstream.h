@@ -24,20 +24,21 @@ struct LoggerStream {
   virtual ~LoggerStream() noexcept = default;
 
   template <typename T>
-  friend LoggerStream& operator<<(LoggerStream& stream, const T& t) noexcept {
+  [[deprecated("use logger macro defined in ilogger.h")]] friend LoggerStream&
+  operator<<(LoggerStream& stream, const T& t) noexcept {
     stream.mLogStream << t;
     return stream;
   }
 
   // match std::endl to flush
-  friend LoggerStream& operator<<(LoggerStream& stream,
-                                  std::ostream& (*pf)(std::ostream&)) {
+  [[deprecated("use logger macro defined in ilogger.h")]] friend LoggerStream&
+  operator<<(LoggerStream& stream, std::ostream& (*pf)(std::ostream&)) {
     // pf(stream.mLogStream); // no need to insert newline
     stream.flush();
     return stream;
   }
 
-  void flush() {
+  [[deprecated("use logger macro defined in ilogger.h")]] void flush() {
     if (mLogger) {
       mLogger->log(mLogStream.str().c_str());
     }
