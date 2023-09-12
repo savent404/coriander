@@ -13,7 +13,6 @@
 
 #include "app_version.h"  // NOLINT, this is a generated header in build dir
 #include "coriander/application/diagnosis.h"
-#include "coriander/base/loggerstream.h"
 #include "coriander/base/param.h"
 #include "coriander/coriander.h"
 
@@ -108,13 +107,12 @@ static int get_reboot_times() {
   return reboot_times;
 }
 
-
 template <typename T>
 static void zephyr_backend_setup(T* injector) {
-  auto os = coriander::base::LoggerStream(
-      injector->template create<std::shared_ptr<coriander::base::ILogger>>());
-  os << "Coriander version " << APP_VERSION_STRING << std::endl;
-  os << "Reboot times: " << get_reboot_times() << std::endl;
+  auto logger =
+      injector->template create<std::shared_ptr<coriander::base::ILogger>>();
+  CORIANDER_LOG_INFO(logger, "Coriander version " APP_VERSION_STRING);
+  CORIANDER_LOG_INFO(logger, "Reboot times: {}", get_reboot_times());
 
   auto param =
       injector->template create<std::shared_ptr<coriander::Parameter>>();

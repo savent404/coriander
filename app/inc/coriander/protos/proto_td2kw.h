@@ -15,7 +15,6 @@
 #include "coriander/application/diagnosis.h"
 #include "coriander/base/ilogger.h"
 #include "coriander/base/itty.h"
-#include "coriander/base/loggerstream.h"
 #include "coriander/iboard_event.h"
 #include "coriander/iprotocol_ctl.h"
 #include "coriander/os/isystick.h"
@@ -32,7 +31,6 @@ struct ProtoTd2kw : public IProtocolCtl {
   using BoardEvent = coriander::IBoardEvent::Event;
   using Systick = coriander::os::ISystick;
   using Logger = coriander::base::ILogger;
-  using LoggerStream = coriander::base::LoggerStream;
   using Diagnosis = coriander::application::Diagnosis;
   ProtoTd2kw(std::shared_ptr<ITty> tty, std::shared_ptr<IBoardEvent> boardEvent,
              std::shared_ptr<Param> params, std::shared_ptr<Systick> systick,
@@ -58,7 +56,6 @@ struct ProtoTd2kw : public IProtocolCtl {
   std::shared_ptr<Logger> mLogger;
   std::shared_ptr<Diagnosis> mDiagnosis;
 
-  LoggerStream mLoggerStream;
   td2kw_detail::RxFrameParser mRxFrameParser;
   td2kw_detail::TxFrameBuilder mTxFrameBuilder;
   bool mEnable = false;

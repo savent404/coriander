@@ -23,7 +23,6 @@ ProtoTd2kw::ProtoTd2kw(std::shared_ptr<ITty> tty,
       mParams(param),
       mSystick(systick),
       mLogger(logger),
-      mLoggerStream(logger),
       mDiagnosis(diagnosis) {
   using DiagDevId = Diagnosis::DiagDevId;
   using DeviceStatus = Diagnosis::DeviceStatus;
@@ -131,7 +130,7 @@ void ProtoTd2kw::txRoutine() noexcept {
 
   auto n = mTty->write(msg.data(), msg.size());
   if (static_cast<size_t>(n) != msg.size()) {
-    mLoggerStream << "td2kw: send message failed" << std::endl;
+    CORIANDER_LOG_WARN(mLogger, "td2kw: send message failed");
   }
 }
 
@@ -159,14 +158,14 @@ void ProtoTd2kw::rxRoutine() noexcept {
 
   if (mRxFrameParser.getCounter() != mRxCyclicCounter &&
       mRxCyclicCounter != -1) {
-    mLoggerStream << "proto_td2kw: rx frame lost, wanted counter: "
-                  << mRxCyclicCounter
-                  << ", got counter: " << mRxFrameParser.getCounter()
-                  << std::endl;
+    CORIANDER_LOG_TRACE(
+        mLogger,
+        "proto_td2kw: rx frame lost, wanted counter: {}, got counter: {}",
+        mRxCyclicCounter, mRxFrameParser.getCounter());
   }
 
   if (recvDeadlineExpired() && !mRecvDeadlineWarned) {
-    mLoggerStream << "proto_td2kw: recv timeout" << std::endl;
+    CORIANDER_LOG_WARN(mLogger, "proto_td2kw: recv timeout");
     mTxFrameBuilder.setStateMotorCommuteState(true);
     mRecvDeadlineWarned = true;
   } else {
