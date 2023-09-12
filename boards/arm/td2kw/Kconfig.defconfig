@@ -4,6 +4,6 @@
 if BOARD_TENGDUN_2KW
 
 config BOARD
-    default "tengdun_2kw"
+    default "td2kw"
 
 endif # BOARD_TENGDUN_2KW
