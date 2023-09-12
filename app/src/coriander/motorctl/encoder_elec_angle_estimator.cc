@@ -9,7 +9,6 @@
  */
 #include "coriander/motorctl/encoder_elec_angle_estimator.h"
 
-#include "coriander/base/loggerstream.h"
 #include "coriander/base/math.h"
 
 namespace {
@@ -94,7 +93,6 @@ bool EncoderElecAngleEstimator::enabled() { return mEncoder->enabled(); }
 
 void EncoderElecAngleEstimator::calibrate() {
   using Property = base::Property;
-  coriander::base::LoggerStream stream(mLogger);
   float t = static_cast<float>(mEncoder->getEncoderCount()) /
             mEncoder->getEncoderCountPerRound() * 360.0f * mPolePair;
   if (mReverse) {
@@ -111,8 +109,8 @@ void EncoderElecAngleEstimator::calibrate() {
   }
   mNeedCalibrate = false;
 
-  stream << "Calibrated electrical angle offset: " << mElecAngleOffset
-         << std::endl;
+  CORIANDER_LOG_DEBUG(mLogger, "Calibrated electrical angle offset: {}",
+                      mElecAngleOffset);
 }
 
 bool EncoderElecAngleEstimator::needCalibrate() { return mNeedCalibrate; }
