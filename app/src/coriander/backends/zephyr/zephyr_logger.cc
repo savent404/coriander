@@ -13,13 +13,11 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
-LOG_MODULE_REGISTER(coriander, 3);
-
 namespace coriander {
 namespace base {
 namespace zephyr {
 
-  void Logger::log(const char *msg) noexcept { LOG_INF("%s", msg); }
+void Logger::log(const char *msg) noexcept { LOG_PRINTK("%s", msg); }
 
 }  // namespace zephyr
 }  // namespace base
