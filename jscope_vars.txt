@@ -21,3 +21,7 @@ _dCurrCtlOutputUq - x1000 Uq component of Current Control Output
 _dPosCurr - Position Current
 _dPosTarget - Position Target
 _dPosErr - Position Error
+_dVelCurrent - Current velocity
+_dVelTarget - Target velocity
+_dVelErr - Velocity deviation
+_dCurrCtlElecAngle - Electrical angle value measured within the current control loop
