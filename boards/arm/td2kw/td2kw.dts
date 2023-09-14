@@ -15,7 +15,7 @@
 
 	zephyr,user {
 		io-channels =  <&adc1 1>, <&adc1 3>, <&adc1 15>, <&adc1 8>,
-		/* For phase current */ <&adc2 11>, <&adc2 12>, <&adc2 13>;
+		/* For phase current */ <&adc1 11>, <&adc2 12>, <&adc3 13>;
 		io-channel-names = "adc1-1", "adc1-3", "adc1-15", "adc1-8",
 		    "motor_iu", "motor_iv", "motor_iw";
 	};
@@ -56,13 +56,13 @@
 
 	servo: servo {
 		compatible = "coriander,bldc";
-		pwms = <&pwm 1 PWM_USEC(500) PWM_POLARITY_NORMAL>,
-			<&pwm 2 PWM_USEC(500) PWM_POLARITY_NORMAL>,
-			<&pwm 3 PWM_USEC(500) PWM_POLARITY_NORMAL>,
-			<&pwm 4 PWM_USEC(500) PWM_POLARITY_NORMAL>,
-			<&pwm 1 PWM_USEC(500) (PWM_POLARITY_NORMAL | STM32_PWM_COMPLEMENTARY)>,
-			<&pwm 2 PWM_USEC(500) (PWM_POLARITY_NORMAL | STM32_PWM_COMPLEMENTARY)>,
-			<&pwm 3 PWM_USEC(500) (PWM_POLARITY_NORMAL | STM32_PWM_COMPLEMENTARY)>;
+		pwms = <&pwm 1 PWM_USEC(200) PWM_POLARITY_NORMAL>,
+			<&pwm 2 PWM_USEC(200) PWM_POLARITY_NORMAL>,
+			<&pwm 3 PWM_USEC(200) PWM_POLARITY_NORMAL>,
+			<&pwm 4 PWM_USEC(200) PWM_POLARITY_NORMAL>,
+			<&pwm 1 PWM_USEC(200) (PWM_POLARITY_NORMAL | STM32_PWM_COMPLEMENTARY)>,
+			<&pwm 2 PWM_USEC(200) (PWM_POLARITY_NORMAL | STM32_PWM_COMPLEMENTARY)>,
+			<&pwm 3 PWM_USEC(200) (PWM_POLARITY_NORMAL | STM32_PWM_COMPLEMENTARY)>;
 		pwm-names = "motor-u", "motor-v", "motor-w", "adc-trigger", "motor-un", "motor-vn", "motor-wn";
 		enable-pin = <&gpioc 7 GPIO_ACTIVE_LOW>;
 		max_pulse = <PWM_USEC(490)>;
@@ -129,7 +129,8 @@
 
 	st,adc-prescaler = <8>;
 
-	pinctrl-0 = <&adc1_in1_pa1 &adc1_in3_pa3 &adc1_in8_pb0 &adc1_in15_pc5>;
+	pinctrl-0 = <&adc1_in1_pa1 &adc1_in3_pa3 &adc1_in8_pb0
+		&adc1_in11_pc1 &adc1_in15_pc5>;
 	pinctrl-names = "default";
 
 	channel@1 {
@@ -164,6 +165,14 @@
 		zephyr,resolution = <12>;
 	};
 
+	channel@11 {
+		reg = <11>;
+		zephyr,gain = "ADC_GAIN_1";
+		zephyr,reference = "ADC_REF_INTERNAL";
+		zephyr,acquisition-time = <ADC_ACQ_TIME(ADC_ACQ_TIME_TICKS, 56)>;
+		zephyr,resolution = <8>;
+	};
+
 	channel@15 {
 		reg = <15>;
 		zephyr,gain = "ADC_GAIN_1";
@@ -179,16 +188,9 @@
 	#size-cells = <0>;
 	st,adc-prescaler = <4>;
 
-	pinctrl-0 = <&adc2_in11_pc1 &adc2_in12_pc2 &adc2_in13_pc3>;
+	pinctrl-0 = <&adc2_in11_pc1 &adc2_in12_pc2>;
 	pinctrl-names = "default";
 
-	channel@11 {
-		reg = <11>;
-		zephyr,gain = "ADC_GAIN_1";
-		zephyr,reference = "ADC_REF_INTERNAL";
-		zephyr,acquisition-time = <ADC_ACQ_TIME(ADC_ACQ_TIME_TICKS, 56)>;
-		zephyr,resolution = <8>;
-	};
 	channel@12 {
 		reg = <12>;
 		zephyr,gain = "ADC_GAIN_1";
@@ -196,6 +198,18 @@
 		zephyr,acquisition-time = <ADC_ACQ_TIME(ADC_ACQ_TIME_TICKS, 56)>;
 		zephyr,resolution = <8>;
 	};
+
+};
+
+&adc3 {
+	status = "okay";
+	#address-cells = <1>;
+	#size-cells = <0>;
+	st,adc-prescaler = <4>;
+
+	pinctrl-0 = <&adc3_in13_pc3>;
+	pinctrl-names = "default";
+
 	channel@13 {
 		reg = <13>;
 		zephyr,gain = "ADC_GAIN_1";
@@ -211,7 +225,9 @@
 
 	pwm: pwm {
 		status = "okay";
-		pinctrl-0 = <&tim1_ch1_pa8 &tim1_ch2_pa9 &tim1_ch3_pa10>;
+		pinctrl-0 = <&tim1_ch1_pa8 &tim1_ch1n_pb13
+			&tim1_ch2_pa9 &tim1_ch2n_pb14
+			&tim1_ch3_pa10 &tim1_ch3n_pb15>;
 		pinctrl-names = "default";
 	};
 };
