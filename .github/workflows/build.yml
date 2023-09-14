@@ -28,6 +28,7 @@ jobs:
           python-version: '3.7'
 
       - name: Run the jscope variable check script
+        working-directory: coriander
         run: python check_vars.py
 
       - name: Build firmware(minimal)
