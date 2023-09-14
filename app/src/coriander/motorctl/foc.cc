@@ -10,132 +10,102 @@
 
 #include "coriander/motorctl/foc.h"
 
+#include <assert.h>
+#include <math.h>
+
 #include <cmath>
 
 namespace {
 
-// NOTE: don't use matrix to simplify the code for toolchain optimizing
-static inline void SpaceVectorPwmDetailed(float I, float J, float K, float* S1,
-                                          float* S2, float* S3) {
-  int F1, F2, F3, N, sector;
-  float T1, T2, T0half;
+// slow version of svpwm
+static inline void svpwm_slow(float alpha, float beta, float Ts, float Udc,
+                              float* tu, float* tv, float* tw) {
+  float theta, sector_angle, u_ref, u_ref_percent, ts_half, t0_half, t1, t2,
+      v[4], o[3];
+  int sector;
 
-  // sector calculation
-  if (I > 0) {
-    F1 = 1;
-  } else {
-    F1 = 0;
-  }
-  if (J > 0) {
-    F2 = 1;
-  } else {
-    F2 = 0;
-  }
-  if (K > 0) {
-    F3 = 1;
-  } else {
-    F3 = 0;
-  }
-  N = F1 + 2 * F2 + 4 * F3;
+  constexpr const float sqrt_3 = 1.7320508075688772935274463415059f;
+  constexpr const float pi = 3.1415926535897932384626433832795f;
+  constexpr const float pi_3 = pi / 3;
 
-  // convert N to sector
-  switch (N) {
-    case 1:
-      sector = 6;
-      break;
-    case 2:
-      sector = 2;
-      break;
-    case 3:
-      sector = 1;
-      break;
-    case 4:
-      sector = 4;
-      break;
-    case 5:
-      sector = 5;
-      break;
-    case 6:
-      sector = 3;
-      break;
-    default:
-      sector = 0;
-      // __ASSERT_NO_MSG(0);
+  // calculate sector and sector_angle
+  theta = atan2f(beta, alpha) - pi;
+  if (theta < 0) {
+    theta += 2 * pi;
   }
 
-  // sector condition
+  sector = static_cast<int>(floorf(theta / pi_3));
+  sector_angle = theta - sector * pi_3;
+
+  // calulate reference voltage
+  u_ref = sqrtf(alpha * alpha + beta * beta);
+  if (u_ref > Udc) {
+    u_ref = Udc;
+  }
+  u_ref_percent = u_ref * sqrt_3 / Udc;
+
+  // calulate switch time
+  ts_half = Ts / 2;
+  t1 = u_ref_percent * sin(pi_3 - sector_angle) * ts_half;
+  t2 = u_ref_percent * sin(sector_angle) * ts_half;
+  t0_half = (ts_half - t1 - t2) / 2;
+
+  v[0] = t0_half;
+  v[1] = t0_half + t1;
+  v[2] = t0_half + t2;
+  v[3] = t0_half + t1 + t2;
+
   switch (sector) {
+    case 0:
+      o[0] = v[0];
+      o[1] = v[1];
+      o[2] = v[3];
+      break;
     case 1:
-      T1 = I;
-      T2 = J;
+      o[0] = v[2];
+      o[1] = v[0];
+      o[2] = v[3];
       break;
     case 2:
-      T1 = -K;
-      T2 = -I;
+      o[0] = v[3];
+      o[1] = v[0];
+      o[2] = v[1];
       break;
     case 3:
-      T1 = J;
-      T2 = K;
+      o[0] = v[3];
+      o[1] = v[2];
+      o[2] = v[0];
       break;
     case 4:
-      T1 = -I;
-      T2 = -J;
+      o[0] = v[1];
+      o[1] = v[3];
+      o[2] = v[0];
       break;
     case 5:
-      T1 = K;
-      T2 = I;
-      break;
-    case 6:
-      T1 = -J;
-      T2 = -K;
-      break;
-    default:
-      T1 = T2 = 0;
-      // __ASSERT_NO_MSG(0);
+      o[0] = v[0];
+      o[1] = v[3];
+      o[2] = v[2];
       break;
   }
-  T0half = .5 * (1 - T1 - T2);
 
-  // duty cycle calculation
-  switch (sector) {
-    case 1:
-      I = T1 + T2 + T0half;
-      J = T2 + T0half;
-      K = T0half;
-      break;
-    case 2:
-      I = T1 + T0half;
-      J = T1 + T2 + T0half;
-      K = T0half;
-      break;
-    case 3:
-      I = T0half;
-      J = T1 + T2 + T0half;
-      K = T2 + T0half;
-      break;
-    case 4:
-      I = T0half;
-      J = T1 + T0half;
-      K = T1 + T2 + T0half;
-      break;
-    case 5:
-      I = T2 + T0half;
-      J = T0half;
-      K = T1 + T2 + T0half;
-      break;
-    case 6:
-      I = T1 + T2 + T0half;
-      J = T0half;
-      K = T1 + T0half;
-      break;
-    default:
-      I = J = K = 0;
-      // __ASSERT_NO_MSG(0);
-      break;
+  // centerize output
+  float max = o[0], min = o[0], center_offset;
+  for (int i = 1; i < 3; i++) {
+    if (max < o[i]) {
+      max = o[i];
+    }
+    if (min > o[i]) {
+      min = o[i];
+    }
   }
-  *S1 = I;
-  *S2 = J;
-  *S3 = K;
+  center_offset = ts_half - (max + min) / 2;
+  for (int i = 0; i < 3; i++) {
+    o[i] += center_offset;
+    assert(o[i] > 0 && o[i] < Ts);
+  }
+  *tu = o[0];
+  *tv = o[1];
+  *tw = o[2];
 }
 }  // namespace
 
@@ -144,11 +114,7 @@ namespace motorctl {
 
 void foc::SpaceVectorPwm(float alpha, float beta, float* du, float* dv,
                          float* dw) {
-  constexpr const float sqrt3_2 = 0.86602540378f;
-  float i = alpha * sqrt3_2;
-  float j = -0.5f * alpha + sqrt3_2 * beta;
-  float k = -0.5f * alpha - sqrt3_2 * beta;
-  ::SpaceVectorPwmDetailed(i, j, k, du, dv, dw);
+  ::svpwm_slow(alpha, beta, 1, 1, du, dv, dw);
 }
 
 }  // namespace motorctl

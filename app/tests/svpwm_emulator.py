@@ -2,92 +2,60 @@ from matplotlib import pyplot as plt
 import numpy as np
 import math
 
-def svpwm(alpha: float, beta: float):
-    sqrt3_2 = math.sqrt(3) / 2
+def svpwm_raw(alpha: float, beta: float, switch_duration:float, Udc: float):
+    theta = math.atan2(beta, alpha) - math.pi
+    if theta < 0:
+        theta = theta + math.pi * 2
+    sector = int(math.floor(theta / (math.pi / 3)))
+    angle = theta - sector * math.pi / 3
+    u_ref = min(math.sqrt(alpha * alpha + beta * beta), Udc) * math.sqrt(3)
+    u_ref_percent = u_ref / Udc
+    t_halfsample = switch_duration / 2
+    t1 = u_ref_percent * math.sin(math.pi/3 - angle) * t_halfsample
+    t2 = u_ref_percent * math.sin(angle) * t_halfsample
+    t0_half = (t_halfsample - t1 - t2) / 2
 
-    i = alpha * sqrt3_2
-    j = -alpha /2 + beta * sqrt3_2
-    k = -alpha /2 - beta * sqrt3_2
+    f0 = t0_half
+    f1 = t0_half + t1
+    f2 = t0_half + t2
+    f3 = t0_half + t1 + t2
 
-    f1 = 0
-    f2 = 0
-    f3 = 0
-    if i > 0:
-        f1 = 1
-    if j > 0:
-        f2 = 1
-    if k > 0:
-        f3 = 1
-
-    N = f1 + f2*2 + f3*4
-    n2sector = [6, 2, 1, 4, 5, 3]
-    sector = n2sector[N-1]
-
-    t1 = 0
-    t2 = 0
-    if sector == 1:
-        t1 = i
-        t2 = j
+    i,j,k = 0,0,0
+    if sector == 0:
+        i,j,k = f0,f1,f3
+    elif sector == 1:
+        i,j,k = f2,f0,f3
     elif sector == 2:
-        t1 = -k
-        t2 = -i
+        i,j,k = f3,f0,f1
     elif sector == 3:
-        t1 = j
-        t2 = k
+        i,j,k = f3,f2,f0
     elif sector == 4:
-        t1 = -i
-        t2 = -j
+        i,j,k = f1,f3,f0
     elif sector == 5:
-        t1 = k
-        t2 = i
-    elif sector == 6:
-        t1 = -j
-        t2 = -k
-    else:
-        t1 = 0
-        t2 = 0
-    
-    t0 = 0.5 * (1 - t1 - t2)
+        i,j,k = f0,f3,f2
 
-    if sector == 1:
-        i = t1 + t2 + t0
-        j = t2 + t0
-        k = t0
-    elif sector == 2:
-        i = t1 + t0
-        j = t1 + t2 + t0
-        k = t0
-    elif sector == 3:
-        i = t0
-        j = t1 + t2 + t0
-        k = t2 + t0
-    elif sector == 4:
-        i = t0
-        j = t1 + t0
-        k = t1 + t2 + t0
-    elif sector == 5:
-        i = t2 + t0
-        j = t0
-        k = t1 + t2 + t0
-    elif sector == 6:
-        i = t1 + t2 + t0
-        j = t0
-        k = t1 + t0
-    else:
-        i = 0
-        j = 0
-        k = 0
-        
+    # centerize
+    min_v = min(i,j,k)
+    max_v = max(i,j,k)
+    mid_v = (max_v + min_v) / 2
+    offset = t_halfsample - mid_v
+    i,j,k = i + offset, j + offset, k + offset
+
+    assert(i > 0 and j > 0 and k > 0)
+    assert(i < switch_duration and j < switch_duration and k < switch_duration)
+
     return i,j,k
 
-def emulator_key_point():
+def svpwm(alpha: float, beta: float):
+    return svpwm_raw(alpha, beta, 1, 1)
 
+def emulator_key_point():
     for idx in range(36):
         angle = idx * math.pi / 18
         alpha = math.cos(angle)
         beta = math.sin(angle)
         i,j,k = svpwm(alpha, beta)
-        print("idx: %02d, angle: %03d ,alpha: %.2f, beta: %.2f, i: %.10f, j: %.10f, k: %.10f" % (idx, idx*10, alpha, beta, i, j, k))
+        print("idx: %02d, angle: %03d, alpha: %.2f, beta: %.2f, i: %.10f, j: %.10f, k: %.10f" % (idx, idx*10, alpha, beta, i, j, k))
 
 if __name__ == '__main__':
 
@@ -119,4 +87,3 @@ if __name__ == '__main__':
     plt.plot(t, u_c, label='u_c')
     plt.legend()
     plt.show()
-    
