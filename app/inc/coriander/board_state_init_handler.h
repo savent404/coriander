@@ -14,7 +14,6 @@
 #include "coriander/application/diagnosis.h"
 #include "coriander/application/iappstatus.h"
 #include "coriander/base/ilogger.h"
-#include "coriander/base/loggerstream.h"
 #include "coriander/iboard_event.h"
 #include "coriander/iboard_state_init_handler.h"
 #include "coriander/parameter_requirements.h"

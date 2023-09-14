@@ -1,4 +1,4 @@
 if BOARD_ATK
     config BOARD
-        default "atk_dmf407"
+        default "atk"
 endif

@@ -29,9 +29,9 @@ BoardStateInitHandler::BoardStateInitHandler(
           }
 
           if (status == application::Diagnosis::DeviceStatus::Error) {
-            auto os = base::LoggerStream(mLogger);
-            os << "BoardStateInitHandler: diagnosis error, id:"
-               << static_cast<int>(id) << std::endl;
+            CORIANDER_LOG_ERROR(mLogger,
+                                "BoardStateInitHandler: diagnosis error, id:{}",
+                                static_cast<int>(id));
             mEvent->raiseEvent(IBoardEvent::Event::Crap);
           }
         });

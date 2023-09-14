@@ -14,7 +14,6 @@
 #include <utility>
 
 #include "coriander/base/ilogger.h"
-#include "coriander/base/loggerstream.h"
 #include "coriander/iboard_event.h"
 #include "coriander/os/imutex.h"
 #include "coriander/os/isemaphore.h"
@@ -50,11 +49,8 @@ struct BoardEvent : public IBoardEvent {
     static_assert(
         sizeof(msg) / sizeof(msg[0]) == static_cast<int>(Event::MAX_EVENT),
         "Event message not match");
-    base::LoggerStream os(mLogger);
-
-    os << "Raise event: " << static_cast<int>(event) << " "
-       << msg[static_cast<int>(event)] << std::endl;
-
+    CORIANDER_LOG_TRACE(mLogger, "Raise event: {} {}", static_cast<int>(event),
+                        msg[static_cast<int>(event)]);
     for (auto &cb : mEventCallbacks[static_cast<int>(event)]) {
       cb(event);
     }

@@ -9,8 +9,6 @@
  */
 #include "coriander/parameter_requirements_validator.h"
 
-#include "coriander/base/loggerstream.h"
-
 namespace coriander {
 
 ParamReqValidator::ParamReqValidator(std::shared_ptr<ILogger> logger,
@@ -32,15 +30,14 @@ bool ParamReqValidator::validate() {
   for (auto &it : mParamMap) {
     auto &item = it.second;
     if (!mParam->has(item->name)) {
-      auto os = coriander::base::LoggerStream(mLogger);
-      os << "required param " << item->name << " not found" << std::endl;
+      CORIANDER_LOG_WARN(mLogger, "required param {} not found", item->name);
       return false;
     }
     auto &param = mParam->get(item->name);
     auto &v = param.value();
     if (coriander::base::TypeHelper::type(std::move(v)) != item->type) {
-      auto os = coriander::base::LoggerStream(mLogger);
-      os << "required param " << item->name << " type mismatch" << std::endl;
+      CORIANDER_LOG_WARN(mLogger, "required param {} type mismatch",
+                         item->name);
       return false;
     }
   }
